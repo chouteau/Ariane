@@ -1,0 +1,14 @@
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\obj\Debug\Ariane.csprojResolveAssemblyReference.cache
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\bin\Debug\Ariane.dll
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\bin\Debug\Ariane.pdb
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\bin\Debug\Newtonsoft.Json.dll
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\bin\Debug\Newtonsoft.Json.xml
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\obj\Debug\Ariane.dll
+E:\S3\Codeplex\Ariane\CloudSoft.ServiceBus\obj\Debug\Ariane.pdb
+E:\S3\Codeplex\Ariane\Ariane\bin\Debug\Ariane.dll
+E:\S3\Codeplex\Ariane\Ariane\bin\Debug\Ariane.pdb
+E:\S3\Codeplex\Ariane\Ariane\bin\Debug\Newtonsoft.Json.dll
+E:\S3\Codeplex\Ariane\Ariane\bin\Debug\Newtonsoft.Json.xml
+E:\S3\Codeplex\Ariane\Ariane\obj\Debug\Ariane.csprojResolveAssemblyReference.cache
+E:\S3\Codeplex\Ariane\Ariane\obj\Debug\Ariane.dll
+E:\S3\Codeplex\Ariane\Ariane\obj\Debug\Ariane.pdb
