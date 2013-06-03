@@ -16,8 +16,12 @@ namespace Ariane
 			{
 				Reader = new Lazy<IMessageReader>(() =>
 					{
-						var result = GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeReader);
-						return (IMessageReader)result;
+						if (TypeReader != null)
+						{
+							var result = GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeReader);
+							return (IMessageReader)result;
+						}
+						return null;
 					}, true);
 
 				Medium = new Lazy<IMedium>(() =>
