@@ -181,21 +181,6 @@ namespace Ariane
 
 		#endregion
 
-		private string Serialize(object body)
-		{
-			var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-			var sb = new StringBuilder();
-			using (var textWriter = new System.IO.StringWriter(sb))
-			{
-				using (var jsonWriter = new Newtonsoft.Json.JsonTextWriter(textWriter))
-				{
-					jsonSerializer.Serialize(jsonWriter, body);
-				}
-			}
-			var result = sb.ToString();
-			return result;
-		}
-
 		void SendInQueue()
 		{
 			while (!m_Terminated)
