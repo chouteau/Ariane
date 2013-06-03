@@ -73,6 +73,7 @@
     <Compile Include="MSMQMessageWrapper.cs" />
     <Compile Include="MSMQMedium.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueueSetting.cs" />
     <Compile Include="ServiceBusConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>

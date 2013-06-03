@@ -26,7 +26,7 @@ namespace Ariane.Configuration
 			}
 		}
 
-		[ConfigurationProperty("typeReader", IsRequired = true)]
+		[ConfigurationProperty("typeReader", IsRequired = false)]
 		public string TypeReader
 		{
 			get

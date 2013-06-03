@@ -83,7 +83,7 @@ namespace Ariane
 			mq.Send(m);
 		}
 
-		public void RegisterReadersFromConfig(string configFileName = null)
+		public void RegisterQueuesFromConfig(string configFileName = null)
 		{ 
 			string sectionName = "ariane/serviceBus";
 			Configuration.ServiceBusConfigurationSection section = null;
@@ -105,11 +105,15 @@ namespace Ariane
 				{
 					continue;
 				}
-				var reader = Type.GetType(item.TypeReader);
-				if (reader == null)
+				Type reader = null;
+				if (item.TypeReader != null)
 				{
-					GlobalConfiguration.Configuration.Logger.Warn("Type {0} reader for servicebus does not exists", item.TypeReader);
-					continue;
+					reader = Type.GetType(item.TypeReader);
+					if (reader == null)
+					{
+						GlobalConfiguration.Configuration.Logger.Warn("Type {0} reader for servicebus does not exists", item.TypeReader);
+						continue;
+					}
 				}
 				var medium = Type.GetType(item.TypeMedium);
 				if (medium == null)
@@ -121,13 +125,13 @@ namespace Ariane
 					}
 					medium = typeof(InMemoryMedium);
 				}
-				RegisterReader(item.QueueName, reader, medium);
+				RegisterQueue(new QueueSetting() { Name = item.QueueName, TypeReader = reader, TypeMedium = medium });
 			}
 		}
 
-		public void RegisterReader(string queueName, Type reader, Type medium = null)
+		public void RegisterQueue(QueueSetting queueSetting)
 		{
-			if (m_RegistrationList.Any(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase)))
+			if (m_RegistrationList.Any(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase)))
 			{
 				return;
 			}
@@ -135,9 +139,9 @@ namespace Ariane
 			{
 				var registration = new Registration()
 				{
-					QueueName = queueName,
-					TypeReader = reader,
-					TypeMedium = medium ?? typeof(InMemoryMedium),
+					QueueName = queueSetting.Name,
+					TypeReader = queueSetting.TypeReader,
+					TypeMedium = queueSetting.TypeMedium,
 				};
 
 				m_RegistrationList.Add(registration);
@@ -156,9 +160,11 @@ namespace Ariane
 
 			foreach (var item in m_RegistrationList)
 			{
-				var medium = item.Medium.Value;
 				var queue = item.Queue.Value;
-				item.Reader.Value.Start(queue);
+				if (item.Reader.Value != null)
+				{
+					item.Reader.Value.Start(queue);
+				}
 			}
 		}
 

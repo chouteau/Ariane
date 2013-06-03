@@ -10,8 +10,12 @@ namespace Ariane.Tests
 		public static void Main()
 		{
 			var m_Bus = new BusManager();
-			m_Bus.RegisterReadersFromConfig();
-			m_Bus.RegisterReader("test.memory2", typeof(PersonMessageReader));
+			m_Bus.RegisterQueuesFromConfig();
+			m_Bus.RegisterQueue(new QueueSetting() 
+			{
+				Name = "test.memory2", 
+				TypeReader = typeof(PersonMessageReader)
+			});
 
 			m_Bus.StartReading();
 
