@@ -78,13 +78,28 @@ namespace Ariane
 					break;
 				}
 
+				T message = default(T);
 				try
 				{
-					var m = m_Queue.EndReceive<T>(result);
-					m_Queue.Reset();
-					ProcessMessage(m);
+					message = m_Queue.EndReceive<T>(result);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
+				{
+					Logger.Error(ex);
+				}
+				finally
+				{
+					m_Queue.Reset();
+				}
+
+				try
+				{
+					if (message != null)
+					{
+						ProcessMessage(message);
+					}
+				}
+				catch (Exception ex)
 				{
 					Logger.Error(ex);
 				}

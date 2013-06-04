@@ -152,6 +152,48 @@ namespace Ariane
 			}
 		}
 
+		public void RegisterMemoryReader(string queueName, Type typeReader)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeReader = typeReader,
+				TypeMedium = typeof(InMemoryMedium),
+			};
+			RegisterQueue(queueSetting);
+		}
+
+		public void RegisterMemoryWriter(string queueName)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(InMemoryMedium),
+			};
+			RegisterQueue(queueSetting);
+		}
+
+		public void RegisterMSMQReader(string queueName, Type typeReader)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeReader = typeReader,
+				TypeMedium = typeof(MSMQMedium),
+			};
+			RegisterQueue(queueSetting);
+		}
+
+		public void RegisterMSMQWriter(string queueName)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(MSMQMedium),
+			};
+			RegisterQueue(queueSetting);
+		}
+
 		public void StartReading()
 		{
 			foreach (var item in m_RegistrationList)
