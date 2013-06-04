@@ -87,6 +87,8 @@ namespace Ariane
 			mq.Send(m);
 		}
 
+		#region Registration
+
 		public void RegisterQueuesFromConfig(string configFileName = null)
 		{ 
 			string sectionName = "ariane/serviceBus";
@@ -194,13 +196,18 @@ namespace Ariane
 			RegisterQueue(queueSetting);
 		}
 
+		#endregion
+
 		public void StartReading()
 		{
 			foreach (var item in m_RegistrationList)
 			{
 				if (item.Reader.IsValueCreated)
 				{
-					item.Reader.Value.Stop();
+					if (item.Reader.Value != null)
+					{
+						item.Reader.Value.Stop();
+					}
 				}
 			}
 
@@ -218,6 +225,10 @@ namespace Ariane
 		{
 			foreach (var item in m_RegistrationList)
 			{
+				if (item.Reader.Value == null)
+				{
+					continue;
+				}
 				item.Reader.Value.Stop();
 				item.Reader.Value.Dispose();
 			}
@@ -227,6 +238,10 @@ namespace Ariane
 		{
 			foreach (var item in m_RegistrationList)
 			{
+				if (item.Reader.Value == null)
+				{
+					continue;
+				}
 				item.Reader.Value.Pause();
 			}
 		}
