@@ -28,7 +28,18 @@ namespace Ariane
 		public T EndReceive<T>(IAsyncResult result)
 		{
 			var message = m_Queue.EndReceive(result);
-			var body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(message.Body as string);
+			var content = message.Body as string;
+			T body = default(T);
+			try
+			{
+				body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+			}
+			catch (Exception ex)
+			{
+				ex.Data.Add("jsoncontent", content);
+				GlobalConfiguration.Configuration.Logger.Error(ex);
+			}
+
 			return body;
 		}
 
