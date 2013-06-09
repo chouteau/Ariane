@@ -10,12 +10,14 @@ namespace Ariane.Tests
 		public static void Main()
 		{
 			var m_Bus = new BusManager();
-			m_Bus.RegisterQueuesFromConfig();
-			m_Bus.RegisterQueue(new QueueSetting() 
-			{
-				Name = "test.memory2", 
-				TypeReader = typeof(PersonMessageReader)
-			});
+			m_Bus.Register
+				.AddFromConfig()
+				.AddQueue(new QueueSetting() 
+				{
+					Name = "test.memory2", 
+					TypeReader = typeof(PersonMessageReader)
+				})
+				.AddMemoryReader("test.memory3", typeof(PersonMessageReader));
 
 			m_Bus.StartReading();
 
@@ -46,7 +48,19 @@ namespace Ariane.Tests
 				m_Bus.Send("test.memory2", person);
 			}
 
+			for (int i = 0; i < 100; i++)
+			{
+				var person = new Person();
+				person.FirsName = i.ToString();
+				person.LastName = Guid.NewGuid().ToString();
+
+				m_Bus.Send("test.memory3", person);
+			}
+
 			Console.Read();
+
+			m_Bus.StopReading();
+			m_Bus.Dispose();
 		}
 	}
 }

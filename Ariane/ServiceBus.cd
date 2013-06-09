@@ -1,41 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="CloudSoft.ServiceBus.Bus">
-    <Position X="6.75" Y="0.75" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <NestedTypes>
-      <Class Name="CloudSoft.ServiceBus.Bus.Registration" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Bus.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAIBAAAAACQAIggAAEAAgIBAACAACAAAQAAAAAAACAA=</HashCode>
-      <FileName>Bus.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CloudSoft.ServiceBus.MSMQMedium">
-    <Position X="4.25" Y="6.25" Width="2.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
-      <FileName>MSMQMedium.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CloudSoft.ServiceBus.InMemoryMedium">
-    <Position X="9.5" Y="6.25" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
-      <FileName>InMemoryMedium.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CloudSoft.ServiceBus.MessageReaderBase&lt;T&gt;">
-    <Position X="6.75" Y="9.5" Width="3.25" />
+  <Class Name="Ariane.MessageReaderBase&lt;T&gt;">
+    <Position X="10.25" Y="4" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -45,11 +11,49 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CloudSoft.ServiceBus.IServiceBus">
-    <Position X="3.75" Y="0.5" Width="2" />
+  <Interface Name="Ariane.IServiceBus">
+    <Position X="4" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAgAAAEAAAABAAAAACAAAQAAAAAAAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAgAAAEAAAAAAAAABAAAAQAAAAAAAAAA=</HashCode>
       <FileName>IServiceBus.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Register" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Ariane.IFluentRegister">
+    <Position X="7.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAEAAAAAAAAAAAAAAAAAAAAAhFAAAAAAAA=</HashCode>
+      <FileName>IFluentRegister.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ariane.IMedium">
+    <Position X="5.25" Y="3" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>IMedium.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ariane.IMessage">
+    <Position X="4" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAEAAAAAAAAAABAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>IMessage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ariane.IMessageQueue">
+    <Position X="7.25" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAADAAAAEIAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>IMessageQueue.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ariane.IMessageReader">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAACAAAAAAAAAAAAAAAAAAAAAAIAAEAAAAAAA=</HashCode>
+      <FileName>IMessageReader.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

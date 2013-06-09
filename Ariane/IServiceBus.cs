@@ -7,8 +7,7 @@ namespace Ariane
 {
 	public interface IServiceBus
 	{
-		void RegisterQueuesFromConfig(string configFileName = null);
-		void RegisterQueue(QueueSetting queue);
+		IFluentRegister Register { get; }
 		void StartReading();
 		void StopReading();
 		void PauseReading();

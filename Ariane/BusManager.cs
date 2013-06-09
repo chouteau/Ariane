@@ -10,72 +10,40 @@ namespace Ariane
 {
 	public class BusManager : IServiceBus, IDisposable
 	{
-		private class Registration
-		{
-			public Registration()
-			{
-				Reader = new Lazy<IMessageReader>(() =>
-					{
-						if (TypeReader != null)
-						{
-							var result = GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeReader);
-							return (IMessageReader)result;
-						}
-						return null;
-					}, true);
-
-				Medium = new Lazy<IMedium>(() =>
-					{
-						return (IMedium)GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeMedium);
-					}, true);
-
-				Queue = new Lazy<IMessageQueue>(() =>
-					{
-						return Medium.Value.CreateMessageQueue(QueueName);
-					}, true);
-			}
-			public string QueueName { get; set; }
-			public Type TypeReader { get; set; }
-			public Lazy<IMessageReader> Reader { get; set; }
-			public Type TypeMedium { get; set; }
-			public Lazy<IMedium> Medium { get; set; }
-			public Lazy<IMessageQueue> Queue { get; set; }
-		}
-
-		private SynchronizedCollection<Registration> m_RegistrationList;
-
-		private Queue<Action> m_Queue;
-		private ManualResetEvent m_NewMessage = new ManualResetEvent(false);
-		private ManualResetEvent m_Terminate = new ManualResetEvent(false);
-		private bool m_Terminated = false;
-		private Thread m_SendThread;
+		private ActionQueue m_ActionQueue;
+		private FluentRegister m_Register;
 
 		public BusManager()
 		{
-			m_RegistrationList = new SynchronizedCollection<Registration>();
+			m_Register = new FluentRegister();
 		}
 
 		#region IServiceBus Members
 
+		public IFluentRegister Register
+		{
+			get
+			{
+				return m_Register;
+			}
+		}
+
 		public void Send(string queueName, object body, string label = null)
 		{
-			if (m_Queue == null)
+			if (m_ActionQueue == null)
 			{
-				InitializeQueueSenderThread();
+				m_ActionQueue = new ActionQueue();
+				m_ActionQueue.Start();
 			}
-			lock(m_Queue)
+			m_ActionQueue.Add(() =>
 			{
-				m_Queue.Enqueue(() =>
-					{
-						SendInternal(queueName, body, label);
-					});
-				m_NewMessage.Set();
-			}
+				SendInternal(queueName, body, label);
+			});
 		}
 
 		private void SendInternal(string queueName, object body, string label = null)
 		{
-			var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registration == null)
 			{
 				return;
@@ -87,120 +55,9 @@ namespace Ariane
 			mq.Send(m);
 		}
 
-		#region Registration
-
-		public void RegisterQueuesFromConfig(string configFileName = null)
-		{ 
-			string sectionName = "ariane/serviceBus";
-			Configuration.ServiceBusConfigurationSection section = null;
-			if (configFileName == null) // Default file configuration
-			{
-				section = System.Configuration.ConfigurationManager.GetSection(sectionName) as Configuration.ServiceBusConfigurationSection;
-			}
-			else
-			{
-				var map = new ExeConfigurationFileMap();
-				map.ExeConfigFilename = configFileName;
-				var config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
-				section = config.GetSection(sectionName) as Configuration.ServiceBusConfigurationSection;
-			}
-
-			foreach (Configuration.ServiceBusQueueReaderConfigurationElement item in section.QueueReaders)
-			{
-				if (!item.Enabled)
-				{
-					continue;
-				}
-				Type reader = null;
-				if (item.TypeReader != null)
-				{
-					reader = Type.GetType(item.TypeReader);
-					if (reader == null)
-					{
-						GlobalConfiguration.Configuration.Logger.Warn("Type {0} reader for servicebus does not exists", item.TypeReader);
-						continue;
-					}
-				}
-				var medium = Type.GetType(item.TypeMedium);
-				if (medium == null)
-				{
-					if (!string.IsNullOrEmpty(item.TypeMedium))
-					{
-						GlobalConfiguration.Configuration.Logger.Warn("Type {0} medium for servicebus does not exists", item.TypeMedium);
-						continue;
-					}
-					medium = typeof(InMemoryMedium);
-				}
-				RegisterQueue(new QueueSetting() { Name = item.QueueName, TypeReader = reader, TypeMedium = medium });
-			}
-		}
-
-		public void RegisterQueue(QueueSetting queueSetting)
-		{
-			if (m_RegistrationList.Any(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase)))
-			{
-				return;
-			}
-			lock (m_RegistrationList.SyncRoot)
-			{
-				var registration = new Registration()
-				{
-					QueueName = queueSetting.Name,
-					TypeReader = queueSetting.TypeReader,
-					TypeMedium = queueSetting.TypeMedium,
-				};
-
-				m_RegistrationList.Add(registration);
-			}
-		}
-
-		public void RegisterMemoryReader(string queueName, Type typeReader)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeReader = typeReader,
-				TypeMedium = typeof(InMemoryMedium),
-			};
-			RegisterQueue(queueSetting);
-		}
-
-		public void RegisterMemoryWriter(string queueName)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeMedium = typeof(InMemoryMedium),
-			};
-			RegisterQueue(queueSetting);
-		}
-
-		public void RegisterMSMQReader(string queueName, Type typeReader)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeReader = typeReader,
-				TypeMedium = typeof(MSMQMedium),
-			};
-			RegisterQueue(queueSetting);
-		}
-
-		public void RegisterMSMQWriter(string queueName)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeMedium = typeof(MSMQMedium),
-			};
-			RegisterQueue(queueSetting);
-		}
-
-		#endregion
-
 		public void StartReading()
 		{
-			foreach (var item in m_RegistrationList)
+			foreach (var item in m_Register.List)
 			{
 				if (item.Reader.IsValueCreated)
 				{
@@ -211,7 +68,7 @@ namespace Ariane
 				}
 			}
 
-			foreach (var item in m_RegistrationList)
+			foreach (var item in m_Register.List)
 			{
 				var queue = item.Queue.Value;
 				if (item.Reader.Value != null)
@@ -223,7 +80,7 @@ namespace Ariane
 
 		public void StopReading()
 		{
-			foreach (var item in m_RegistrationList)
+			foreach (var item in m_Register.List)
 			{
 				if (item.Reader.Value == null)
 				{
@@ -236,7 +93,7 @@ namespace Ariane
 
 		public void PauseReading()
 		{
-			foreach (var item in m_RegistrationList)
+			foreach (var item in m_Register.List)
 			{
 				if (item.Reader.Value == null)
 				{
@@ -248,73 +105,13 @@ namespace Ariane
 
 		#endregion
 
-		void SendInQueue()
-		{
-			while (!m_Terminated)
-			{
-				var waitHandles = new WaitHandle[] { m_Terminate, m_NewMessage };
-				int result = ManualResetEvent.WaitAny(waitHandles, 60 * 1000, true);
-				if (result == 0)
-				{
-					m_Terminated = true;
-					break;
-				}
-				m_NewMessage.Reset();
-
-				if (m_Queue.Count == 0)
-				{
-					continue;
-				}
-				// Enqueue
-				Queue<Action> queueCopy;
-				lock (m_Queue)
-				{
-					queueCopy = new Queue<Action>(m_Queue);
-					m_Queue.Clear();
-				}
-
-				foreach (var send in queueCopy)
-				{
-					try
-					{
-						send();
-					}
-					catch(Exception ex)
-					{
-						GlobalConfiguration.Configuration.Logger.Error(ex);
-					}
-				}
-			}
-		}
-
-		private void InitializeQueueSenderThread()
-		{
-			m_Queue = new Queue<Action>();
-			m_SendThread = new Thread(new ThreadStart(SendInQueue));
-			m_SendThread.IsBackground = true;
-			m_SendThread.Start();
-		}
-
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			if (m_Queue != null)
+			if (m_ActionQueue != null)
 			{
-				m_Queue.Clear();
-			}
-			m_Terminated = true;
-			if (m_Terminate != null)
-			{
-				m_Terminate.Set();
-			}
-			if (m_SendThread != null)
-			{
-				if (m_SendThread != null 
-					&& !m_SendThread.Join(TimeSpan.FromSeconds(5)))
-				{
-					m_SendThread.Abort();
-				}
+				m_ActionQueue.Dispose();
 			}
 		}
 

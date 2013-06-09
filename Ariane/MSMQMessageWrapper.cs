@@ -9,11 +9,6 @@ namespace Ariane
 	{
 		private System.Messaging.Message m_Message;
 
-		public MSMQMessageWrapper()
-		{
-
-		}
-
 		public MSMQMessageWrapper(System.Messaging.Message message)
 		{
 			m_Message = message;

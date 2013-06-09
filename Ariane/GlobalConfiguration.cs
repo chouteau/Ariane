@@ -25,7 +25,6 @@ namespace Ariane
 						m_Configuration = new ServiceBusConfiguration();
 						m_Configuration.DependencyResolver = new DefaultDependencyResolver();
 						m_Configuration.Logger = new DiagnosticsLogger();
-						var readingEnableSettings = 
 					}
 				}
 				return m_Configuration;
