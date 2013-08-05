@@ -5,13 +5,15 @@ using System.Text;
 
 namespace Ariane.Tests
 {
-	public class Tests
+	public class Tests 
 	{
 		public static void Main()
 		{
 			var m_Bus = new BusManager();
+			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Tests).Assembly.Location), "ariane.config");
+
 			m_Bus.Register
-				.AddFromConfig()
+				.AddFromConfig(configFileName)
 				.AddQueue(new QueueSetting() 
 				{
 					Name = "test.memory2", 

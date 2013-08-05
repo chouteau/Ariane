@@ -31,7 +31,7 @@ namespace Ariane
 			this.m_NewMessage.Set();
 		}
 
-		public void SendInQueue()
+		private void SendInQueue()
 		{
 			while (!m_Terminated)
 			{

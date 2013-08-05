@@ -49,11 +49,6 @@ namespace Ariane
 				if (item.TypeReader != null)
 				{
 					reader = Type.GetType(item.TypeReader);
-					if (reader == null)
-					{
-						GlobalConfiguration.Configuration.Logger.Warn("Type {0} reader for servicebus does not exists", item.TypeReader);
-						continue;
-					}
 				}
 				var medium = Type.GetType(item.TypeMedium);
 				if (medium == null)
@@ -65,7 +60,8 @@ namespace Ariane
 					}
 					medium = typeof(InMemoryMedium);
 				}
-				AddQueue(new QueueSetting() { Name = item.QueueName, TypeReader = reader, TypeMedium = medium });
+				var qs = new QueueSetting() { Name = item.QueueName, TypeReader = reader, TypeMedium = medium };
+				AddQueue(qs);
 			}
 			return this;
 		}
