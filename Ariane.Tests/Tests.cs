@@ -57,6 +57,11 @@ namespace Ariane.Tests
 				person.LastName = Guid.NewGuid().ToString();
 
 				m_Bus.Send("test.memory3", person);
+			} 
+
+			for (int i = 0; i < 100; i++)
+			{
+				m_Bus.Send("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
 			}
 
 			Console.Read();

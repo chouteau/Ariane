@@ -46,14 +46,19 @@ namespace Ariane
 					continue;
 				}
 				Type reader = null;
-				if (item.TypeReader != null)
+				if (!string.IsNullOrWhiteSpace(item.TypeReader))
 				{
 					reader = Type.GetType(item.TypeReader);
+					if (reader == null)
+					{
+						GlobalConfiguration.Configuration.Logger.Warn("Type {0} reader for servicebus does not exists", item.TypeReader);
+						continue;
+					}
 				}
 				var medium = Type.GetType(item.TypeMedium);
 				if (medium == null)
 				{
-					if (!string.IsNullOrEmpty(item.TypeMedium))
+					if (!string.IsNullOrWhiteSpace(item.TypeMedium))
 					{
 						GlobalConfiguration.Configuration.Logger.Warn("Type {0} medium for servicebus does not exists", item.TypeMedium);
 						continue;
