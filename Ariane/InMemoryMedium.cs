@@ -11,13 +11,13 @@ namespace Ariane
 		{
 		}
 
-		public IMessageQueue CreateMessageQueue(string queueName)
+		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
 			var result = new System.Collections.Queue();
 			return new InMemoryMessageQueueWrapper(result, queueName);
 		}
 
-		public IMessage CreateMessage()
+		public virtual IMessage CreateMessage()
 		{
 			return new InMemoryMessage();
 		}

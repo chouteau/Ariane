@@ -9,19 +9,20 @@ namespace Ariane.Tests
 	{
 		public static void Main()
 		{
-			var m_Bus = new BusManager();
+			var bus = new BusManager();
 			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Tests).Assembly.Location), "ariane.config");
 
-			m_Bus.Register
+			bus.Register
 				.AddFromConfig(configFileName)
-				.AddQueue(new QueueSetting() 
+				.AddQueue(new QueueSetting()
 				{
-					Name = "test.memory2", 
+					Name = "test.memory2",
 					TypeReader = typeof(PersonMessageReader)
 				})
 				.AddMemoryReader("test.memory3", typeof(PersonMessageReader));
+				
 
-			m_Bus.StartReading();
+			bus.StartReading();
 
 			for (int i = 0; i < 100; i++)
 			{
@@ -29,7 +30,7 @@ namespace Ariane.Tests
 				person.FirsName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
-				m_Bus.Send("test.memory", person);
+				bus.Send("test.memory", person);
 			}
 
 			for (int i = 0; i < 100; i++)
@@ -38,7 +39,7 @@ namespace Ariane.Tests
 				person.FirsName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
-				m_Bus.Send("test.msmq", person);
+				bus.Send("test.msmq", person);
 			}
 
 			for (int i = 0; i < 100; i++)
@@ -47,7 +48,7 @@ namespace Ariane.Tests
 				person.FirsName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
-				m_Bus.Send("test.memory2", person);
+				bus.Send("test.memory2", person);
 			}
 
 			for (int i = 0; i < 100; i++)
@@ -56,18 +57,18 @@ namespace Ariane.Tests
 				person.FirsName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
-				m_Bus.Send("test.memory3", person);
+				bus.Send("test.memory3", person);
 			} 
 
 			for (int i = 0; i < 100; i++)
 			{
-				m_Bus.Send("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
+				bus.Send("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
 			}
 
 			Console.Read();
 
-			m_Bus.StopReading();
-			m_Bus.Dispose();
+			bus.StopReading();
+			bus.Dispose();
 		}
 	}
 }

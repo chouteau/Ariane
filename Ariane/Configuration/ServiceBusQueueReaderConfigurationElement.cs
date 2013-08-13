@@ -64,6 +64,5 @@ namespace Ariane.Configuration
 				this["enabled"] = value;
 			}
 		}
-
 	}
 }

@@ -9,16 +9,16 @@ namespace Ariane.Tests.Server
 	{
 		static void Main(string[] args)
 		{
-			var m_Bus = new BusManager();
+			var bus = new BusManager();
 			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location), "ariane.config");
 
-			m_Bus.Register.AddFromConfig(configFileName);
+			bus.Register.AddFromConfig(configFileName);
 
-			m_Bus.StartReading();
+			bus.StartReading();
 
 			Console.ReadKey();
 
-			m_Bus.StopReading();
+			bus.StopReading();
 
 		}
 	}
