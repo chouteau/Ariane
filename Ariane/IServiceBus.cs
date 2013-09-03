@@ -12,5 +12,6 @@ namespace Ariane
 		void StopReading();
 		void PauseReading();
 		void Send(string queueName, object body, string label = null);
+		void Send<T>(string queueName, T body, string label = null);
 	}
 }

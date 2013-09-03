@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane
 {
-	public class MSMQMessageWrapper : IMessage
+	public class MSMQMessageWrapper<T> : IMessage<T>
 	{
 		private System.Messaging.Message m_Message;
 
@@ -35,11 +35,11 @@ namespace Ariane
 			}
 		}
 
-		public object Body
+		public T Body
 		{
 			get
 			{
-				return m_Message.Body;
+				return (T) m_Message.Body;
 			}
 			set
 			{

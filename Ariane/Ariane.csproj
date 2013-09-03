@@ -57,6 +57,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentRegister.cs" />
     <Compile Include="GlobalConfiguration.cs" />
+    <Compile Include="IActionQueue.cs" />
     <Compile Include="IDependencyResolver.cs" />
     <Compile Include="IFluentRegister.cs" />
     <Compile Include="ILogger.cs" />

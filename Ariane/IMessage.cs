@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Ariane
 {
-	public interface IMessage : IDisposable
+	public interface IMessage<T> : IDisposable
 	{
 		string QueueName { get; set; }
 		string Label { get; set; }
-		object Body { get; set; }
+		T Body { get; set; }
 		bool Recoverable { get; set; }
 	}
 }

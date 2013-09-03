@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Ariane
 {
-	internal class ActionQueue : IDisposable
+	internal class ActionQueue : IDisposable, Ariane.IActionQueue
 	{
 		private Queue<Action> m_Queue;
 		private ManualResetEvent m_NewMessage = new ManualResetEvent(false);

@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicMemoryMessageReader.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonMessageReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

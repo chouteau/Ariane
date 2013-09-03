@@ -19,7 +19,8 @@ namespace Ariane.Tests
 					Name = "test.memory2",
 					TypeReader = typeof(PersonMessageReader)
 				})
-				.AddMemoryReader("test.memory3", typeof(PersonMessageReader));
+				.AddMemoryReader("test.memory3", typeof(PersonMessageReader))
+				.AddMemoryReader("dynamic.memory", typeof(DynamicMemoryMessageReader));
 				
 
 			bus.StartReading();
@@ -62,7 +63,8 @@ namespace Ariane.Tests
 
 			for (int i = 0; i < 100; i++)
 			{
-				bus.Send("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
+				bus.Send<dynamic>("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
+				bus.Send<dynamic>("dynamic.memory", new { id = i, test = Guid.NewGuid().ToString() });
 			}
 
 			Console.Read();

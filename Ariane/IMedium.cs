@@ -8,6 +8,6 @@ namespace Ariane
 	public interface IMedium
 	{
 		IMessageQueue CreateMessageQueue(string queueName);
-		IMessage CreateMessage();
+		IMessage<T> CreateMessage<T>();
 	}
 }

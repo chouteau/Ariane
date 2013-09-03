@@ -12,9 +12,9 @@ namespace Ariane
 		private System.Collections.Queue m_Queue;
 		private ManualResetEvent m_Event;
 
-		public InMemoryMessageQueueWrapper(System.Collections.Queue queue, string queueName)
+		public InMemoryMessageQueueWrapper(string queueName)
 		{
-			m_Queue = queue;
+			m_Queue = new System.Collections.Queue();
 			m_Event = new ManualResetEvent(false);
 			QueueName = queueName;
 		}
@@ -31,8 +31,8 @@ namespace Ariane
 		public T EndReceive<T>(IAsyncResult r)
 		{
 			var message = m_Queue.Dequeue();
-			var wrapped = message as IMessage;
-			return (T)wrapped.Body;
+			var wrapped = message as IMessage<T>;
+			return wrapped.Body;
 		}
 
 		public void Reset()
@@ -43,7 +43,7 @@ namespace Ariane
 			}
 		}
 
-		public void Send(IMessage message)
+		public void Send<T>(IMessage<T> message)
 		{
 			lock (m_Queue)
 			{

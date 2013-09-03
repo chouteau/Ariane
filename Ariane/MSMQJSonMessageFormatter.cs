@@ -54,7 +54,8 @@ namespace Ariane
 				throw new ArgumentNullException();
 			}
 
-			var json = JsonConvert.SerializeObject(((IMessage)obj).Body, Formatting.None);
+			object body = obj.GetType().GetProperty("Body").GetValue(obj, null);
+			var json = JsonConvert.SerializeObject(body, Formatting.None);
 			var buffer = System.Text.Encoding.UTF8.GetBytes(json);
 			message.BodyStream = new System.IO.MemoryStream(buffer);
 			message.BodyType = 0;

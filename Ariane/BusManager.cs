@@ -10,7 +10,7 @@ namespace Ariane
 {
 	public class BusManager : IServiceBus, IDisposable
 	{
-		private ActionQueue m_ActionQueue;
+		private IActionQueue m_ActionQueue;
 		private FluentRegister m_Register;
 
 		public BusManager()
@@ -30,8 +30,14 @@ namespace Ariane
 
 		public void Send(string queueName, object body, string label = null)
 		{
+			Send<object>(queueName, body, label);
+		}
+
+		public void Send<T>(string queueName, T body, string label = null)
+		{
 			if (m_ActionQueue == null)
 			{
+				// TODO : Use DI Registration
 				m_ActionQueue = new ActionQueue();
 				m_ActionQueue.Start();
 			}
@@ -41,7 +47,7 @@ namespace Ariane
 			});
 		}
 
-		private void SendInternal(string queueName, object body, string label = null)
+		private void SendInternal<T>(string queueName, T body, string label = null)
 		{
 			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registration == null)
@@ -49,7 +55,7 @@ namespace Ariane
 				return;
 			}
 			var mq = registration.Queue.Value;
-			var m = registration.Medium.Value.CreateMessage();
+			var m = registration.Medium.Value.CreateMessage<T>();
 			m.Label = label ?? Guid.NewGuid().ToString();
 			m.Body = body;
 			mq.Send(m);

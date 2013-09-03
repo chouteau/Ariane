@@ -48,7 +48,7 @@ namespace Ariane
 
 		}
 
-		public void Send(IMessage message)
+		public void Send<T>(IMessage<T> message)
 		{
 			m_Queue.Send(message);
 		}
