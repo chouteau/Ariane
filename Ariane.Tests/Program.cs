@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Ariane.Tests
 {
-	public class Tests 
+	public class Program 
 	{
 		public static void Main()
 		{
 			var bus = new BusManager();
-			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Tests).Assembly.Location), "ariane.config");
+			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location), "ariane.config");
 
 			bus.Register
 				.AddFromConfig(configFileName)
@@ -65,6 +65,10 @@ namespace Ariane.Tests
 			{
 				bus.Send<dynamic>("dynamic.msmq", new { id = i, test = Guid.NewGuid().ToString() });
 				bus.Send<dynamic>("dynamic.memory", new { id = i, test = Guid.NewGuid().ToString() });
+				dynamic message = new System.Dynamic.ExpandoObject();
+				message.id = i;
+				message.text = Guid.NewGuid().ToString();
+				bus.Send<System.Dynamic.ExpandoObject>("expando.msmq", message);
 			}
 
 			Console.Read();

@@ -28,11 +28,6 @@ namespace Ariane
 			}
 		}
 
-		public void Send(string queueName, object body, string label = null)
-		{
-			Send<object>(queueName, body, label);
-		}
-
 		public void Send<T>(string queueName, T body, string label = null)
 		{
 			if (m_ActionQueue == null)
@@ -107,6 +102,25 @@ namespace Ariane
 				}
 				item.Reader.Value.Pause();
 			}
+		}
+
+		/// <summary>
+		/// Used by Unit Test
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		/// <param name="label"></param>
+		public void SyncProcess<T>(string queueName, T body, string label = null)
+		{
+			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			if (registration == null)
+			{
+				return;
+			}
+			var mq = registration.Queue.Value;
+			var reader = (MessageReaderBase<T>)registration.Reader.Value;
+			reader.ProcessMessage(body);
 		}
 
 		#endregion

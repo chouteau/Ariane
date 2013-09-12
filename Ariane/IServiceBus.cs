@@ -7,11 +7,36 @@ namespace Ariane
 {
 	public interface IServiceBus
 	{
+		/// <summary>
+		/// Register queues
+		/// </summary>
 		IFluentRegister Register { get; }
+		/// <summary>
+		/// Start reading for item in queues and process
+		/// </summary>
 		void StartReading();
+		/// <summary>
+		/// Stop reading queues
+		/// </summary>
 		void StopReading();
+		/// <summary>
+		/// Pause reading queues
+		/// </summary>
 		void PauseReading();
-		void Send(string queueName, object body, string label = null);
+		/// <summary>
+		/// Send typed object in queue
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		/// <param name="label"></param>
 		void Send<T>(string queueName, T body, string label = null);
+		/// <summary>
+		/// Process message directly synchronously for unit tests 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		void SyncProcess<T>(string queueName, T body, string label = null);
 	}
 }

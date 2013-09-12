@@ -7,7 +7,12 @@ namespace Ariane.Tests
 {
 	public class Person
 	{
+		public Person()
+		{
+			IsProcessed = false;
+		}
 		public string FirsName { get; set; }
 		public string LastName { get; set; }
+		public bool IsProcessed { get; set; }
 	}
 }
