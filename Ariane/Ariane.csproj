@@ -63,6 +63,7 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="IMedium.cs" />
     <Compile Include="IMessageReader.cs" />
+    <Compile Include="MessageReaderBase.cs" />
     <Compile Include="InMemoryMessage.cs" />
     <Compile Include="MessageEnqueuedAsyncResult.cs" />
     <Compile Include="MSMQJSonMessageFormatter.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="IServiceBus.cs" />
     <Compile Include="InMemoryMessageQueueWrapper.cs" />
     <Compile Include="InMemoryMedium.cs" />
-    <Compile Include="MessageReaderBase.cs" />
+    <Compile Include="MessageDispatcher.cs" />
     <Compile Include="MSMQMessageQueueWrapper.cs" />
     <Compile Include="MSMQMessageWrapper.cs" />
     <Compile Include="MSMQMedium.cs" />

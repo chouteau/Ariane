@@ -82,11 +82,13 @@ namespace Ariane
 				var registration = new Registration()
 				{
 					QueueName = queueSetting.Name,
-					TypeReader = queueSetting.TypeReader,
 					TypeMedium = queueSetting.TypeMedium,
 				};
-
-				m_RegistrationList.Add(registration);
+				registration.AddSubscriber(queueSetting.TypeReader);
+				if (!m_RegistrationList.Any(i => i.QueueName == queueSetting.Name))
+				{
+					m_RegistrationList.Add(registration);
+				}
 			}
 			return this;
 		}

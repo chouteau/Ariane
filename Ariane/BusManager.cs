@@ -10,12 +10,12 @@ namespace Ariane
 {
 	public class BusManager : IServiceBus, IDisposable
 	{
-		private IActionQueue m_ActionQueue;
 		private FluentRegister m_Register;
 
 		public BusManager()
 		{
 			m_Register = new FluentRegister();
+			ActionQueue = new Lazy<IActionQueue>(InitializeActionQueue, true);
 		}
 
 		#region IServiceBus Members
@@ -28,15 +28,11 @@ namespace Ariane
 			}
 		}
 
+		protected Lazy<IActionQueue> ActionQueue { get; set; }
+
 		public void Send<T>(string queueName, T body, string label = null)
 		{
-			if (m_ActionQueue == null)
-			{
-				// TODO : Use DI Registration
-				m_ActionQueue = new ActionQueue();
-				m_ActionQueue.Start();
-			}
-			m_ActionQueue.Add(() =>
+			ActionQueue.Value.Add(() =>
 			{
 				SendInternal(queueName, body, label);
 			});
@@ -60,19 +56,8 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader.IsValueCreated)
-				{
-					if (item.Reader.Value != null)
-					{
-						item.Reader.Value.Stop();
-					}
-				}
-			}
-
-			foreach (var item in m_Register.List)
-			{
 				var queue = item.Queue.Value;
-				if (item.Reader.Value != null)
+				if (item.Reader != null)
 				{
 					item.Reader.Value.Start(queue);
 				}
@@ -83,7 +68,7 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader.Value == null)
+				if (item.Reader == null)
 				{
 					continue;
 				}
@@ -96,7 +81,7 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader.Value == null)
+				if (item.Reader == null)
 				{
 					continue;
 				}
@@ -119,7 +104,7 @@ namespace Ariane
 				return;
 			}
 			var mq = registration.Queue.Value;
-			var reader = (MessageReaderBase<T>)registration.Reader.Value;
+			var reader = (MessageDispatcher<T>)registration.Reader.Value;
 			reader.ProcessMessage(body);
 		}
 
@@ -129,12 +114,19 @@ namespace Ariane
 
 		public void Dispose()
 		{
-			if (m_ActionQueue != null)
+			if (ActionQueue != null)
 			{
-				m_ActionQueue.Dispose();
+				ActionQueue.Value.Dispose();
 			}
 		}
 
 		#endregion
+
+		private IActionQueue InitializeActionQueue()
+		{
+			var result = new ActionQueue();
+			result.Start();
+			return result;
+		}
 	}
 }
