@@ -9,6 +9,19 @@ namespace Ariane.Tests
 	{
 		public static void Main()
 		{
+			AzureClient();
+		}
+
+		public static void AzureClient()
+		{
+			var azureTest = new AzureTests();
+			azureTest.Send_Person();
+			// azureTest.Receive_Person();
+			Console.WriteLine("messageSent");
+		}
+
+		public static void DefaultClient()
+		{
 			var bus = new BusManager();
 			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location), "ariane.config");
 

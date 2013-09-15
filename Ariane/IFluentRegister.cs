@@ -13,5 +13,7 @@ namespace Ariane
 		IFluentRegister AddMemoryWriter(string queueName);
 		IFluentRegister AddMSMQReader(string queueName, Type typeReader);
 		IFluentRegister AddMSMQWriter(string queueName);
+		IFluentRegister AddAzureReader(string queueName, Type typeReader);
+		IFluentRegister AddAzureWriter(string queueName);
 	}
 }

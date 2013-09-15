@@ -20,12 +20,12 @@ namespace Ariane
 			return new MSMQMessageQueueWrapper(result, queueName);
 		}
 
-		public virtual IMessage<T> CreateMessage<T>()
-		{
-			var result = new System.Messaging.Message();
-			result.Priority = System.Messaging.MessagePriority.Normal;
-			result.Recoverable = true;
-			return new MSMQMessageWrapper<T>(result);
-		}
+		//public virtual IMessage<T> CreateMessage<T>()
+		//{
+		//	var result = new System.Messaging.Message();
+		//	result.Priority = System.Messaging.MessagePriority.Normal;
+		//	result.Recoverable = true;
+		//	return new MSMQMessageWrapper<T>(result);
+		//}
 	}
 }

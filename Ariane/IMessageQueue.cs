@@ -12,6 +12,6 @@ namespace Ariane
 		IAsyncResult BeginReceive();
 		T EndReceive<T>(IAsyncResult result);
 		void Reset();
-		void Send<T>(IMessage<T> message);
+		void Send<T>(Message<T> message);
 	}
 }

@@ -139,5 +139,28 @@ namespace Ariane
 			return this;
 		}
 
+		public IFluentRegister AddAzureReader(string queueName, Type typeReader)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeReader = typeReader,
+				TypeMedium = typeof(AzureMedium),
+			};
+			AddQueue(queueSetting);
+			return this;
+		}
+
+		public IFluentRegister AddAzureWriter(string queueName)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(AzureMedium),
+			};
+			AddQueue(queueSetting);
+			return this;
+		}
+
 	}
 }

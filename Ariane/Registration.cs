@@ -11,6 +11,7 @@ namespace Ariane
 		{
 			Medium = new Lazy<IMedium>(InitializeMedium, true);
 			Queue = new Lazy<IMessageQueue>(InitializeMessageQueue, true);
+			Reader = new Lazy<IMessageReader>(InitializeMessageReader, true);
 			MessageSubscriberList = new List<Type>();
 		}
 
@@ -23,17 +24,23 @@ namespace Ariane
 
 		private IMedium InitializeMedium()
 		{
-			return (IMedium)GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeMedium);
+			var result = (IMedium)GlobalConfiguration.Configuration.DependencyResolver.GetService(TypeMedium);
+			return result;
 		}
 
 		private IMessageQueue InitializeMessageQueue()
 		{
-			return Medium.Value.CreateMessageQueue(QueueName);
+			var result = Medium.Value.CreateMessageQueue(QueueName);
+			return result;
 		}
 
 		private IMessageReader InitializeMessageReader()
 		{
-			var messageSubscriber = MessageSubscriberList.First();
+			var messageSubscriber = MessageSubscriberList.FirstOrDefault();
+			if (messageSubscriber == null)
+			{
+				return null;
+			}
 			var messageType = messageSubscriber.BaseType.GetGenericArguments()[0];
 			var baseType = typeof(MessageDispatcher<>);
 			var typeReader = baseType.MakeGenericType(messageType);

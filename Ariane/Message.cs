@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane
 {
-	public class InMemoryMessage<T> : IMessage<T>
+	public class Message<T>
 	{
 		public string QueueName { get; set; }
 		public string Label { get; set; }

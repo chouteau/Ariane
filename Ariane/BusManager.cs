@@ -46,7 +46,7 @@ namespace Ariane
 				return;
 			}
 			var mq = registration.Queue.Value;
-			var m = registration.Medium.Value.CreateMessage<T>();
+			var m = new Message<T>();//  registration.Medium.Value.CreateMessage<T>();
 			m.Label = label ?? Guid.NewGuid().ToString();
 			m.Body = body;
 			mq.Send(m);
@@ -57,7 +57,7 @@ namespace Ariane
 			foreach (var item in m_Register.List)
 			{
 				var queue = item.Queue.Value;
-				if (item.Reader != null)
+				if (item.Reader.Value != null)
 				{
 					item.Reader.Value.Start(queue);
 				}
@@ -68,7 +68,7 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader == null)
+				if (item.Reader.Value == null)
 				{
 					continue;
 				}
@@ -81,7 +81,7 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader == null)
+				if (item.Reader.Value == null)
 				{
 					continue;
 				}

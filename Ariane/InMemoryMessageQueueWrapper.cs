@@ -31,7 +31,7 @@ namespace Ariane
 		public T EndReceive<T>(IAsyncResult r)
 		{
 			var message = m_Queue.Dequeue();
-			var wrapped = message as IMessage<T>;
+			var wrapped = message as Message<T>;
 			return wrapped.Body;
 		}
 
@@ -43,7 +43,7 @@ namespace Ariane
 			}
 		}
 
-		public void Send<T>(IMessage<T> message)
+		public void Send<T>(Message<T> message)
 		{
 			lock (m_Queue)
 			{

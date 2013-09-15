@@ -48,9 +48,14 @@ namespace Ariane
 
 		}
 
-		public void Send<T>(IMessage<T> message)
+		public void Send<T>(Message<T> message)
 		{
-			m_Queue.Send(message);
+			var m = new System.Messaging.Message();
+			m.Priority = System.Messaging.MessagePriority.Normal;
+			m.Recoverable = true;
+			m.Body = message.Body;
+			m.Label = message.Label;
+			m_Queue.Send(m);
 		}
 
 		#endregion

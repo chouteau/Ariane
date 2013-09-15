@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureTests.cs" />
     <Compile Include="DynamicMemoryMessageReader.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonMessageReader.cs" />
@@ -58,6 +59,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ariane.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="connectionStrings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">
