@@ -46,7 +46,7 @@ namespace Ariane
 				return;
 			}
 			var mq = registration.Queue.Value;
-			var m = new Message<T>();//  registration.Medium.Value.CreateMessage<T>();
+			var m = new Message<T>();
 			m.Label = label ?? Guid.NewGuid().ToString();
 			m.Body = body;
 			mq.Send(m);

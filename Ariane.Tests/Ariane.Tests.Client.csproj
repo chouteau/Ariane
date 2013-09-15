@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="AzureTests.cs" />
     <Compile Include="DynamicMemoryMessageReader.cs" />
+    <Compile Include="DynamicReader.cs" />
+    <Compile Include="DynamicReaderBase.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonMessageReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

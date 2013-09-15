@@ -9,7 +9,29 @@ namespace Ariane.Tests
 	{
 		public static void Main()
 		{
-			AzureClient();
+			// AzureClient();
+			DynamicMessage();
+		}
+
+		public static void DynamicMessage()
+		{
+			var bus = new BusManager();
+			bus.Register.AddQueue(new QueueSetting()
+			{
+				Name = "inherited.dynamic"
+				, TypeMedium = typeof(Ariane.InMemoryMedium)
+				, TypeReader = typeof(DynamicReader)
+			});
+
+			dynamic message = new System.Dynamic.ExpandoObject();
+			message.Id = Guid.NewGuid().ToString();
+			bus.Send("inherited.dynamic", message);
+
+			bus.StartReading();
+
+			System.Threading.Thread.Sleep(5 * 1000);
+
+			bus.StopReading();
 		}
 
 		public static void AzureClient()

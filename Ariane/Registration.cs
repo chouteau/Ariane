@@ -41,8 +41,19 @@ namespace Ariane
 			{
 				return null;
 			}
-			var messageType = messageSubscriber.BaseType.GetGenericArguments()[0];
+			Type messageType = messageSubscriber.BaseType;
 			var baseType = typeof(MessageDispatcher<>);
+			while (true)
+			{
+				var arguments = messageType.GetGenericArguments();
+				if (arguments.Count() == 1
+					|| messageType == baseType)
+				{
+					messageType = arguments[0];
+					break;
+				}
+				messageType = messageType.BaseType;
+			}
 			var typeReader = baseType.MakeGenericType(messageType);
 			var result = (IMessageReader)Activator.CreateInstance(typeReader);
 			result.AddMessageSubscribers(MessageSubscriberList);
