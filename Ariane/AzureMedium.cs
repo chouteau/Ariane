@@ -28,12 +28,6 @@ namespace Ariane
 			return new AzureMessageQueueWrapper(queueClient, queueName);
 		}
 
-		//public Message<T> CreateMessage<T>()
-		//{
-		//	var result = new BrokeredMessage();
-		//	return new AzureMessageWrapper<T>();
-		//}
-
 		#endregion
 	}
 }

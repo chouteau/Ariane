@@ -15,11 +15,5 @@ namespace Ariane
 		{
 			return new InMemoryMessageQueueWrapper(queueName);
 		}
-
-		//public virtual IMessage<T> CreateMessage<T>()
-		//{
-		//	return new InMemoryMessage<T>();
-		//}
-
 	}
 }

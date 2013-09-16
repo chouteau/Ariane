@@ -15,17 +15,8 @@ namespace Ariane
 		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
 			string path = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
-
 			var  result = new System.Messaging.MessageQueue(path, System.Messaging.QueueAccessMode.SendAndReceive);
 			return new MSMQMessageQueueWrapper(result, queueName);
 		}
-
-		//public virtual IMessage<T> CreateMessage<T>()
-		//{
-		//	var result = new System.Messaging.Message();
-		//	result.Priority = System.Messaging.MessagePriority.Normal;
-		//	result.Recoverable = true;
-		//	return new MSMQMessageWrapper<T>(result);
-		//}
 	}
 }

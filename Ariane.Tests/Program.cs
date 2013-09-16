@@ -10,7 +10,8 @@ namespace Ariane.Tests
 		public static void Main()
 		{
 			// AzureClient();
-			DynamicMessage();
+			// DynamicMessage();
+			DefaultClient();
 		}
 
 		public static void DynamicMessage()
@@ -103,7 +104,7 @@ namespace Ariane.Tests
 				dynamic message = new System.Dynamic.ExpandoObject();
 				message.id = i;
 				message.text = Guid.NewGuid().ToString();
-				bus.Send<System.Dynamic.ExpandoObject>("expando.msmq", message);
+				bus.Send("expando.msmq", message);
 			}
 
 			Console.Read();

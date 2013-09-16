@@ -11,9 +11,9 @@ namespace Ariane
 
 		public MSMQMessageQueueWrapper(System.Messaging.MessageQueue queue, string queueName)
 		{
+			QueueName = queueName;
 			m_Queue = queue;
 			m_Queue.Formatter = new MSMQJSonMessageFormatter();
-			QueueName = queueName;
 		}
 
 		#region IMessageQueue Members
@@ -50,12 +50,12 @@ namespace Ariane
 
 		public void Send<T>(Message<T> message)
 		{
-			var m = new System.Messaging.Message();
-			m.Priority = System.Messaging.MessagePriority.Normal;
-			m.Recoverable = true;
-			m.Body = message.Body;
-			m.Label = message.Label;
-			m_Queue.Send(m);
+			//var m = new System.Messaging.Message();
+			//m.Priority = System.Messaging.MessagePriority.Normal;
+			//m.Recoverable = true;
+			//m.Body = message.Body;
+			//m.Label = message.Label;
+			m_Queue.Send(message);
 		}
 
 		#endregion
