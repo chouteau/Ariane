@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Ariane
 {
-	public class DiagnosticsLogger : ILogger
+	internal class DiagnosticsLogger : ILogger
 	{
 		public void Info(string message)
 		{

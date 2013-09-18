@@ -28,7 +28,7 @@ namespace Ariane
 			}
 		}
 
-		protected Lazy<IActionQueue> ActionQueue { get; set; }
+		internal Lazy<IActionQueue> ActionQueue { get; set; }
 
 		public void Send<T>(string queueName, T body, string label = null)
 		{

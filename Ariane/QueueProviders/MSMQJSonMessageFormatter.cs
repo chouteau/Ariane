@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace Ariane
+namespace Ariane.QueueProviders
 {
-	public class MSMQJSonMessageFormatter : System.Messaging.IMessageFormatter
+	internal class MSMQJSonMessageFormatter : System.Messaging.IMessageFormatter
 	{
 		#region IMessageFormatter Members
 

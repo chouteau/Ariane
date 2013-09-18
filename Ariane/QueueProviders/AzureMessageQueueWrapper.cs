@@ -6,9 +6,9 @@ using System.Threading;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 
-namespace Ariane
+namespace Ariane.QueueProviders
 {
-	public class AzureMessageQueueWrapper : IMessageQueue
+	internal class AzureMessageQueueWrapper : IMessageQueue
 	{
 		private string m_QueueName;
 		private QueueClient m_Queue;

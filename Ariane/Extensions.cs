@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane
 {
-	public static class Extensions
+	internal static class Extensions
 	{
 		public static TService GetService<TService>(this IDependencyResolver resolver)
 		{

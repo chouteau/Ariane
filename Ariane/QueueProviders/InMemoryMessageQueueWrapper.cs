@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace Ariane
+namespace Ariane.QueueProviders
 {
-	public class InMemoryMessageQueueWrapper : IMessageQueue
+	internal class InMemoryMessageQueueWrapper : IMessageQueue
 	{
 		private System.Collections.Queue m_Queue;
 		private ManualResetEvent m_Event;

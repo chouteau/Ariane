@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ariane
+namespace Ariane.QueueProviders
 {
-	public class MSMQMessageQueueWrapper : IMessageQueue
+	internal class MSMQMessageQueueWrapper : IMessageQueue
 	{
 		private System.Messaging.MessageQueue m_Queue;
 

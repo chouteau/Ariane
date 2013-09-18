@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Ariane
 {
-	public interface IMessageReader : IDisposable
+	internal interface IMessageReader : IDisposable
 	{
 		void AddMessageSubscribers(IList<Type> messageSubscriber);
 		void Pause();

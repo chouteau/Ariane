@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using Microsoft.ServiceBus.Messaging;
 
-namespace Ariane
+namespace Ariane.QueueProviders
 {
-	public class AzureAsyncResult : IAsyncResult
+	internal class AzureAsyncResult : IAsyncResult
 	{
 		private ManualResetEvent m_Event;
 		private QueueClient m_Queue;
