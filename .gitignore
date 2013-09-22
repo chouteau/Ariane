@@ -7,3 +7,4 @@
 /Ariane.Tests.Server/bin
 /Ariane.Tests.Server/obj
 /Ariane.Tests/connectionStrings.config
+/Ariane.Tests/queue

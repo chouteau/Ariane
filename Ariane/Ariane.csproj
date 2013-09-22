@@ -56,9 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionQueue.cs" />
+    <Compile Include="FileMedium.cs" />
     <Compile Include="QueueProviders\AzureAsyncResult.cs" />
     <Compile Include="AzureMedium.cs" />
-    <Compile Include="QueueProviders\AzureMessageQueueWrapper.cs" />
+    <Compile Include="QueueProviders\AzureMessageQueue.cs" />
     <Compile Include="Configuration\ServiceBusQueueReaderConfigurationElement.cs" />
     <Compile Include="Configuration\ServiceBusConfigurationSection.cs" />
     <Compile Include="Configuration\ServiceBusQueueReaderElementCollection.cs" />
@@ -75,15 +76,16 @@
     <Compile Include="IMedium.cs" />
     <Compile Include="IMessageReader.cs" />
     <Compile Include="MessageReaderBase.cs" />
-    <Compile Include="QueueProviders\MessageEnqueuedAsyncResult.cs" />
+    <Compile Include="QueueProviders\FileMessageQueue.cs" />
+    <Compile Include="QueueProviders\AsyncResult.cs" />
     <Compile Include="QueueProviders\MSMQJSonMessageFormatter.cs" />
     <Compile Include="BusManager.cs" />
     <Compile Include="IMessageQueue.cs" />
     <Compile Include="IServiceBus.cs" />
-    <Compile Include="QueueProviders\InMemoryMessageQueueWrapper.cs" />
+    <Compile Include="QueueProviders\InMemoryMessageQueue.cs" />
     <Compile Include="InMemoryMedium.cs" />
     <Compile Include="MessageDispatcher.cs" />
-    <Compile Include="QueueProviders\MSMQMessageQueueWrapper.cs" />
+    <Compile Include="QueueProviders\MSMQMessageQueue.cs" />
     <Compile Include="MSMQMedium.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueSetting.cs" />

@@ -9,31 +9,42 @@ namespace Ariane.Tests.Server
 	{
 		static void Main(string[] args)
 		{
-			AzureServer();
-		}
-
-		static void AzureServer()
-		{
-			var bus = new BusManager();
-			bus.Register.AddAzureReader("test.azure", typeof(PersonMessageReader));
-
-			bus.StartReading();
-
-			System.Threading.Thread.Sleep(5 * 1000);
-		}
-
-		static void DefaultServer()
-		{
-			var bus = new BusManager();
-			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location), "ariane.config");
-
-			bus.Register.AddFromConfig(configFileName);
+			Ariane.IServiceBus bus = null;
+			// bus = DefaultServer();
+			// bus = AzureServer();
+			bus = FileReaderServer();
 
 			bus.StartReading();
 
 			Console.ReadKey();
 
 			bus.StopReading();
+		}
+
+		static Ariane.IServiceBus AzureServer()
+		{
+			var bus = new BusManager();
+			bus.Register.AddAzureReader("test.azure", typeof(PersonMessageReader));
+
+			return bus;
+		}
+
+		static Ariane.IServiceBus DefaultServer()
+		{
+			var bus = new BusManager();
+			var configFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(Program).Assembly.Location), "ariane.config");
+
+			bus.Register.AddFromConfig(configFileName);
+
+			return bus;
+		}
+
+		static Ariane.IServiceBus FileReaderServer()
+		{
+			var bus = new BusManager();
+			bus.Register.AddFileReader("test.file", typeof(PersonMessageReader));
+
+			return bus;
 		}
 	}
 }

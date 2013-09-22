@@ -8,14 +8,14 @@ using Microsoft.ServiceBus.Messaging;
 
 namespace Ariane.QueueProviders
 {
-	internal class AzureMessageQueueWrapper : IMessageQueue
+	internal class AzureMessageQueue : IMessageQueue
 	{
 		private string m_QueueName;
 		private QueueClient m_Queue;
 		private ManualResetEvent m_Event;
 		private DateTime m_LastReadTime;
 
-		public AzureMessageQueueWrapper(QueueClient queueClient, string queueName)
+		public AzureMessageQueue(QueueClient queueClient, string queueName)
 		{
 			m_QueueName = queueName;
 			m_Queue = queueClient;

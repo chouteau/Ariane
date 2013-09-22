@@ -13,7 +13,7 @@ namespace Ariane
 
 		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
-			return new QueueProviders.InMemoryMessageQueueWrapper(queueName);
+			return new QueueProviders.InMemoryMessageQueue(queueName);
 		}
 	}
 }

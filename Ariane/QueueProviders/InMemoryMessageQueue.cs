@@ -7,12 +7,12 @@ using System.Threading;
 
 namespace Ariane.QueueProviders
 {
-	internal class InMemoryMessageQueueWrapper : IMessageQueue
+	internal class InMemoryMessageQueue : IMessageQueue
 	{
 		private System.Collections.Queue m_Queue;
 		private ManualResetEvent m_Event;
 
-		public InMemoryMessageQueueWrapper(string queueName)
+		public InMemoryMessageQueue(string queueName)
 		{
 			m_Queue = new System.Collections.Queue();
 			m_Event = new ManualResetEvent(false);
@@ -25,7 +25,7 @@ namespace Ariane.QueueProviders
 
 		public IAsyncResult BeginReceive()
 		{
-			return new MessageEnqueuedAsyncResult(m_Event);
+			return new AsyncResult(m_Event);
 		}
 
 		public T EndReceive<T>(IAsyncResult r)

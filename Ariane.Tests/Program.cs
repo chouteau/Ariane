@@ -56,7 +56,8 @@ namespace Ariane.Tests
 					TypeReader = typeof(PersonMessageReader)
 				})
 				.AddMemoryReader("test.memory3", typeof(PersonMessageReader))
-				.AddMemoryReader("dynamic.memory", typeof(DynamicMemoryMessageReader));
+				.AddMemoryReader("dynamic.memory", typeof(DynamicMemoryMessageReader))
+				.AddFileWriter("test.file");
 				
 
 			bus.StartReading();
@@ -105,6 +106,15 @@ namespace Ariane.Tests
 				message.id = i;
 				message.text = Guid.NewGuid().ToString();
 				bus.Send("expando.msmq", message);
+			}
+
+			for (int i = 0; i < 100; i++)
+			{
+				var person = new Person();
+				person.FirsName = i.ToString();
+				person.LastName = Guid.NewGuid().ToString();
+
+				bus.Send("test.file", person);
 			}
 
 			Console.Read();

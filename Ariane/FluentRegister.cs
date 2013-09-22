@@ -162,5 +162,28 @@ namespace Ariane
 			return this;
 		}
 
+		public IFluentRegister AddFileReader(string queueName, Type typeReader)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeReader = typeReader,
+				TypeMedium = typeof(FileMedium),
+			};
+			AddQueue(queueSetting);
+			return this;
+		}
+
+		public IFluentRegister AddFileWriter(string queueName)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(FileMedium),
+			};
+			AddQueue(queueSetting);
+			return this;
+		}
+
 	}
 }

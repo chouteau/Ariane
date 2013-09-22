@@ -6,11 +6,11 @@ using System.Threading;
 
 namespace Ariane.QueueProviders
 {
-	internal class MessageEnqueuedAsyncResult : IAsyncResult
+	internal class AsyncResult : IAsyncResult
 	{
 		private ManualResetEvent m_Event;
 
-		public MessageEnqueuedAsyncResult(ManualResetEvent @event)
+		public AsyncResult(ManualResetEvent @event)
 		{
 			m_Event = @event;
 		}

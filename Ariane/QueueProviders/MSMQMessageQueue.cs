@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Ariane.QueueProviders
 {
-	internal class MSMQMessageQueueWrapper : IMessageQueue
+	internal class MSMQMessageQueue : IMessageQueue
 	{
 		private System.Messaging.MessageQueue m_Queue;
 
-		public MSMQMessageQueueWrapper(System.Messaging.MessageQueue queue, string queueName)
+		public MSMQMessageQueue(System.Messaging.MessageQueue queue, string queueName)
 		{
 			QueueName = queueName;
 			m_Queue = queue;

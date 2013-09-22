@@ -16,7 +16,7 @@ namespace Ariane
 		{
 			string path = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
 			var  result = new System.Messaging.MessageQueue(path, System.Messaging.QueueAccessMode.SendAndReceive);
-			return new QueueProviders.MSMQMessageQueueWrapper(result, queueName);
+			return new QueueProviders.MSMQMessageQueue(result, queueName);
 		}
 	}
 }
