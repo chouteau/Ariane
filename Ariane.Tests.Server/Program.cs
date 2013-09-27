@@ -14,6 +14,11 @@ namespace Ariane.Tests.Server
 			// bus = AzureServer();
 			bus = FileReaderServer();
 
+			bus.Register.AddFileReader<Person>("test.file", (message) =>
+			{
+				Console.Write(message.FirsName);
+			});
+
 			bus.StartReading();
 
 			Console.ReadKey();

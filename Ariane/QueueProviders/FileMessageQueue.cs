@@ -84,7 +84,11 @@ namespace Ariane.QueueProviders
 					System.IO.File.Delete(fileName);
 					break;
 				}
-				catch(System.IO.IOException)
+				catch (System.IO.FileNotFoundException)
+				{
+					break;
+				}
+				catch (System.IO.IOException)
 				{
 					if (retryCount > 4)
 					{

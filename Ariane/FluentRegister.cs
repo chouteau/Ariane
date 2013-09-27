@@ -73,22 +73,39 @@ namespace Ariane
 
 		public IFluentRegister AddQueue(QueueSetting queueSetting)
 		{
-			if (m_RegistrationList.Any(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase)))
-			{
-				return this;
-			}
 			lock (m_RegistrationList.SyncRoot)
 			{
-				var registration = new Registration()
+				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				if (registration == null)
 				{
-					QueueName = queueSetting.Name,
-					TypeMedium = queueSetting.TypeMedium,
-				};
-				registration.AddSubscriber(queueSetting.TypeReader);
-				if (!m_RegistrationList.Any(i => i.QueueName == queueSetting.Name))
-				{
+					registration = new Registration()
+					{
+						QueueName = queueSetting.Name,
+						TypeMedium = queueSetting.TypeMedium,
+					};
 					m_RegistrationList.Add(registration);
 				}
+				registration.AddSubscriberType(queueSetting.TypeReader);
+			}
+			return this;
+		}
+
+		internal IFluentRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
+		{
+			lock (m_RegistrationList.SyncRoot)
+			{
+				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				if (registration == null)
+				{
+					registration = new Registration()
+					{
+						QueueName = queueSetting.Name,
+						TypeMedium = queueSetting.TypeMedium,
+					};
+					m_RegistrationList.Add(registration);
+				}
+				var subscriber = new AnonymousMessageSubscriber<T>(predicate);
+				registration.AddSubscriber(subscriber);
 			}
 			return this;
 		}
@@ -102,6 +119,17 @@ namespace Ariane
 				TypeMedium = typeof(InMemoryMedium),
 			};
 			AddQueue(queueSetting);
+			return this;
+		}
+
+		public IFluentRegister AddMemoryReader<T>(string queueName, Action<T> predicate)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(InMemoryMedium),
+			};
+			AddQueue<T>(queueSetting, predicate);
 			return this;
 		}
 
@@ -128,6 +156,17 @@ namespace Ariane
 			return this;
 		}
 
+		public IFluentRegister AddMSMQReader<T>(string queueName, Action<T> predicate)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(MSMQMedium),
+			};
+			AddQueue<T>(queueSetting, predicate);
+			return this;
+		}
+
 		public IFluentRegister AddMSMQWriter(string queueName)
 		{
 			var queueSetting = new QueueSetting()
@@ -151,6 +190,17 @@ namespace Ariane
 			return this;
 		}
 
+		public IFluentRegister AddAzureReader<T>(string queueName, Action<T> predicate)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(AzureMedium),
+			};
+			AddQueue(queueSetting, predicate);
+			return this;
+		}
+
 		public IFluentRegister AddAzureWriter(string queueName)
 		{
 			var queueSetting = new QueueSetting()
@@ -171,6 +221,17 @@ namespace Ariane
 				TypeMedium = typeof(FileMedium),
 			};
 			AddQueue(queueSetting);
+			return this;
+		}
+
+		public IFluentRegister AddFileReader<T>(string queueName, Action<T> predicate)
+		{
+			var queueSetting = new QueueSetting()
+			{
+				Name = queueName,
+				TypeMedium = typeof(FileMedium),
+			};
+			AddQueue(queueSetting, predicate);
 			return this;
 		}
 

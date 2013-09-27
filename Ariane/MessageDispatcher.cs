@@ -6,27 +6,35 @@ using System.Threading;
 
 namespace Ariane
 {
-	internal class MessageDispatcher<T> : IDisposable, IMessageReader
+	internal class MessageDispatcher<T> : IDisposable, IMessageDispatcher
 	{
 		private ManualResetEvent m_EventStop;
 		private bool m_Terminated = false;
 		private Thread m_Thread;
 		private IMessageQueue m_Queue;
-		private IList<Type> m_MessageSubscriberList;
+		private IList<Type> m_MessageSubscriberTypeList;
 
 		public MessageDispatcher()
 		{
 			Logger = GlobalConfiguration.Configuration.Logger;
-			m_MessageSubscriberList = new List<Type>();
+			m_MessageSubscriberTypeList = new List<Type>();
 			MessageSubscriberList = new Lazy<IList<MessageReaderBase<T>>>(InitilizeSubscriberList, true);
 		}
 
 		protected ILogger Logger { get; set; }
 		protected Lazy<IList<MessageReaderBase<T>>> MessageSubscriberList;
 
-		public void AddMessageSubscribers(IList<Type> messageSubscriber)
+		public void AddMessageSubscriberTypeList(IList<Type> list)
 		{
-			m_MessageSubscriberList = messageSubscriber;
+			m_MessageSubscriberTypeList = list;
+		}
+
+		public void AddMessageSubscriberList(IList<object> list)
+		{
+			foreach (var item in list)
+			{
+				MessageSubscriberList.Value.Add(item as MessageReaderBase<T>);
+			}
 		}
 
 		public virtual void Start(IMessageQueue queue)
@@ -34,7 +42,7 @@ namespace Ariane
 			m_EventStop = new ManualResetEvent(false);
 			m_Queue = queue;
 			m_Thread = new Thread(new ThreadStart(Run));
-			m_Thread.Name = string.Format("MessageReaderBase:{0}", queue.QueueName);
+			m_Thread.Name = string.Format("Ariane.MessageReaderBase:{0}", queue.QueueName);
 			m_Thread.Start();
 		}
 
@@ -50,20 +58,17 @@ namespace Ariane
 			{
 				m_EventStop.Set();
 			}
-			m_MessageSubscriberList.Clear();
+			m_MessageSubscriberTypeList.Clear();
 		}
 
 		public virtual void Stop()
 		{
 			Terminate();
-			// Attendre 5 secondes avant de tuer le process
 			if (m_Thread != null && !m_Thread.Join(TimeSpan.FromSeconds(5)))
 			{
 				m_Thread.Abort();
 			}
 		}
-
-		// public abstract void ProcessMessage(T message);
 
 		private void Run()
 		{
@@ -138,7 +143,7 @@ namespace Ariane
 		private IList<MessageReaderBase<T>> InitilizeSubscriberList()
 		{
 			var result = new List<MessageReaderBase<T>>();
-			foreach (var subscriberType in m_MessageSubscriberList)
+			foreach (var subscriberType in m_MessageSubscriberTypeList)
 			{
 				var subscriber = GlobalConfiguration.Configuration.DependencyResolver.GetService(subscriberType);
 				result.Add(subscriber as MessageReaderBase<T>);

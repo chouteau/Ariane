@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionQueue.cs" />
+    <Compile Include="AnonymousMessageSubscriber.cs" />
     <Compile Include="FileMedium.cs" />
     <Compile Include="QueueProviders\AzureAsyncResult.cs" />
     <Compile Include="AzureMedium.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="IFluentRegister.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMedium.cs" />
-    <Compile Include="IMessageReader.cs" />
+    <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="MessageReaderBase.cs" />
     <Compile Include="QueueProviders\FileMessageQueue.cs" />
     <Compile Include="QueueProviders\AsyncResult.cs" />
