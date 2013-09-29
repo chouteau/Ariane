@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Ariane.QueueProviders
 {
-	internal class InMemoryMessageQueue : IMessageQueue
+	public class InMemoryMessageQueue : IMessageQueue
 	{
 		private System.Collections.Queue m_Queue;
 		private ManualResetEvent m_Event;

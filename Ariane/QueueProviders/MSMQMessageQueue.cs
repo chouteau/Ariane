@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane.QueueProviders
 {
-	internal class MSMQMessageQueue : IMessageQueue
+	public class MSMQMessageQueue : IMessageQueue
 	{
 		private System.Messaging.MessageQueue m_Queue;
 
@@ -50,11 +50,6 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			//var m = new System.Messaging.Message();
-			//m.Priority = System.Messaging.MessagePriority.Normal;
-			//m.Recoverable = true;
-			//m.Body = message.Body;
-			//m.Label = message.Label;
 			m_Queue.Send(message);
 		}
 

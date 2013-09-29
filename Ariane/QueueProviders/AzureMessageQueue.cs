@@ -8,7 +8,7 @@ using Microsoft.ServiceBus.Messaging;
 
 namespace Ariane.QueueProviders
 {
-	internal class AzureMessageQueue : IMessageQueue
+	public class AzureMessageQueue : IMessageQueue
 	{
 		private string m_QueueName;
 		private QueueClient m_Queue;

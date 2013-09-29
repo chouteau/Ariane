@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
-	internal class FileMessageQueue : IMessageQueue, IDisposable
+	public class FileMessageQueue : IMessageQueue, IDisposable
 	{
 		private string m_QueueName;
 		private string m_Path;
