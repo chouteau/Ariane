@@ -22,6 +22,7 @@ namespace Ariane.QueueProviders
 			m_Queue.BeginReceive(ProcessEndReceive, m_Queue);
 		}
 
+
 		void ProcessEndReceive(IAsyncResult result)
 		{
 			var qc = result.AsyncState as QueueClient;

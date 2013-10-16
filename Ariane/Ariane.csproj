@@ -23,6 +23,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,6 +60,7 @@
     <Compile Include="ActionQueue.cs" />
     <Compile Include="AnonymousMessageSubscriber.cs" />
     <Compile Include="FileMedium.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="QueueProviders\AzureAsyncResult.cs" />
     <Compile Include="AzureMedium.cs" />
     <Compile Include="QueueProviders\AzureMessageQueue.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="IMedium.cs" />
     <Compile Include="IMessageDispatcher.cs" />
     <Compile Include="MessageReaderBase.cs" />
+    <Compile Include="QueueProviders\FastDirectoryEnumerator.cs" />
     <Compile Include="QueueProviders\FileMessageQueue.cs" />
     <Compile Include="QueueProviders\AsyncResult.cs" />
     <Compile Include="QueueProviders\MSMQJSonMessageFormatter.cs" />

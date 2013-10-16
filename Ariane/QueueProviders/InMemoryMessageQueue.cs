@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Ariane.QueueProviders
 {
-	public class InMemoryMessageQueue : IMessageQueue
+	public class InMemoryMessageQueue : IMessageQueue, IDisposable
 	{
 		private System.Collections.Queue m_Queue;
 		private ManualResetEvent m_Event;
@@ -17,6 +17,19 @@ namespace Ariane.QueueProviders
 			m_Queue = new System.Collections.Queue();
 			m_Event = new ManualResetEvent(false);
 			QueueName = queueName;
+		}
+
+		public int? Timeout
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		public void SetTimeout()
+		{
+
 		}
 
 		#region IMessageQueue Members
@@ -54,5 +67,13 @@ namespace Ariane.QueueProviders
 
 		#endregion
 
+
+		public void Dispose()
+		{
+			if (m_Event != null)
+			{
+				m_Event.Dispose();
+			}
+		}
 	}
 }

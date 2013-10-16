@@ -13,5 +13,7 @@ namespace Ariane
 		T EndReceive<T>(IAsyncResult result);
 		void Reset();
 		void Send<T>(Message<T> message);
+		int? Timeout { get; }
+		void SetTimeout();
 	}
 }

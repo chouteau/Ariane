@@ -18,6 +18,19 @@ namespace Ariane.QueueProviders
 
 		#region IMessageQueue Members
 
+		public int? Timeout
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		public void SetTimeout()
+		{
+
+		}
+
 		public string QueueName { get ; private set; }
 
 		public IAsyncResult BeginReceive()

@@ -17,40 +17,51 @@ namespace Ariane.QueueProviders
 		private ManualResetEvent m_Event;
 		private System.Collections.Generic.Queue<string> m_Queue;
 
+		public virtual string Filter
+		{
+			get
+			{
+				return string.Format("{0}.*", m_QueueName);
+			}
+		}
+
+		public int? Timeout
+		{
+			get
+			{
+				return 10 * 1000;
+			}
+		}
+
+		public void SetTimeout()
+		{
+			try
+			{
+				ScanExistingFiles();
+			}
+			catch (Exception ex)
+			{
+				GlobalConfiguration.Configuration.Logger.Error(ex);
+			}
+		}
+
 		public FileMessageQueue(string queueName, string path)
 		{
 			m_QueueName = queueName;
 			m_Path = path;
 			m_Event = new ManualResetEvent(false);
-			m_Queue = new Queue<string>();
+			m_Queue = new Queue<string>(1000000);
 
 			m_FileWatcher = new FileSystemWatcher();
 			m_FileWatcher.Path = path;
-			m_FileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.FileName;
+			m_FileWatcher.NotifyFilter = NotifyFilters.CreationTime;
 			m_FileWatcher.Created += (s, arg) =>
 			{
 				m_Queue.Enqueue(arg.FullPath);
 				m_Event.Set();
 			};
-			m_FileWatcher.Filter = string.Format("{0}.*", queueName);
+			m_FileWatcher.Filter = Filter;
 			m_FileWatcher.EnableRaisingEvents = true;
-
-			var callback = new WaitOrTimerCallback((state, timeout) => 
-			{
-				try
-				{
-					ScanExistingFiles();
-				}
-				catch(Exception ex)
-				{
-					GlobalConfiguration.Configuration.Logger.Error(ex);
-				}
-			});
-			System.Threading.ThreadPool.RegisterWaitForSingleObject(new System.Threading.AutoResetEvent(false)
-				, callback
-				, null
-				, 1000 * 10
-				, false);
 		}
 
 		#region IMessageQueue Members
@@ -79,6 +90,7 @@ namespace Ariane.QueueProviders
 			{
 				try
 				{
+					System.Threading.Thread.Sleep(100);
 					var content = System.IO.File.ReadAllText(fileName);
 					m = JsonConvert.DeserializeObject<T>(content);
 					System.IO.File.Delete(fileName);
@@ -128,20 +140,24 @@ namespace Ariane.QueueProviders
 			{
 				m_Event.Dispose();
 			}
+			if (m_Queue != null)
+			{
+				m_Queue.Clear();
+				m_Queue = null;
+			}
 		}
 
 		#endregion
 
 		private void ScanExistingFiles()
 		{
-			var list = from file in System.IO.Directory.GetFiles(m_Path, m_FileWatcher.Filter, SearchOption.TopDirectoryOnly)
-					   let fileInfo = new System.IO.FileInfo(file)
-					   orderby fileInfo.CreationTime
-					   select fileInfo;
+			var list = from file in FastDirectoryEnumerator.EnumerateFiles(m_Path, Filter, SearchOption.TopDirectoryOnly)
+					   orderby file.CreationTime
+					   select file;
 
 			foreach (var file in list)
 			{
-				m_Queue.Enqueue(file.FullName);
+				m_Queue.Enqueue(file.Path);
 			}
 
 			if (m_Queue.Count > 0)
@@ -149,5 +165,6 @@ namespace Ariane.QueueProviders
 				m_Event.Set();
 			}
 		}
+
 	}
 }

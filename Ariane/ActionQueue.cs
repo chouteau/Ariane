@@ -82,6 +82,11 @@ namespace Ariane
 			if (m_Terminate != null)
 			{
 				m_Terminate.Set();
+				m_Terminate.Dispose();
+			}
+			if (m_NewMessage != null)
+			{
+				m_NewMessage.Dispose();
 			}
 			if (m_SendThread != null)
 			{
