@@ -8,3 +8,4 @@
 /Ariane.Tests.Server/obj
 /Ariane.Tests/connectionStrings.config
 /Ariane.Tests/queue
+/*.suo

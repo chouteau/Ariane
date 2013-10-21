@@ -14,9 +14,16 @@ namespace Ariane
 
 		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
-			string path = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
+			var pathConfig = System.Configuration.ConfigurationManager.ConnectionStrings[queueName];
+			if (pathConfig == null)
+			{
+				throw new ArgumentException("queueName {0} does not exists", queueName);
+			}
 
-			if (!System.Messaging.MessageQueue.Exists(path))
+			var path = pathConfig.ConnectionString;
+
+			if (!path.StartsWith("formatname:direct")
+				&& !System.Messaging.MessageQueue.Exists(path))
 			{
 				string everyone = new System.Security.Principal.SecurityIdentifier(
 					"S-1-1-0").Translate(typeof(System.Security.Principal.NTAccount)).ToString();
