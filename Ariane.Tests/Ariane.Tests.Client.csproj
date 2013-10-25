@@ -71,6 +71,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ariane.Azure\Ariane.Azure.csproj">
+      <Project>{a50d52ce-f29d-4b50-b7c6-cf20fb05411e}</Project>
+      <Name>Ariane.Azure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ariane\Ariane.csproj">
       <Project>{D71050CE-F15A-4A94-9438-C755C1A28D5D}</Project>
       <Name>Ariane</Name>

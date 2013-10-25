@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
+using Ariane;
+
 namespace Ariane.Tests
 {
 	[TestFixture]

@@ -53,6 +53,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ariane.Azure\Ariane.Azure.csproj">
+      <Project>{a50d52ce-f29d-4b50-b7c6-cf20fb05411e}</Project>
+      <Name>Ariane.Azure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ariane\Ariane.csproj">
       <Project>{d71050ce-f15a-4a94-9438-c755c1a28d5d}</Project>
       <Name>Ariane</Name>
