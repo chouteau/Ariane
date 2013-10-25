@@ -90,7 +90,7 @@ namespace Ariane
 			return this;
 		}
 
-		internal IFluentRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
+		public IFluentRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
 		{
 			lock (m_RegistrationList.SyncRoot)
 			{
@@ -173,40 +173,6 @@ namespace Ariane
 			{
 				Name = queueName,
 				TypeMedium = typeof(MSMQMedium),
-			};
-			AddQueue(queueSetting);
-			return this;
-		}
-
-		public IFluentRegister AddAzureReader(string queueName, Type typeReader)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeReader = typeReader,
-				TypeMedium = typeof(AzureMedium),
-			};
-			AddQueue(queueSetting);
-			return this;
-		}
-
-		public IFluentRegister AddAzureReader<T>(string queueName, Action<T> predicate)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeMedium = typeof(AzureMedium),
-			};
-			AddQueue(queueSetting, predicate);
-			return this;
-		}
-
-		public IFluentRegister AddAzureWriter(string queueName)
-		{
-			var queueSetting = new QueueSetting()
-			{
-				Name = queueName,
-				TypeMedium = typeof(AzureMedium),
 			};
 			AddQueue(queueSetting);
 			return this;
