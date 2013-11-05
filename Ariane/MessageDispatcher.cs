@@ -86,7 +86,15 @@ namespace Ariane
 					continue;
 				}
 				var waitHandles = new WaitHandle[] { m_EventStop, result.AsyncWaitHandle };
-				int index = WaitHandle.WaitAny(waitHandles, m_Queue.Timeout.GetValueOrDefault(60 * 1000));
+				int index = 0;
+				if (m_Queue.Timeout.HasValue)
+				{
+					index = WaitHandle.WaitAny(waitHandles, m_Queue.Timeout.Value);
+				}
+				else
+				{
+					index = WaitHandle.WaitAny(waitHandles);
+				}
 				if (index == 0)
 				{
 					m_Terminated = true;

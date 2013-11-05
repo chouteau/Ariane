@@ -29,7 +29,7 @@ namespace Ariane.QueueProviders
 		{
 			get
 			{
-				return 10 * 1000;
+				return 10 * 1000; // 10 seconds
 			}
 		}
 
