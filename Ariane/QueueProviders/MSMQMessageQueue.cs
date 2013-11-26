@@ -63,7 +63,23 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			m_Queue.Send(message);
+			try
+			{
+				m_Queue.Send(message);
+			}
+			catch (System.Messaging.MessageQueueException mqex)
+			{
+				mqex.Data.Add("QueueName", QueueName);
+				mqex.Data.Add("MsmqErrorCode", mqex.MessageQueueErrorCode.ToString());
+				mqex.Data.Add("Message", message);
+				throw mqex;
+			}
+			catch(Exception ex)
+			{
+				ex.Data.Add("QueueName", QueueName);
+				ex.Data.Add("Message", message);
+				throw ex;
+			}
 		}
 
 		#endregion

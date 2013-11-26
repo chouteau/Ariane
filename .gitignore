@@ -9,3 +9,6 @@
 /Ariane.Tests/connectionStrings.config
 /Ariane.Tests/queue
 /*.suo
+
+/Ariane.Azure/bin
+/Ariane.Azure/obj
