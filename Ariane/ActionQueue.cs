@@ -52,11 +52,16 @@ namespace Ariane
 					m_Terminated = true;
 					break;
 				}
+				else if (result == 258
+					&& m_Queue.Count == 0)
+				{
+					break;
+				}
 				m_NewMessage.Reset();
 
 				if (m_Queue.Count == 0)
 				{
-					break;
+					continue;
 				}
 				// Enqueue
 				Queue<Action> queueCopy;
@@ -109,8 +114,7 @@ namespace Ariane
 			}
 			if (m_SendThread != null)
 			{
-				if (m_SendThread != null
-					&& !m_SendThread.Join(TimeSpan.FromSeconds(5)))
+				if (!m_SendThread.Join(TimeSpan.FromSeconds(5)))
 				{
 					m_SendThread.Abort();
 				}
