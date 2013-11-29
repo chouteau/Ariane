@@ -52,10 +52,12 @@
     <Compile Include="DynamicMemoryMessageReader.cs" />
     <Compile Include="DynamicReader.cs" />
     <Compile Include="DynamicReaderBase.cs" />
+    <Compile Include="MyDynamicMessageReader.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonMessageReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="StaticContainer.cs" />
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>

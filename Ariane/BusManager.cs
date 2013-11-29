@@ -66,6 +66,10 @@ namespace Ariane
 
 		public void StopReading()
 		{
+			if (this.ActionQueue.IsValueCreated)
+			{
+				this.ActionQueue.Value.Dispose();
+			}
 			foreach (var item in m_Register.List)
 			{
 				if (item.Reader.Value == null)
@@ -108,6 +112,13 @@ namespace Ariane
 			reader.ProcessMessage(body);
 		}
 
+		public dynamic CreateMessage(string messageName)
+		{
+			dynamic result = new System.Dynamic.ExpandoObject();
+			result.MessageName = messageName;
+			return result;
+		}
+
 		#endregion
 
 		#region IDisposable Members
@@ -125,7 +136,6 @@ namespace Ariane
 		private IActionQueue InitializeActionQueue()
 		{
 			var result = new ActionQueue();
-			result.Start();
 			return result;
 		}
 	}

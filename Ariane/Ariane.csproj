@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ActionQueue.cs" />
     <Compile Include="AnonymousMessageSubscriber.cs" />
+    <Compile Include="DynamicMessageReaderBase.cs" />
     <Compile Include="FileMedium.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Configuration\ServiceBusQueueReaderConfigurationElement.cs" />

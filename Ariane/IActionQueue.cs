@@ -5,6 +5,5 @@ namespace Ariane
 	{
 		void Add(Action action);
 		void Dispose();
-		void Start();
 	}
 }

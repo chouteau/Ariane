@@ -69,15 +69,27 @@ namespace Ariane.QueueProviders
 			}
 			catch (System.Messaging.MessageQueueException mqex)
 			{
-				mqex.Data.Add("QueueName", QueueName);
-				mqex.Data.Add("MsmqErrorCode", mqex.MessageQueueErrorCode.ToString());
-				mqex.Data.Add("Message", message);
+				try
+				{
+					mqex.Data.Add("QueueName", QueueName);
+					mqex.Data.Add("MsmqErrorCode", mqex.MessageQueueErrorCode.ToString());
+					mqex.Data.Add("MessageType", message.GetType().FullName);
+					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+					mqex.Data.Add("Message", json);
+				}
+				catch { /* Dead for science */ }
 				throw mqex;
 			}
 			catch(Exception ex)
 			{
-				ex.Data.Add("QueueName", QueueName);
-				ex.Data.Add("Message", message);
+				try
+				{
+					ex.Data.Add("QueueName", QueueName);
+					ex.Data.Add("MessageType", message.GetType().FullName);
+					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+					ex.Data.Add("Message", json);
+				}
+				catch { /* Dead for science */ }
 				throw ex;
 			}
 		}

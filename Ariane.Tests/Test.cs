@@ -21,6 +21,8 @@ namespace Ariane.Tests
 			bus.SyncProcess("test.memory3", person);
 
 			NUnit.Framework.Assert.IsTrue(person.IsProcessed);
+
+			bus.StopReading();
 		}
 
 		[NUnit.Framework.Test]
@@ -37,6 +39,32 @@ namespace Ariane.Tests
 			bus.StartReading();
 
 			System.Threading.Thread.Sleep(1000);
+
+			bus.StopReading();
+		}
+
+		[NUnit.Framework.Test]
+		public void Send_And_Process_Dynamic_Message()
+		{
+			var bus = new BusManager();
+			bus.Register.AddFileReader("test.file", typeof(MyDynamicMessageReader));
+
+			var d = bus.CreateMessage("test");
+			var firstName = d.FirstName = Guid.NewGuid().ToString();
+			var lastName = d.LastName = Guid.NewGuid().ToString();
+
+			bus.Send("test.file", d);
+
+			bus.StartReading();
+
+			System.Threading.Thread.Sleep(15000);
+
+			var result = StaticContainer.Model as dynamic;
+
+			NUnit.Framework.Assert.AreEqual(result.FirstName, firstName);
+			NUnit.Framework.Assert.AreEqual(result.LastName, lastName);
+
+			bus.StopReading();
 		}
 	}
 }

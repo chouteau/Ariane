@@ -56,7 +56,11 @@ namespace Ariane
 			m_Terminated = true;
 			if (m_EventStop != null)
 			{
-				m_EventStop.Set();
+				if (!m_EventStop.SafeWaitHandle.IsClosed)
+				{
+					m_EventStop.Set();
+				}
+				m_EventStop.Dispose();
 			}
 			m_MessageSubscriberTypeList.Clear();
 		}

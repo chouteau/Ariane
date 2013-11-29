@@ -16,5 +16,14 @@ namespace Ariane
 		{
 			return resolver.GetServices(typeof(TService)).Cast<TService>();
 		}
+
+		public static bool IsDynamicPropertyExists(this System.Dynamic.ExpandoObject obj, string propertyName)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			return ((IDictionary<String, object>)obj).ContainsKey(propertyName);
+		}
 	}
 }

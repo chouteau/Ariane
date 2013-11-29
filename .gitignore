@@ -12,3 +12,5 @@
 
 /Ariane.Azure/bin
 /Ariane.Azure/obj
+
+/Ariane.Tests/connectionStrings.config
