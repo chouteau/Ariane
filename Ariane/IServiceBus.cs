@@ -39,7 +39,7 @@ namespace Ariane
 		/// <param name="body"></param>
 		void SyncProcess<T>(string queueName, T body, string label = null);
 		/// <summary>
-		/// Create dynamic message
+		/// Create dynamic message with name
 		/// </summary>
 		/// <param name="messageName"></param>
 		/// <returns></returns>
