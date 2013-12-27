@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Ariane
 {
 	internal class ActionQueue : IDisposable, Ariane.IActionQueue
 	{
-		private Queue<Action> m_Queue;
+		private ConcurrentQueue<Action> m_Queue;
 		private ManualResetEvent m_NewMessage = new ManualResetEvent(false);
 		private ManualResetEvent m_Terminate = new ManualResetEvent(false);
 		private bool m_Terminated = false;
@@ -17,25 +18,29 @@ namespace Ariane
 
 		public ActionQueue()
 		{
-			m_Queue = new Queue<Action>();
+			m_Queue = new ConcurrentQueue<Action>();
+			Timeout = 60;
 		}
+
+		public int Timeout { get; set; }
 
 		public void Add(Action action)
 		{
-			lock (m_Lock)
+			if (m_SendThread == null)
 			{
-				if (m_SendThread == null)
-				{
-					Start();
-				}
-
-				this.m_Queue.Enqueue(action);
+				Start();
 			}
+
+			this.m_Queue.Enqueue(action);
 			this.m_NewMessage.Set();
 		}
 
 		private void Start()
 		{
+			if (m_SendThread != null)
+			{
+				return;
+			}
 			m_SendThread = new Thread(new ThreadStart(SendInQueue));
 			m_SendThread.IsBackground = true;
 			m_SendThread.Start();
@@ -46,7 +51,7 @@ namespace Ariane
 			while (!m_Terminated)
 			{
 				var waitHandles = new WaitHandle[] { m_Terminate, m_NewMessage };
-				int result = ManualResetEvent.WaitAny(waitHandles, 60 * 1000, false);
+				int result = ManualResetEvent.WaitAny(waitHandles, Timeout * 1000, false);
 				if (result == 0)
 				{
 					m_Terminated = true;
@@ -63,19 +68,19 @@ namespace Ariane
 				{
 					continue;
 				}
-				// Enqueue
-				Queue<Action> queueCopy;
-				lock (m_Queue)
-				{
-					queueCopy = new Queue<Action>(m_Queue);
-					m_Queue.Clear();
-				}
 
-				foreach (var send in queueCopy)
+				while(true)
 				{
+					Action a = null;
+					var success = m_Queue.TryDequeue(out a);
+					if (!success 
+						|| a == null)
+					{
+						break;
+					}
 					try
 					{
-						send();
+						a();
 					}
 					catch (Exception ex)
 					{
@@ -95,10 +100,6 @@ namespace Ariane
 
 		public void Dispose()
 		{
-			if (m_Queue != null)
-			{
-				m_Queue.Clear();
-			}
 			m_Terminated = true;
 			if (m_Terminate != null)
 			{ 

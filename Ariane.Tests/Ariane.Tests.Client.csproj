@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionQueueTests.cs" />
     <Compile Include="AzureTests.cs" />
     <Compile Include="DynamicMemoryMessageReader.cs" />
     <Compile Include="DynamicReader.cs" />
