@@ -68,6 +68,7 @@ namespace Ariane
 		{
 			if (this.ActionQueue.IsValueCreated)
 			{
+				this.ActionQueue.Value.Stop();
 				this.ActionQueue.Value.Dispose();
 			}
 			foreach (var item in m_Register.List)

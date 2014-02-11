@@ -9,12 +9,12 @@ namespace Ariane.QueueProviders
 {
 	public class InMemoryMessageQueue : IMessageQueue, IDisposable
 	{
-		private System.Collections.Queue m_Queue;
+		private System.Collections.Concurrent.ConcurrentQueue<object> m_Queue;
 		private ManualResetEvent m_Event;
 
 		public InMemoryMessageQueue(string queueName)
 		{
-			m_Queue = new System.Collections.Queue();
+			m_Queue = new System.Collections.Concurrent.ConcurrentQueue<object>();
 			m_Event = new ManualResetEvent(false);
 			QueueName = queueName;
 		}
@@ -43,9 +43,17 @@ namespace Ariane.QueueProviders
 
 		public T EndReceive<T>(IAsyncResult r)
 		{
-			var message = m_Queue.Dequeue();
-			var wrapped = message as Message<T>;
-			return wrapped.Body;
+			object message = null;
+			bool result = m_Queue.TryDequeue(out message);
+			if (result)
+			{
+				var wrapped = message as Message<T>;
+				if (wrapped != null)
+				{
+					return wrapped.Body;
+				}
+			}
+			return default(T);
 		}
 
 		public void Reset()
@@ -58,10 +66,7 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			lock (m_Queue)
-			{
-				m_Queue.Enqueue(message);
-			}
+			m_Queue.Enqueue(message);
 			m_Event.Set();
 		}
 

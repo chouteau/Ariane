@@ -96,7 +96,7 @@ namespace Ariane
 					index = WaitHandle.WaitAny(waitHandles, m_Queue.Timeout.Value);
 				}
 				else
-				{
+				{	
 					index = WaitHandle.WaitAny(waitHandles);
 				}
 				if (index == 0)

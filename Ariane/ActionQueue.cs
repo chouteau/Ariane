@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Ariane
 {
-	internal class ActionQueue : IDisposable, Ariane.IActionQueue
+	internal class ActionQueue : Ariane.IActionQueue
 	{
 		private ConcurrentQueue<Action> m_Queue;
 		private ManualResetEvent m_NewMessage = new ManualResetEvent(false);
@@ -33,6 +33,11 @@ namespace Ariane
 
 			this.m_Queue.Enqueue(action);
 			this.m_NewMessage.Set();
+		}
+
+		public void Stop()
+		{
+			m_Terminated = true;
 		}
 
 		private void Start()
