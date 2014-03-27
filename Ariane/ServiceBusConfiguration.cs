@@ -5,14 +5,21 @@ using System.Text;
 
 namespace Ariane
 {
+	/// <summary>
+	/// Configuration of Service Bus
+	/// </summary>
 	public class ServiceBusConfiguration
 	{
 		public ServiceBusConfiguration()
 		{
-			ReadingEnable = true;
 		}
+		/// <summary>
+		/// Resolver 
+		/// </summary>
 		public IDependencyResolver DependencyResolver { get; set; }
+		/// <summary>
+		/// Logger
+		/// </summary>
 		public ILogger Logger { get; set; }
-		public bool ReadingEnable { get; set; }
 	}
 }

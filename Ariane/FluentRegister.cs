@@ -30,13 +30,29 @@ namespace Ariane
 			if (configFileName == null) // Default file configuration
 			{
 				section = System.Configuration.ConfigurationManager.GetSection(sectionName) as Configuration.ServiceBusConfigurationSection;
+				if (section == null)
+				{
+					// Check if ariane.config is present with location of current assembly
+					var path = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
+					configFileName = System.IO.Path.Combine(path.TrimEnd('\\'), "ariane.config");
+					if (!System.IO.File.Exists(configFileName))
+					{
+						configFileName = null;
+					}
+				}
 			}
-			else
+
+			if (section == null
+				&& configFileName != null)
 			{
 				var map = new ExeConfigurationFileMap();
 				map.ExeConfigFilename = configFileName;
 				var config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
 				section = config.GetSection(sectionName) as Configuration.ServiceBusConfigurationSection;
+			}
+			else
+			{
+				throw new System.Configuration.ConfigurationErrorsException(string.Format("section {0} does not exists", sectionName));
 			}
 
 			foreach (Configuration.ServiceBusQueueReaderConfigurationElement item in section.QueueReaders)
@@ -65,7 +81,13 @@ namespace Ariane
 					}
 					medium = typeof(InMemoryMedium);
 				}
-				var qs = new QueueSetting() { Name = item.QueueName, TypeReader = reader, TypeMedium = medium };
+				var qs = new QueueSetting() 
+				{ 
+					Name = item.QueueName, 
+					TypeReader = reader, 
+					TypeMedium = medium,
+					AutoStartReading = item.AutoStartReading
+				};
 				AddQueue(qs);
 			}
 			return this;
@@ -73,6 +95,11 @@ namespace Ariane
 
 		public IFluentRegister AddQueue(QueueSetting queueSetting)
 		{
+			if (queueSetting == null)
+			{
+				throw new ArgumentNullException();
+			}
+
 			lock (m_RegistrationList.SyncRoot)
 			{
 				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
@@ -82,6 +109,7 @@ namespace Ariane
 					{
 						QueueName = queueSetting.Name,
 						TypeMedium = queueSetting.TypeMedium,
+						AutoStartReading = queueSetting.AutoStartReading
 					};
 					m_RegistrationList.Add(registration);
 				}
@@ -92,6 +120,12 @@ namespace Ariane
 
 		public IFluentRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
 		{
+			if (queueSetting == null
+				|| predicate == null)
+			{
+				throw new ArgumentNullException();
+			}
+
 			lock (m_RegistrationList.SyncRoot)
 			{
 				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
@@ -101,6 +135,7 @@ namespace Ariane
 					{
 						QueueName = queueSetting.Name,
 						TypeMedium = queueSetting.TypeMedium,
+						AutoStartReading = queueSetting.AutoStartReading
 					};
 					m_RegistrationList.Add(registration);
 				}
@@ -108,6 +143,34 @@ namespace Ariane
 				registration.AddSubscriber(subscriber);
 			}
 			return this;
+		}
+
+		public void Clear()
+		{
+			lock (m_RegistrationList.SyncRoot)
+			{
+				foreach (var registration in m_RegistrationList)
+				{
+					if (!registration.AutoStartReading)
+					{
+						continue;
+					}
+					if (registration.Reader == null)
+					{
+						continue;
+					}
+					registration.Reader.Dispose();
+				}
+				m_RegistrationList.Clear();
+			}
+		}
+
+		public IEnumerable<string> GetRegisteredQueues()
+		{
+			lock (m_RegistrationList.SyncRoot)
+			{
+				return m_RegistrationList.Select(i => i.QueueName);
+			}
 		}
 	}
 }

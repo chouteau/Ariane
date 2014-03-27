@@ -1,0 +1,77 @@
+﻿3.0.32.0 
+- Add this file
+- Change versionning method 
+- Allow disable autostart for reading queue
+- Add Synchronized receive items in queues without process
+- Add many tests , 81% code coveraged
+- Remove pause queue
+- Add start/stop reading specific queue by name
+- Add clear registered queue
+- Add GetRegisteredQueues() name list of registered queues
+- Separate client/server console from test project
+- Separate Azure tests in specific project
+
+2.9.2 
+Improve stability for ActionQueue with Concurrent threads
+
+2.9.1.0 
+Simplify IFluentRegister, move all specialized registration method to extension methode (using required)
+2.9.0.0 
+Add DymanicMessageReader
+
+2.8.0.5 
+Best tracking for msmq error
+
+2.8.0.4 
+Wait for ever if timeout for queue is not configured
+
+2.8.0.3 
+Remove sub timer on MessageDispatcher if Timout is not configured
+
+2.8.0.1 
+Separate Azure queue to dedicated assembly Ariane.Azure
+
+2.7.0.3 
+Create MSMQueue if not exists on local computer only
+
+2.7.0.2 
+Allow override Filter for file with FileMessageQueue
+Fix Memory leak with FileMessageQueue
+
+2.7.0.1 
+Queue providers are inheritable
+
+2.7.0.0 
+Support anonymous readers
+
+2.6.0.0 
+Support FileSystem Queueing (FileMedium)
+
+2.5.0.2 
+Fixed issue with json serialization msmq messages
+
+2.5.0.1 
+Allow inherited reader without generic message type
+
+2.5.0.0 
+Support Azure Message Bus
+
+2.4.0.0 
+Multi Readers by Queue
+
+2.3.0.1 
+The send method is now generic
+Adding direct send to reader for synchronous unit tests
+
+2.3.0.0 
+IMessage refactored to generic
+Allow send typed message or dynamic 
+
+2.2.0.4 
+Passing methods for Mediums in virtual for overriding
+
+2.2.0.3 
+using dynamic in msmq
+
+2.2.0.1 
+Allow null ReaderType in registration

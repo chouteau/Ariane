@@ -6,9 +6,7 @@ namespace Ariane
 	{
 		void AddMessageSubscriberTypeList(IList<Type> list);
 		void AddMessageSubscriberList(IList<object> subscriber);
-		void Pause();
 		void Start(IMessageQueue queue);
 		void Stop();
-		void Terminate();
 	}
 }

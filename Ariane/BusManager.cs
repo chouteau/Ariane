@@ -8,6 +8,9 @@ using System.Configuration;
 
 namespace Ariane
 {
+	/// <summary>
+	/// Implementation of Service Bus
+	/// </summary>
 	public class BusManager : IServiceBus, IDisposable
 	{
 		private FluentRegister m_Register;
@@ -45,7 +48,7 @@ namespace Ariane
 			{
 				return;
 			}
-			var mq = registration.Queue.Value;
+			var mq = registration.Queue;
 			var m = new Message<T>();
 			m.Label = label ?? Guid.NewGuid().ToString();
 			m.Body = body;
@@ -56,12 +59,81 @@ namespace Ariane
 		{
 			foreach (var item in m_Register.List)
 			{
-				var queue = item.Queue.Value;
-				if (item.Reader.Value != null)
+				var queue = item.Queue;
+				if (item.AutoStartReading 
+					&& item.Reader != null)
 				{
-					item.Reader.Value.Start(queue);
+					item.Reader.Start(queue);
 				}
 			}
+		}
+
+		public void StartReading(string queueName)
+		{
+			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			if (q == null)
+			{
+				return;
+			}
+
+			q.Reader.Start(q.Queue);
+		}
+
+		public IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
+		{
+			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			if (registration == null)
+			{
+				return null;
+			}
+			var mq = registration.Queue;
+			var result = new List<T>();
+			while (true)
+			{
+				IAsyncResult item = null;
+				mq.Reset();
+				mq.SetTimeout();
+				try
+				{
+					item = mq.BeginReceive();
+				}
+				catch (Exception ex)
+				{
+					GlobalConfiguration.Configuration.Logger.Error(ex);
+					continue;
+				}
+				var handles = new WaitHandle[] { item.AsyncWaitHandle };
+				var index = WaitHandle.WaitAny(handles, timeout);
+				if (index == 258) // Timeout
+				{
+					break;
+				}
+				T message = default(T);
+				try
+				{
+					message = mq.EndReceive<T>(item);
+				}
+				catch (Exception ex)
+				{
+					GlobalConfiguration.Configuration.Logger.Error(ex);
+				}
+				finally
+				{
+					mq.Reset();
+				}
+
+				if (message == null)
+				{
+					continue;
+				}
+
+				result.Add(message);
+				if (result.Count == count)
+				{
+					break;
+				}
+			}
+			return result;
 		}
 
 		public void StopReading()
@@ -69,29 +141,30 @@ namespace Ariane
 			if (this.ActionQueue.IsValueCreated)
 			{
 				this.ActionQueue.Value.Stop();
-				this.ActionQueue.Value.Dispose();
 			}
 			foreach (var item in m_Register.List)
 			{
-				if (item.Reader.Value == null)
+				if (!item.AutoStartReading)
 				{
 					continue;
 				}
-				item.Reader.Value.Stop();
-				item.Reader.Value.Dispose();
+				if (item.Reader == null)
+				{
+					continue;
+				}
+				item.Reader.Stop();
 			}
 		}
 
-		public void PauseReading()
+		public void StopReading(string queueName)
 		{
-			foreach (var item in m_Register.List)
+			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			if (q == null)
 			{
-				if (item.Reader.Value == null)
-				{
-					continue;
-				}
-				item.Reader.Value.Pause();
+				return;
 			}
+
+			q.Reader.Stop();
 		}
 
 		/// <summary>
@@ -108,9 +181,12 @@ namespace Ariane
 			{
 				return;
 			}
-			var mq = registration.Queue.Value;
-			var reader = (MessageDispatcher<T>)registration.Reader.Value;
-			reader.ProcessMessage(body);
+			var mq = registration.Queue;
+			var reader = (MessageDispatcher<T>)registration.Reader;
+			if (reader != null)
+			{
+				reader.ProcessMessage(body);
+			}
 		}
 
 		public dynamic CreateMessage(string messageName)
@@ -126,9 +202,21 @@ namespace Ariane
 
 		public virtual void Dispose()
 		{
-			if (ActionQueue != null)
+			if (this.ActionQueue.IsValueCreated)
 			{
-				ActionQueue.Value.Dispose();
+				this.ActionQueue.Value.Dispose();
+			}
+			foreach (var item in m_Register.List)
+			{
+				if (!item.AutoStartReading)
+				{
+					continue;
+				}
+				if (item.Reader == null)
+				{
+					continue;
+				}
+				item.Reader.Dispose();
 			}
 		}
 

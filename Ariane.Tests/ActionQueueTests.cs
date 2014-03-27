@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ariane.Tests
 {
-	[NUnit.Framework.TestFixture]
+	[TestClass]
 	public class ActionQueueTests
 	{
-		[NUnit.Framework.Test]
+		[TestMethod]
 		public void Add_Action_From_MultiThreads()
 		{
 			var actionQueue = new Ariane.ActionQueue();

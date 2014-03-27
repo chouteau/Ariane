@@ -6,18 +6,22 @@ using System.Text;
 
 namespace Ariane
 {
+	/// <summary>
+	/// Represents a queue MSMQ Type
+	/// </summary>
 	public class MSMQMedium : IMedium
 	{
-		public MSMQMedium()
-		{
-		}
-
+		/// <summary>
+		/// Create message compatible with MSMQ
+		/// </summary>
+		/// <param name="queueName"></param>
+		/// <returns></returns>
 		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
 			var pathConfig = System.Configuration.ConfigurationManager.ConnectionStrings[queueName];
 			if (pathConfig == null)
 			{
-				throw new ArgumentException("queueName {0} does not exists", queueName);
+				throw new ArgumentException(string.Format("queueName {0} does not exists in connectionStrings section configuration", queueName));
 			}
 
 			var path = pathConfig.ConnectionString;

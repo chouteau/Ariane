@@ -17,6 +17,35 @@ namespace Ariane.QueueProviders
 		private ManualResetEvent m_Event;
 		private System.Collections.Generic.Queue<string> m_Queue;
 
+		public FileMessageQueue(string queueName, string path)
+		{
+			m_QueueName = queueName;
+			m_Path = path;
+			m_Event = new ManualResetEvent(false);
+			m_Queue = new Queue<string>(1000000);
+
+			if (path.StartsWith("."))
+			{
+				var directory = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
+				path = System.IO.Path.Combine(directory.TrimEnd('\\'), path.TrimStart('.').TrimStart('\\'));
+				if (!System.IO.Directory.Exists(path))
+				{
+					System.IO.Directory.CreateDirectory(path);
+				}
+			}
+
+			m_FileWatcher = new FileSystemWatcher();
+			m_FileWatcher.Path = path;
+			m_FileWatcher.NotifyFilter = NotifyFilters.CreationTime;
+			m_FileWatcher.Created += (s, arg) =>
+			{
+				m_Queue.Enqueue(arg.FullPath);
+				m_Event.Set();
+			};
+			m_FileWatcher.Filter = Filter;
+			m_FileWatcher.EnableRaisingEvents = true;
+		}
+
 		public virtual string Filter
 		{
 			get
@@ -43,25 +72,6 @@ namespace Ariane.QueueProviders
 			{
 				GlobalConfiguration.Configuration.Logger.Error(ex);
 			}
-		}
-
-		public FileMessageQueue(string queueName, string path)
-		{
-			m_QueueName = queueName;
-			m_Path = path;
-			m_Event = new ManualResetEvent(false);
-			m_Queue = new Queue<string>(1000000);
-
-			m_FileWatcher = new FileSystemWatcher();
-			m_FileWatcher.Path = path;
-			m_FileWatcher.NotifyFilter = NotifyFilters.CreationTime;
-			m_FileWatcher.Created += (s, arg) =>
-			{
-				m_Queue.Enqueue(arg.FullPath);
-				m_Event.Set();
-			};
-			m_FileWatcher.Filter = Filter;
-			m_FileWatcher.EnableRaisingEvents = true;
 		}
 
 		#region IMessageQueue Members

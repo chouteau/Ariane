@@ -5,13 +5,12 @@ using System.Text;
 
 using Ariane;
 
-namespace Ariane.Tests
+namespace Ariane.Tests.Client
 {
 	public class Program 
 	{
 		public static void Main()
 		{
-			// AzureClient();
 			// DynamicMessage();
 			DefaultClient();
 		}
@@ -21,9 +20,9 @@ namespace Ariane.Tests
 			var bus = new BusManager();
 			bus.Register.AddQueue(new QueueSetting()
 			{
-				Name = "inherited.dynamic"
-				, TypeMedium = typeof(Ariane.InMemoryMedium)
-				, TypeReader = typeof(DynamicReader)
+				Name = "inherited.dynamic", 
+				TypeMedium = typeof(Ariane.InMemoryMedium),
+				TypeReader = typeof(Ariane.Tests.MyDynamicMessageReader)
 			});
 
 			dynamic message = new System.Dynamic.ExpandoObject();
@@ -35,14 +34,6 @@ namespace Ariane.Tests
 			System.Threading.Thread.Sleep(5 * 1000);
 
 			bus.StopReading();
-		}
-
-		public static void AzureClient()
-		{
-			var azureTest = new AzureTests();
-			azureTest.Send_Person();
-			// azureTest.Receive_Person();
-			Console.WriteLine("messageSent");
 		}
 
 		public static void DefaultClient()
@@ -58,7 +49,7 @@ namespace Ariane.Tests
 					TypeReader = typeof(PersonMessageReader)
 				})
 				.AddMemoryReader("test.memory3", typeof(PersonMessageReader))
-				.AddMemoryReader("dynamic.memory", typeof(DynamicMemoryMessageReader))
+				.AddMemoryReader("dynamic.memory", typeof(Ariane.Tests.MyDynamicMessageReader))
 				.AddFileWriter("test.file");
 				
 
@@ -67,7 +58,7 @@ namespace Ariane.Tests
 			for (int i = 0; i < 100; i++)
 			{
 				var person = new Person();
-				person.FirsName = i.ToString();
+				person.FirstName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
 				bus.Send("test.memory", person);
@@ -76,7 +67,7 @@ namespace Ariane.Tests
 			for (int i = 0; i < 100; i++)
 			{
 				var person = new Person();
-				person.FirsName = i.ToString();
+				person.FirstName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
 				bus.Send("test.msmq", person);
@@ -85,7 +76,7 @@ namespace Ariane.Tests
 			for (int i = 0; i < 100; i++)
 			{
 				var person = new Person();
-				person.FirsName = i.ToString();
+				person.FirstName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
 				bus.Send("test.memory2", person);
@@ -94,7 +85,7 @@ namespace Ariane.Tests
 			for (int i = 0; i < 100; i++)
 			{
 				var person = new Person();
-				person.FirsName = i.ToString();
+				person.FirstName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
 				bus.Send("test.memory3", person);
@@ -113,7 +104,7 @@ namespace Ariane.Tests
 			for (int i = 0; i < 100; i++)
 			{
 				var person = new Person();
-				person.FirsName = i.ToString();
+				person.FirstName = i.ToString();
 				person.LastName = Guid.NewGuid().ToString();
 
 				bus.Send("test.file", person);

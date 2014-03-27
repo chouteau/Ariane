@@ -47,8 +47,9 @@
     <Compile Include="..\Ariane.Tests\PersonMessageReader.cs">
       <Link>PersonMessageReader.cs</Link>
     </Compile>
-    <Compile Include="DynamicMessageReader.cs" />
-    <Compile Include="ExpandoMessageReader.cs" />
+    <Compile Include="..\Ariane.Tests\StaticContainer.cs">
+      <Link>StaticContainer.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -63,10 +64,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Ariane.Tests\connectionStrings.config">
-      <Link>connectionStrings.config</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="App.config" />
     <None Include="ariane.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

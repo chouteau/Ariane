@@ -5,11 +5,18 @@ using System.Text;
 
 namespace Ariane
 {
+	/// <summary>
+	/// Represents the queue of type File System
+	/// </summary>
 	public class FileMedium : IMedium
 	{
-
 		#region IMedium Members
 
+		/// <summary>
+		/// Create message queue compatible with file system
+		/// </summary>
+		/// <param name="queueName"></param>
+		/// <returns></returns>
 		public IMessageQueue CreateMessageQueue(string queueName)
 		{
 			string path = null;

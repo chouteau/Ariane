@@ -39,19 +39,25 @@ namespace Ariane
 
 		public virtual void Start(IMessageQueue queue)
 		{
+			if (m_Thread != null
+				&& m_Thread.IsAlive)
+			{
+				return;
+			}
+			m_Terminated = false;
 			m_EventStop = new ManualResetEvent(false);
 			m_Queue = queue;
 			m_Thread = new Thread(new ThreadStart(Run));
 			m_Thread.Name = string.Format("Ariane.MessageReaderBase:{0}", queue.QueueName);
 			m_Thread.Start();
+
+			foreach (var item in MessageSubscriberList.Value)
+			{
+				item.FromQueueName = m_Queue.QueueName;
+			}
 		}
 
-		public virtual void Pause()
-		{
-			m_Thread.Interrupt();
-		}
-
-		public void Terminate()
+		public virtual void Stop()
 		{
 			m_Terminated = true;
 			if (m_EventStop != null)
@@ -62,13 +68,8 @@ namespace Ariane
 				}
 				m_EventStop.Dispose();
 			}
-			m_MessageSubscriberTypeList.Clear();
-		}
-
-		public virtual void Stop()
-		{
-			Terminate();
-			if (m_Thread != null && !m_Thread.Join(TimeSpan.FromSeconds(5)))
+			if (m_Thread != null 
+				&& !m_Thread.Join(TimeSpan.FromSeconds(5)))
 			{
 				m_Thread.Abort();
 			}
@@ -76,7 +77,13 @@ namespace Ariane
 
 		private void Run()
 		{
-			while (!m_Terminated && m_Queue != null)
+			if (m_Queue.Timeout.HasValue)
+			{
+				m_Queue.SetTimeout();
+			}
+
+			while (!m_Terminated 
+				&& m_Queue != null)
 			{
 				IAsyncResult result = null;
 				try
@@ -152,7 +159,8 @@ namespace Ariane
 
 		public virtual void Dispose()
 		{
-			Terminate();
+			Stop();
+			m_MessageSubscriberTypeList.Clear();
 		}
 
 		#endregion
@@ -162,8 +170,8 @@ namespace Ariane
 			var result = new List<MessageReaderBase<T>>();
 			foreach (var subscriberType in m_MessageSubscriberTypeList)
 			{
-				var subscriber = GlobalConfiguration.Configuration.DependencyResolver.GetService(subscriberType);
-				result.Add(subscriber as MessageReaderBase<T>);
+				var subscriber = (MessageReaderBase<T>) GlobalConfiguration.Configuration.DependencyResolver.GetService(subscriberType);
+				result.Add(subscriber);
 			}
 			return result;
 		}

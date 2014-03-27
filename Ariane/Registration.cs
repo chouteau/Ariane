@@ -7,22 +7,46 @@ namespace Ariane
 {
 	internal class Registration
 	{
+		private Lazy<IMessageDispatcher> m_LazyReader { get; set; }
+		private Lazy<IMedium> m_LazyMedium { get; set; }
+		private Lazy<IMessageQueue> m_LazyQueue { get; set; }
+
 		public Registration()
 		{
-			Medium = new Lazy<IMedium>(InitializeMedium, true);
-			Queue = new Lazy<IMessageQueue>(InitializeMessageQueue, true);
-			Reader = new Lazy<IMessageDispatcher>(InitializeMessageReader, true);
+			m_LazyMedium = new Lazy<IMedium>(InitializeMedium, true);
+			m_LazyQueue = new Lazy<IMessageQueue>(InitializeMessageQueue, true);
+			m_LazyReader = new Lazy<IMessageDispatcher>(InitializeMessageReader, true);
 			MessageSubscriberTypeList = new List<Type>();
 			AnonymousMessageSubscriberList = new List<object>();
+			AutoStartReading = true;
 		}
 
 		public string QueueName { get; set; }
-		public Lazy<IMessageDispatcher> Reader { get; set; }
+		public IMessageDispatcher Reader 
+		{
+			get
+			{
+				return m_LazyReader.Value;
+			}
+		}
+		public IMedium Medium 
+		{
+			get
+			{
+				return m_LazyMedium.Value;
+			}
+		}
+		public IMessageQueue Queue 
+		{
+			get
+			{
+				return m_LazyQueue.Value;
+			}
+		}
 		public Type TypeMedium { get; set; }
-		public Lazy<IMedium> Medium { get; set; }
-		public Lazy<IMessageQueue> Queue { get; set; }
 		public IList<Type> MessageSubscriberTypeList { get; set; }
 		public IList<object> AnonymousMessageSubscriberList { get; set; }
+		public bool AutoStartReading { get; set; }
 
 		private IMedium InitializeMedium()
 		{
@@ -32,20 +56,18 @@ namespace Ariane
 
 		private IMessageQueue InitializeMessageQueue()
 		{
-			var result = Medium.Value.CreateMessageQueue(QueueName);
+			var result = Medium.CreateMessageQueue(QueueName);
 			return result;
 		}
 
 		private IMessageDispatcher InitializeMessageReader()
 		{
-			var messageSubscriber = MessageSubscriberTypeList.FirstOrDefault();
-			if (messageSubscriber == null)
+			var dispatcher = CreateMessageDispatcher();
+			if (dispatcher != null)
 			{
-				return null;
+				dispatcher.AddMessageSubscriberTypeList(MessageSubscriberTypeList);
+				dispatcher.AddMessageSubscriberList(AnonymousMessageSubscriberList);
 			}
-			var dispatcher = CreateMessageDispatcher(messageSubscriber);
-			dispatcher.AddMessageSubscriberTypeList(MessageSubscriberTypeList);
-			dispatcher.AddMessageSubscriberList(AnonymousMessageSubscriberList);
 			return dispatcher;
 		}
 
@@ -67,9 +89,28 @@ namespace Ariane
 			AnonymousMessageSubscriberList.Add(subscriber);
 		}
 
-		private IMessageDispatcher CreateMessageDispatcher(Type messageSubscriber)
+		private IMessageDispatcher CreateMessageDispatcher()
 		{
-			var messageType = messageSubscriber.BaseType;
+			Type messageType = null;
+			var messageSubscriber = MessageSubscriberTypeList.FirstOrDefault();
+			if (messageSubscriber == null)
+			{
+				if (AnonymousMessageSubscriberList.Count > 0)
+				{
+					var f = AnonymousMessageSubscriberList.First();
+					messageType = f.GetType();
+				}
+			}
+			else
+			{
+				messageType = messageSubscriber.BaseType;
+			}
+
+			if (messageType == null)
+			{
+				return null;
+			}
+
 			var baseType = typeof(MessageDispatcher<>);
 			while (true)
 			{

@@ -18,7 +18,7 @@ namespace Ariane.Tests.Server
 
 			bus.Register.AddFileReader<Person>("test.file", (message) =>
 			{
-				Console.Write(message.FirsName);
+				Console.Write(message.FirstName);
 			});
 
 			bus.StartReading();

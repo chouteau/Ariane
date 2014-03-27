@@ -14,8 +14,9 @@ namespace Ariane.Tests
 				return;
 			}
 
-			Console.WriteLine(message);
+			message.IsProcessed = true;
 			StaticContainer.Model = message;
+			GlobalConfiguration.Configuration.Logger.Info("dynamic process from queue {0}", FromQueueName);
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace Ariane.Configuration
 		public ServiceBusQueueReaderConfigurationElement()
 		{
 			this.Enabled = true;
+			this.AutoStartReading = true;
 		}
 
 		[ConfigurationProperty("queueName", IsRequired = true)]
@@ -62,6 +63,19 @@ namespace Ariane.Configuration
 			set
 			{
 				this["enabled"] = value;
+			}
+		}
+
+		[ConfigurationProperty("autoStartReading", IsRequired = false)]
+		public bool AutoStartReading 
+		{
+			get
+			{
+				return (bool)this["autoStartReading"];
+			}
+			set
+			{
+				this["autoStartReading"] = value;
 			}
 		}
 	}

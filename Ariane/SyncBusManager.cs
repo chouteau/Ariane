@@ -12,14 +12,15 @@ namespace Ariane
 	{
 		private Ariane.IServiceBus m_Decorated;
 
+		public SyncBusManager()
+			: this(new BusManager())
+		{
+
+		}
+
 		public SyncBusManager(Ariane.IServiceBus decorated)
 		{
 			m_Decorated = decorated;
-		}
-
-		public void PauseReading()
-		{
-			m_Decorated.PauseReading();
 		}
 
 		public Ariane.IFluentRegister Register
@@ -37,9 +38,24 @@ namespace Ariane
 			m_Decorated.StartReading();
 		}
 
+		public void StartReading(string queueName)
+		{
+			m_Decorated.StartReading(queueName);
+		}
+
+		public IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
+		{
+			return m_Decorated.Receive<T>(queueName, count, timeout);
+		}
+
 		public void StopReading()
 		{
 			m_Decorated.StopReading();
+		}
+
+		public void StopReading(string queueName)
+		{
+			m_Decorated.StopReading(queueName);
 		}
 
 		public void SyncProcess<T>(string queueName, T body, string label = null)
@@ -50,6 +66,11 @@ namespace Ariane
 		public dynamic CreateMessage(string name)
 		{
 			return m_Decorated.CreateMessage(name);
+		}
+
+		public void Dispose()
+		{
+			m_Decorated.Dispose();
 		}
 	}
 }

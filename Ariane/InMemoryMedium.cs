@@ -5,12 +5,16 @@ using System.Text;
 
 namespace Ariane
 {
+	/// <summary>
+	/// Queue in memory
+	/// </summary>
 	public class InMemoryMedium : IMedium
 	{
-		public InMemoryMedium()
-		{
-		}
-
+		/// <summary>
+		/// Create queue
+		/// </summary>
+		/// <param name="queueName"></param>
+		/// <returns></returns>
 		public virtual IMessageQueue CreateMessageQueue(string queueName)
 		{
 			return new QueueProviders.InMemoryMessageQueue(queueName);

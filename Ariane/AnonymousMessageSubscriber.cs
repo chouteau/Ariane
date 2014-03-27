@@ -16,7 +16,7 @@ namespace Ariane
 
 		public override void ProcessMessage(T message)
 		{
-			m_Predicate.Invoke(message);
+			m_Predicate(message);
 		}
 	}
 }
