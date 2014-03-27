@@ -15,3 +15,4 @@
 
 /Ariane.Tests/connectionStrings.config
 /TestResults
+/Ariane.Azure.Tests/connectionStrings.config
