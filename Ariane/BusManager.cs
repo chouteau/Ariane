@@ -148,7 +148,7 @@ namespace Ariane
 				{
 					continue;
 				}
-				if (item.Reader == null)
+				if (!item.IsReaderCreated)
 				{
 					continue;
 				}

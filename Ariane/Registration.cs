@@ -22,6 +22,16 @@ namespace Ariane
 		}
 
 		public string QueueName { get; set; }
+
+		public bool IsReaderCreated
+		{
+
+			get
+			{
+				return m_LazyReader.IsValueCreated;
+			}
+		}
+
 		public IMessageDispatcher Reader 
 		{
 			get

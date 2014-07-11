@@ -1,4 +1,8 @@
-﻿3.0.32.0 
+﻿3.0.33.0
+- Best singleton for globalconfiguration with lazyloading
+- Fix thread not closed in reader not used when bus manager stop
+
+3.0.32.0 
 - Add this file
 - Change versionning method 
 - Allow disable autostart for reading queue

@@ -34,11 +34,11 @@ namespace Ariane.Tests
 
 			var personList = bus.Receive<Person>("sendreceivetest", 10, 5 * 1000);
 
-			Assert.AreEqual(10, personList.Count());
+			Check.That(personList.Count()).Equals(10);
 
 			personList = bus.Receive<Person>("sendreceivetest", 50, 2 * 1000);
 
-			Assert.AreEqual(40, personList.Count());
+			Check.That(personList.Count()).Equals(40);
 
 			bus.Dispose();
 		}
