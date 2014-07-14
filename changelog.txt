@@ -1,4 +1,11 @@
-﻿3.0.33.0
+﻿3.0.34.0
+- ActionQueue can be replaced using IActionQueue
+- Public methods of BusManager are virtual (OCP)
+
+3.0.33.1
+- Fix thread not closed in reader not used when bus manager stop
+
+3.0.33.0
 - Best singleton for globalconfiguration with lazyloading
 - Fix thread not closed in reader not used when bus manager stop
 

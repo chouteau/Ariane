@@ -33,7 +33,7 @@ namespace Ariane
 
 		internal Lazy<IActionQueue> ActionQueue { get; set; }
 
-		public void Send<T>(string queueName, T body, string label = null)
+		public virtual void Send<T>(string queueName, T body, string label = null)
 		{
 			ActionQueue.Value.Add(() =>
 			{
@@ -41,7 +41,7 @@ namespace Ariane
 			});
 		}
 
-		private void SendInternal<T>(string queueName, T body, string label = null)
+		protected virtual void SendInternal<T>(string queueName, T body, string label = null)
 		{
 			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registration == null)
@@ -55,7 +55,7 @@ namespace Ariane
 			mq.Send(m);
 		}
 
-		public void StartReading()
+		public virtual void StartReading()
 		{
 			foreach (var item in m_Register.List)
 			{
@@ -68,7 +68,7 @@ namespace Ariane
 			}
 		}
 
-		public void StartReading(string queueName)
+		public virtual void StartReading(string queueName)
 		{
 			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
 			if (q == null)
@@ -79,7 +79,7 @@ namespace Ariane
 			q.Reader.Start(q.Queue);
 		}
 
-		public IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
+		public virtual IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
 		{
 			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registration == null)
@@ -136,7 +136,7 @@ namespace Ariane
 			return result;
 		}
 
-		public void StopReading()
+		public virtual void StopReading()
 		{
 			if (this.ActionQueue.IsValueCreated)
 			{
@@ -152,11 +152,14 @@ namespace Ariane
 				{
 					continue;
 				}
-				item.Reader.Stop();
+				if (item.Reader != null)
+				{
+					item.Reader.Stop();
+				}
 			}
 		}
 
-		public void StopReading(string queueName)
+		public virtual void StopReading(string queueName)
 		{
 			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
 			if (q == null)
@@ -174,7 +177,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="body"></param>
 		/// <param name="label"></param>
-		public void SyncProcess<T>(string queueName, T body, string label = null)
+		public virtual void SyncProcess<T>(string queueName, T body, string label = null)
 		{
 			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registration == null)
@@ -187,9 +190,13 @@ namespace Ariane
 			{
 				reader.ProcessMessage(body);
 			}
+			else
+			{
+				SendInternal(queueName, body);
+			}
 		}
 
-		public dynamic CreateMessage(string messageName)
+		public virtual dynamic CreateMessage(string messageName)
 		{
 			dynamic result = new System.Dynamic.ExpandoObject();
 			result.MessageName = messageName;
@@ -224,7 +231,8 @@ namespace Ariane
 
 		private IActionQueue InitializeActionQueue()
 		{
-			var result = new ActionQueue();
+			var result = GlobalConfiguration.Configuration.DependencyResolver.GetService<IActionQueue>() 
+						?? new ActionQueue();
 			return result;
 		}
 	}
