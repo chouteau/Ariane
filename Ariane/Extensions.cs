@@ -9,7 +9,8 @@ namespace Ariane
 	{
 		public static TService GetService<TService>(this IDependencyResolver resolver)
 		{
-			return (TService)resolver.GetService(typeof(TService));
+			var result = (TService)resolver.GetService(typeof(TService));
+			return result;
 		}
 
 		public static IEnumerable<TService> GetServices<TService>(this IDependencyResolver resolver)

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Ariane
 {
-	internal interface IActionQueue : IDisposable
+	public interface IActionQueue : IDisposable
 	{
 		void Add(Action action);
 		void Stop();

@@ -91,6 +91,7 @@
     <Compile Include="RegisterExtensions.cs" />
     <Compile Include="Registration.cs" />
     <Compile Include="ServiceBusConfiguration.cs" />
+    <Compile Include="SyncActionQueue.cs" />
     <Compile Include="SyncBusManager.cs" />
   </ItemGroup>
   <ItemGroup>

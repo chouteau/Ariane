@@ -62,6 +62,15 @@ namespace Ariane
 		/// <param name="messageName"></param>
 		/// <returns></returns>
 		dynamic CreateMessage(string messageName);
+
+		/// <summary>
+		/// Replace existing action queue service by an other instance
+		/// used by unit test
+		/// </summary>
+		/// <param name="serviceType"></param>
+		/// <param name="service"></param>
+		void ReplaceActionQueue(IActionQueue service);
+
 		/// <summary>
 		/// Dispose service bus
 		/// </summary>

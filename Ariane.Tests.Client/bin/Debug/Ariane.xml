@@ -551,6 +551,14 @@
             <param name="messageName"></param>
             <returns></returns>
         </member>
+        <member name="M:Ariane.IServiceBus.ReplaceActionQueue(Ariane.IActionQueue)">
+            <summary>
+            Replace existing action queue service by an other instance
+            used by unit test
+            </summary>
+            <param name="serviceType"></param>
+            <param name="service"></param>
+        </member>
         <member name="M:Ariane.IServiceBus.Dispose">
             <summary>
             Dispose service bus

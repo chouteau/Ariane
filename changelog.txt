@@ -1,4 +1,11 @@
-﻿3.0.34.0
+﻿3.0.34.1
+- Add ReplaceActionQueue Method in IServiceBus
+- Fix bad design for ActionQueue instanciation
+
+3.0.34.1
+- Fix ActionQueue resolve failed with DI Unity
+
+3.0.34.0
 - ActionQueue can be replaced using IActionQueue
 - Public methods of BusManager are virtual (OCP)
 

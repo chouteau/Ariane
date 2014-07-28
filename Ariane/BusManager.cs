@@ -14,11 +14,12 @@ namespace Ariane
 	public class BusManager : IServiceBus, IDisposable
 	{
 		private FluentRegister m_Register;
+		private IActionQueue m_ActionQueue;
 
 		public BusManager()
 		{
 			m_Register = new FluentRegister();
-			ActionQueue = new Lazy<IActionQueue>(InitializeActionQueue, true);
+			m_ActionQueue = new ActionQueue();
 		}
 
 		#region IServiceBus Members
@@ -31,11 +32,9 @@ namespace Ariane
 			}
 		}
 
-		internal Lazy<IActionQueue> ActionQueue { get; set; }
-
 		public virtual void Send<T>(string queueName, T body, string label = null)
 		{
-			ActionQueue.Value.Add(() =>
+			m_ActionQueue.Add(() =>
 			{
 				SendInternal(queueName, body, label);
 			});
@@ -138,9 +137,9 @@ namespace Ariane
 
 		public virtual void StopReading()
 		{
-			if (this.ActionQueue.IsValueCreated)
+			if (m_ActionQueue != null)
 			{
-				this.ActionQueue.Value.Stop();
+				this.m_ActionQueue.Stop();
 			}
 			foreach (var item in m_Register.List)
 			{
@@ -203,15 +202,24 @@ namespace Ariane
 			return result;
 		}
 
+		public void ReplaceActionQueue(IActionQueue actionQueue)
+		{
+			if (actionQueue == null)
+			{
+				return;
+			}
+			m_ActionQueue = actionQueue;
+		}
+
 		#endregion
 
 		#region IDisposable Members
 
 		public virtual void Dispose()
 		{
-			if (this.ActionQueue.IsValueCreated)
+			if (this.m_ActionQueue != null)
 			{
-				this.ActionQueue.Value.Dispose();
+				this.m_ActionQueue.Dispose();
 			}
 			foreach (var item in m_Register.List)
 			{
@@ -229,11 +237,5 @@ namespace Ariane
 
 		#endregion
 
-		private IActionQueue InitializeActionQueue()
-		{
-			var result = GlobalConfiguration.Configuration.DependencyResolver.GetService<IActionQueue>() 
-						?? new ActionQueue();
-			return result;
-		}
 	}
 }

@@ -68,6 +68,11 @@ namespace Ariane
 			return m_Decorated.CreateMessage(name);
 		}
 
+		public void ReplaceActionQueue(IActionQueue actionQueue)
+		{
+			m_Decorated.ReplaceActionQueue(actionQueue);
+		}
+
 		public void Dispose()
 		{
 			m_Decorated.Dispose();
