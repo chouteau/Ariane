@@ -33,6 +33,22 @@ namespace Ariane.QueueProviders
 
 		public string QueueName { get ; private set; }
 
+		public T Receive<T>()
+		{
+			T body = default(T);
+			try
+			{
+				var timeout = new TimeSpan(0, 0, 0, 0, 100);
+				var message = m_Queue.Receive(timeout);
+				body = GetBody<T>(message);
+			}
+			catch(Exception ex)
+			{
+
+			}
+			return body;
+		}
+
 		public IAsyncResult BeginReceive()
 		{
 			return m_Queue.BeginReceive();
@@ -41,6 +57,17 @@ namespace Ariane.QueueProviders
 		public T EndReceive<T>(IAsyncResult result)
 		{
 			var message = m_Queue.EndReceive(result);
+			var body = GetBody<T>(message);
+			GlobalConfiguration.Configuration.Logger.Debug("Receive message");
+			return body;
+		}
+
+		private T GetBody<T>(System.Messaging.Message message)
+		{
+			if (message == null)
+			{
+				return default(T);
+			}
 			var content = message.Body as string;
 			T body = default(T);
 			try
@@ -52,7 +79,6 @@ namespace Ariane.QueueProviders
 				ex.Data.Add("jsoncontent", content);
 				GlobalConfiguration.Configuration.Logger.Error(ex);
 			}
-
 			return body;
 		}
 

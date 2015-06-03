@@ -81,17 +81,7 @@ namespace Ariane.QueueProviders
 			get { return m_QueueName; }
 		}
 
-		public IAsyncResult BeginReceive()
-		{
-			if (m_Queue.Count > 0)
-			{
-				m_Event.Set();
-			}
-
-			return new AsyncResult(m_Event);
-		}
-
-		public T EndReceive<T>(IAsyncResult result)
+		public T Receive<T>()
 		{
 			var fileName = m_Queue.Dequeue();
 			T m = default(T);
@@ -121,6 +111,21 @@ namespace Ariane.QueueProviders
 				}
 			}
 			return m;
+		}
+
+		public IAsyncResult BeginReceive()
+		{
+			if (m_Queue.Count > 0)
+			{
+				m_Event.Set();
+			}
+
+			return new AsyncResult(m_Event);
+		}
+
+		public T EndReceive<T>(IAsyncResult result)
+		{
+			return Receive<T>();
 		}
 
 		public void Reset()

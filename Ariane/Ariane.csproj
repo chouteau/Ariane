@@ -38,7 +38,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\S2\qmailer\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -69,7 +69,7 @@
     <Compile Include="GlobalConfiguration.cs" />
     <Compile Include="IActionQueue.cs" />
     <Compile Include="IDependencyResolver.cs" />
-    <Compile Include="IFluentRegister.cs" />
+    <Compile Include="IRegister.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMedium.cs" />
     <Compile Include="IMessageDispatcher.cs" />

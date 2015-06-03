@@ -13,8 +13,8 @@ namespace Ariane
 	/// </summary>
 	public class BusManager : IServiceBus, IDisposable
 	{
-		private FluentRegister m_Register;
 		private IActionQueue m_ActionQueue;
+		private FluentRegister m_Register;
 
 		public BusManager()
 		{
@@ -24,12 +24,12 @@ namespace Ariane
 
 		#region IServiceBus Members
 
-		public IFluentRegister Register
-		{
-			get
-			{
-				return m_Register;
-			}
+		public IRegister Register 
+		{ 
+			get 
+			{ 
+				return m_Register; 
+			} 
 		}
 
 		public virtual void Send<T>(string queueName, T body, string label = null)
@@ -42,7 +42,7 @@ namespace Ariane
 
 		protected virtual void SendInternal<T>(string queueName, T body, string label = null)
 		{
-			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			var registration = GetRegistrationByQueueName(queueName);
 			if (registration == null)
 			{
 				return;
@@ -69,7 +69,7 @@ namespace Ariane
 
 		public virtual void StartReading(string queueName)
 		{
-			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			var q = GetRegistrationByQueueName(queueName); 
 			if (q == null)
 			{
 				return;
@@ -80,7 +80,7 @@ namespace Ariane
 
 		public virtual IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
 		{
-			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			var registration = GetRegistrationByQueueName(queueName);
 			if (registration == null)
 			{
 				return null;
@@ -99,14 +99,15 @@ namespace Ariane
 				catch (Exception ex)
 				{
 					GlobalConfiguration.Configuration.Logger.Error(ex);
-					continue;
 				}
 				var handles = new WaitHandle[] { item.AsyncWaitHandle };
 				var index = WaitHandle.WaitAny(handles, timeout);
 				if (index == 258) // Timeout
 				{
+					mq.SetTimeout();
 					break;
 				}
+
 				T message = default(T);
 				try
 				{
@@ -121,12 +122,11 @@ namespace Ariane
 					mq.Reset();
 				}
 
-				if (message == null)
+				if (message != null)
 				{
-					continue;
+					result.Add(message);
 				}
 
-				result.Add(message);
 				if (result.Count == count)
 				{
 					break;
@@ -160,7 +160,7 @@ namespace Ariane
 
 		public virtual void StopReading(string queueName)
 		{
-			var q = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			var q = GetRegistrationByQueueName(queueName); 
 			if (q == null)
 			{
 				return;
@@ -178,7 +178,7 @@ namespace Ariane
 		/// <param name="label"></param>
 		public virtual void SyncProcess<T>(string queueName, T body, string label = null)
 		{
-			var registration = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			var registration = GetRegistrationByQueueName(queueName); 
 			if (registration == null)
 			{
 				return;
@@ -236,6 +236,12 @@ namespace Ariane
 		}
 
 		#endregion
+
+		private Registration GetRegistrationByQueueName(string queueName)
+		{
+			var result = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			return result;
+		}
 
 	}
 }

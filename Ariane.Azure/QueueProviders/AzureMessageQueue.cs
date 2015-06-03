@@ -57,6 +57,11 @@ namespace Ariane.QueueProviders
 			return body;
 		}
 
+		public T Receive<T>()
+		{
+			throw new NotImplementedException();
+		}
+
 		public void Reset()
 		{
 			m_Event.Reset();

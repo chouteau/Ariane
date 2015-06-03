@@ -14,7 +14,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="typeReader"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMemoryReader(this IFluentRegister register, string queueName, Type typeReader)
+		public static IRegister AddMemoryReader(this IRegister register, string queueName, Type typeReader)
 		{
 			if (queueName == null || register == null)
 			{
@@ -39,7 +39,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMemoryReader<T>(this IFluentRegister register, string queueName, Action<T> predicate)
+		public static IRegister AddMemoryReader<T>(this IRegister register, string queueName, Action<T> predicate)
 		{
 			if (queueName == null || register == null || predicate == null)
 			{
@@ -61,7 +61,7 @@ namespace Ariane
 		/// <param name="register"></param>
 		/// <param name="queueName"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMemoryWriter(this IFluentRegister register, string queueName)
+		public static IRegister AddMemoryWriter(this IRegister register, string queueName)
 		{
 			if (queueName == null || register == null)
 			{
@@ -84,7 +84,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="typeReader"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMSMQReader(this IFluentRegister register, string queueName, Type typeReader)
+		public static IRegister AddMSMQReader(this IRegister register, string queueName, Type typeReader)
 		{
 			if (queueName == null || register == null)
 			{
@@ -109,7 +109,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMSMQReader<T>(this IFluentRegister register, string queueName, Action<T> predicate)
+		public static IRegister AddMSMQReader<T>(this IRegister register, string queueName, Action<T> predicate)
 		{
 			if (queueName == null || register == null || predicate == null)
 			{
@@ -131,7 +131,7 @@ namespace Ariane
 		/// <param name="register"></param>
 		/// <param name="queueName"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddMSMQWriter(this IFluentRegister register, string queueName)
+		public static IRegister AddMSMQWriter(this IRegister register, string queueName)
 		{
 			if (queueName == null || register == null)
 			{
@@ -154,7 +154,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="typeReader"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddFileReader(this IFluentRegister register, string queueName, Type typeReader)
+		public static IRegister AddFileReader(this IRegister register, string queueName, Type typeReader)
 		{
 			if (queueName == null || register == null)
 			{
@@ -179,7 +179,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddFileReader<T>(this IFluentRegister register, string queueName, Action<T> predicate)
+		public static IRegister AddFileReader<T>(this IRegister register, string queueName, Action<T> predicate)
 		{
 			if (queueName == null || register == null || predicate == null)
 			{
@@ -201,7 +201,7 @@ namespace Ariane
 		/// <param name="register"></param>
 		/// <param name="queueName"></param>
 		/// <returns></returns>
-		public static IFluentRegister AddFileWriter(this IFluentRegister register, string queueName)
+		public static IRegister AddFileWriter(this IRegister register, string queueName)
 		{
 			if (queueName == null || register == null)
 			{

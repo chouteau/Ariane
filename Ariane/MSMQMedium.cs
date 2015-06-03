@@ -29,10 +29,19 @@ namespace Ariane
 			if (!path.StartsWith("formatname:direct")
 				&& !System.Messaging.MessageQueue.Exists(path))
 			{
-				string everyone = new System.Security.Principal.SecurityIdentifier(
-					"S-1-1-0").Translate(typeof(System.Security.Principal.NTAccount)).ToString();
-				var queue = System.Messaging.MessageQueue.Create(path);
-				queue.SetPermissions(everyone, MessageQueueAccessRights.FullControl);
+				try
+				{
+					string everyone = new System.Security.Principal.SecurityIdentifier(
+						"S-1-1-0").Translate(typeof(System.Security.Principal.NTAccount)).ToString();
+					var queue = System.Messaging.MessageQueue.Create(path);
+					queue.SetPermissions(everyone, MessageQueueAccessRights.FullControl);
+				}
+				catch(Exception ex)
+				{
+					ex.Data.Add("queueName", queueName);
+					ex.Data.Add("queuePath", path);
+					throw ex;
+				}
 			}
 
 			var  result = new System.Messaging.MessageQueue(path, System.Messaging.QueueAccessMode.SendAndReceive);

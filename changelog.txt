@@ -1,4 +1,4 @@
-﻿3.0.34.1
+﻿3.0.34.2
 - Add ReplaceActionQueue Method in IServiceBus
 - Fix bad design for ActionQueue instanciation
 

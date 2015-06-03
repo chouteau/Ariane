@@ -36,12 +36,7 @@ namespace Ariane.QueueProviders
 
 		public string QueueName { get; private set; }
 
-		public IAsyncResult BeginReceive()
-		{
-			return new AsyncResult(m_Event);
-		}
-
-		public T EndReceive<T>(IAsyncResult r)
+		public T Receive<T>()
 		{
 			object message = null;
 			bool result = m_Queue.TryDequeue(out message);
@@ -54,6 +49,16 @@ namespace Ariane.QueueProviders
 				}
 			}
 			return default(T);
+		}
+
+		public IAsyncResult BeginReceive()
+		{
+			return new AsyncResult(m_Event);
+		}
+
+		public T EndReceive<T>(IAsyncResult r)
+		{
+			return Receive<T>();
 		}
 
 		public void Reset()

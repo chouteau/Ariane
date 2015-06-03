@@ -40,7 +40,7 @@ namespace Ariane
 		public virtual void Start(IMessageQueue queue)
 		{
 			if (m_Thread != null
-				&& m_Thread.IsAlive)
+				&& m_Thread.ThreadState != ThreadState.Stopped)
 			{
 				return;
 			}

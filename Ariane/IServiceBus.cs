@@ -13,7 +13,7 @@ namespace Ariane
 		/// <summary>
 		/// Register queues
 		/// </summary>
-		IFluentRegister Register { get; }
+		IRegister Register { get; }
 		/// <summary>
 		/// Start reading for item in queues and process
 		/// </summary>

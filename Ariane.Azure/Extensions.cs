@@ -8,7 +8,7 @@ namespace Ariane
 {
 	public static class Extensions
 	{
-		public static IFluentRegister AddAzureReader(this IFluentRegister register, string queueName, Type typeReader)
+		public static IRegister AddAzureReader(this IRegister register, string queueName, Type typeReader)
 		{
 			var queueSetting = new QueueSetting()
 			{
@@ -20,7 +20,7 @@ namespace Ariane
 			return register;
 		}
 
-		public static IFluentRegister AddAzureReader<T>(this IFluentRegister register, string queueName, Action<T> predicate)
+		public static IRegister AddAzureReader<T>(this IRegister register, string queueName, Action<T> predicate)
 		{
 			var queueSetting = new QueueSetting()
 			{
@@ -31,7 +31,7 @@ namespace Ariane
 			return register;
 		}
 
-		public static IFluentRegister AddAzureWriter(this IFluentRegister register, string queueName)
+		public static IRegister AddAzureWriter(this IRegister register, string queueName)
 		{
 			var queueSetting = new QueueSetting()
 			{

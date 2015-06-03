@@ -23,7 +23,7 @@ namespace Ariane
 			m_Decorated = decorated;
 		}
 
-		public Ariane.IFluentRegister Register
+		public Ariane.IRegister Register
 		{
 			get { return m_Decorated.Register; }
 		}

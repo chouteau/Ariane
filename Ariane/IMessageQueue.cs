@@ -16,6 +16,12 @@ namespace Ariane
 		/// </summary>
 		string QueueName { get; }
 		/// <summary>
+		/// Receive syncrhonized message
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		T Receive<T>();
+		/// <summary>
 		/// Start begin receive async message
 		/// </summary>
 		/// <returns></returns>

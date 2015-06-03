@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane
 {
-	internal class Registration
+	internal class Registration 
 	{
 		private Lazy<IMessageDispatcher> m_LazyReader { get; set; }
 		private Lazy<IMedium> m_LazyMedium { get; set; }
@@ -66,7 +66,16 @@ namespace Ariane
 
 		private IMessageQueue InitializeMessageQueue()
 		{
-			var result = Medium.CreateMessageQueue(QueueName);
+			IMessageQueue result = null;
+			try
+			{
+				result = Medium.CreateMessageQueue(QueueName);
+			}
+			catch(Exception ex)
+			{
+				ex.Data.Add("QueueName", QueueName);
+				GlobalConfiguration.Configuration.Logger.Error(ex);
+			}
 			return result;
 		}
 

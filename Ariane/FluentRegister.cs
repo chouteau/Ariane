@@ -6,24 +6,16 @@ using System.Text;
 
 namespace Ariane
 {
-	internal class FluentRegister : IFluentRegister
+	internal class FluentRegister : IRegister
 	{
-		private SynchronizedCollection<Registration> m_RegistrationList;
-
 		public FluentRegister()
 		{
-			m_RegistrationList = new SynchronizedCollection<Registration>();
+			List = new SynchronizedCollection<Registration>();
 		}
 
-		public SynchronizedCollection<Registration> List
-		{
-			get
-			{
-				return m_RegistrationList;
-			}
-		}
+		public SynchronizedCollection<Registration> List { get; private set; }
 
-		public IFluentRegister AddFromConfig(string configFileName = null)
+		public IRegister AddFromConfig(string configFileName = null)
 		{
 			string sectionName = "ariane/serviceBus";
 			Configuration.ServiceBusConfigurationSection section = null;
@@ -93,16 +85,16 @@ namespace Ariane
 			return this;
 		}
 
-		public IFluentRegister AddQueue(QueueSetting queueSetting)
+		public IRegister AddQueue(QueueSetting queueSetting)
 		{
 			if (queueSetting == null)
 			{
 				throw new ArgumentNullException();
 			}
 
-			lock (m_RegistrationList.SyncRoot)
+			lock (List.SyncRoot)
 			{
-				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				var registration = List.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
 				if (registration == null)
 				{
 					registration = new Registration()
@@ -111,14 +103,14 @@ namespace Ariane
 						TypeMedium = queueSetting.TypeMedium,
 						AutoStartReading = queueSetting.AutoStartReading
 					};
-					m_RegistrationList.Add(registration);
+					List.Add(registration);
 				}
 				registration.AddSubscriberType(queueSetting.TypeReader);
 			}
 			return this;
 		}
 
-		public IFluentRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
+		public IRegister AddQueue<T>(QueueSetting queueSetting, Action<T> predicate)
 		{
 			if (queueSetting == null
 				|| predicate == null)
@@ -126,9 +118,9 @@ namespace Ariane
 				throw new ArgumentNullException();
 			}
 
-			lock (m_RegistrationList.SyncRoot)
+			lock (List.SyncRoot)
 			{
-				var registration = m_RegistrationList.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				var registration = List.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
 				if (registration == null)
 				{
 					registration = new Registration()
@@ -137,7 +129,7 @@ namespace Ariane
 						TypeMedium = queueSetting.TypeMedium,
 						AutoStartReading = queueSetting.AutoStartReading
 					};
-					m_RegistrationList.Add(registration);
+					List.Add(registration);
 				}
 				var subscriber = new AnonymousMessageSubscriber<T>(predicate);
 				registration.AddSubscriber(subscriber);
@@ -147,9 +139,9 @@ namespace Ariane
 
 		public void Clear()
 		{
-			lock (m_RegistrationList.SyncRoot)
+			lock (List.SyncRoot)
 			{
-				foreach (var registration in m_RegistrationList)
+				foreach (var registration in List)
 				{
 					if (!registration.AutoStartReading)
 					{
@@ -161,15 +153,15 @@ namespace Ariane
 					}
 					registration.Reader.Dispose();
 				}
-				m_RegistrationList.Clear();
+				List.Clear();
 			}
 		}
 
 		public IEnumerable<string> GetRegisteredQueues()
 		{
-			lock (m_RegistrationList.SyncRoot)
+			lock (List.SyncRoot)
 			{
-				return m_RegistrationList.Select(i => i.QueueName);
+				return List.Select(i => i.QueueName);
 			}
 		}
 	}
