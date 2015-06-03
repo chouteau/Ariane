@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane", "Ariane\Ariane.csproj", "{D71050CE-F15A-4A94-9438-C755C1A28D5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane", "src\Ariane\Ariane.csproj", "{D71050CE-F15A-4A94-9438-C755C1A28D5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests", "Ariane.Tests\Ariane.Tests.csproj", "{FC82E343-83B8-425C-B7F3-D287B11F47F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests", "src\Ariane.Tests\Ariane.Tests.csproj", "{FC82E343-83B8-425C-B7F3-D287B11F47F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C2C4C346-6109-4C92-855D-08C1E661AAF9}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,13 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C2C4C3
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests.Server", "Ariane.Tests.Server\Ariane.Tests.Server.csproj", "{D7E87EE2-30DC-49C3-846B-6790BF466BDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests.Server", "src\Ariane.Tests.Server\Ariane.Tests.Server.csproj", "{D7E87EE2-30DC-49C3-846B-6790BF466BDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Azure", "Ariane.Azure\Ariane.Azure.csproj", "{A50D52CE-F29D-4B50-B7C6-CF20FB05411E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Azure", "src\Ariane.Azure\Ariane.Azure.csproj", "{A50D52CE-F29D-4B50-B7C6-CF20FB05411E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Azure.Tests", "Ariane.Azure.Tests\Ariane.Azure.Tests.csproj", "{22A74ED3-B1B3-4014-9DDB-780D52B54465}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Azure.Tests", "src\Ariane.Azure.Tests\Ariane.Azure.Tests.csproj", "{22A74ED3-B1B3-4014-9DDB-780D52B54465}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests.Client", "Ariane.Tests.Client\Ariane.Tests.Client.csproj", "{BAE0F73D-C9E5-4A02-90C7-4F130B67590B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests.Client", "src\Ariane.Tests.Client\Ariane.Tests.Client.csproj", "{BAE0F73D-C9E5-4A02-90C7-4F130B67590B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1E435FBE-FD77-45EF-865D-E3B6C3CD60E8}"
 	ProjectSection(SolutionItems) = preProject
