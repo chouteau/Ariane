@@ -1,4 +1,7 @@
-﻿3.1.35.1
+﻿3.1.36.2
+- No rethrow error on bad cast in MsmqMessageQueue
+
+3.1.35.1
 - Migrate from Codeplex
 
 3.0.34.2

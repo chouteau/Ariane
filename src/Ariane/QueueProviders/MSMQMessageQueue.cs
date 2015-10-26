@@ -104,7 +104,6 @@ namespace Ariane.QueueProviders
 					mqex.Data.Add("Message", json);
 				}
 				catch { /* Dead for science */ }
-				throw mqex;
 			}
 			catch(Exception ex)
 			{
@@ -116,7 +115,6 @@ namespace Ariane.QueueProviders
 					ex.Data.Add("Message", json);
 				}
 				catch { /* Dead for science */ }
-				throw ex;
 			}
 		}
 
