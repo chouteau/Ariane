@@ -77,6 +77,8 @@ namespace Ariane
 
 		private void Run()
 		{
+			Logger.Info("Reading for queue {0} was started", this.m_Queue.QueueName);
+
 			if (m_Queue.Timeout.HasValue)
 			{
 				m_Queue.SetTimeout();

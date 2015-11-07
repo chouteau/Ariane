@@ -56,13 +56,25 @@ namespace Ariane
 
 		public virtual void StartReading()
 		{
-			foreach (var item in m_Register.List)
+			GlobalConfiguration.Configuration.Logger.Info("Start reading all {0} configured queues", m_Register.List.Count);
+            foreach (var item in m_Register.List)
 			{
+				GlobalConfiguration.Configuration.Logger.Info("Try to start queue {0}", item.QueueName);
 				var queue = item.Queue;
-				if (item.AutoStartReading 
-					&& item.Reader != null)
+				if (item.Reader != null)
 				{
-					item.Reader.Start(queue);
+					if(item.AutoStartReading)
+					{
+						item.Reader.Start(queue);
+					}
+					else
+					{
+						GlobalConfiguration.Configuration.Logger.Info("queue {0} is not autostarted", item.QueueName);
+					}
+				}
+				else
+				{
+					GlobalConfiguration.Configuration.Logger.Info("queue {0} is already started", item.QueueName);
 				}
 			}
 		}
