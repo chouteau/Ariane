@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Messaging;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ariane.QueueProviders
 {
@@ -28,7 +30,8 @@ namespace Ariane.QueueProviders
 
 		public void SetTimeout()
 		{
-
+			m_Queue.Close();
+			m_Queue.Refresh();
 		}
 
 		public string QueueName { get ; private set; }
@@ -42,7 +45,7 @@ namespace Ariane.QueueProviders
 				var message = m_Queue.Receive(timeout);
 				body = GetBody<T>(message);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 
 			}
@@ -84,7 +87,7 @@ namespace Ariane.QueueProviders
 
 		public void Reset()
 		{
-
+			m_Queue.Refresh();
 		}
 
 		public void Send<T>(Message<T> message)
@@ -131,6 +134,17 @@ namespace Ariane.QueueProviders
 			result.AppendLine(string.Format("MachineName:{0}", m_Queue.MachineName));
 			result.AppendLine(string.Format("QueueName:{0}", m_Queue.QueueName));
 			return result.ToString();
+		}
+
+		private long MessageCount()
+		{
+			long count = 0;
+			var cursor = m_Queue.GetMessageEnumerator2();
+			while(cursor.MoveNext())
+			{
+				count++;
+			}
+			return count;
 		}
 	}
 }

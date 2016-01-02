@@ -94,7 +94,8 @@ namespace Ariane
 				}
 			}
 
-			if (m_SendThread.Join(TimeSpan.FromSeconds(1)))
+			if (m_SendThread != null
+				&& m_SendThread.Join(TimeSpan.FromSeconds(1)))
 			{
 				m_SendThread.Abort();
 			}
