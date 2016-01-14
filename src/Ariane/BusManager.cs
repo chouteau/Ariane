@@ -13,6 +13,7 @@ namespace Ariane
 	/// </summary>
 	public class BusManager : IServiceBus, IDisposable
 	{
+		private static object m_Lock = new object();
 		private IActionQueue m_ActionQueue;
 		private FluentRegister m_Register;
 
@@ -90,7 +91,16 @@ namespace Ariane
 			q.Reader.Start(q.Queue);
 		}
 
-		public virtual IEnumerable<T> Receive<T>(string queueName, int count, int timeout)
+		public virtual IEnumerable<T> Receive<T>(string queueName, int count, int timeoutInMillisecond)
+		{
+			timeoutInMillisecond = Math.Max(60 * 1000, timeoutInMillisecond);
+			lock(m_Lock)
+			{
+				return ReceiveInternal<T>(queueName, count, timeoutInMillisecond);
+			}
+		}
+
+		internal virtual IEnumerable<T> ReceiveInternal<T>(string queueName, int count, int timeoutInMillisecond)
 		{
 			var registration = GetRegistrationByQueueName(queueName);
 			if (registration == null)
@@ -113,7 +123,7 @@ namespace Ariane
 					GlobalConfiguration.Configuration.Logger.Error(ex);
 				}
 				var handles = new WaitHandle[] { item.AsyncWaitHandle };
-				var index = WaitHandle.WaitAny(handles, timeout);
+				var index = WaitHandle.WaitAny(handles, timeoutInMillisecond);
 				if (index == 258) // Timeout
 				{
 					mq.SetTimeout();
