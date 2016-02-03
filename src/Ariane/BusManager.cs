@@ -93,7 +93,7 @@ namespace Ariane
 
 		public virtual IEnumerable<T> Receive<T>(string queueName, int count, int timeoutInMillisecond)
 		{
-			timeoutInMillisecond = Math.Max(60 * 1000, timeoutInMillisecond);
+			timeoutInMillisecond = Math.Min(60 * 1000, timeoutInMillisecond);
 			lock(m_Lock)
 			{
 				return ReceiveInternal<T>(queueName, count, timeoutInMillisecond);
