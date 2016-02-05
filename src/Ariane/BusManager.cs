@@ -57,25 +57,28 @@ namespace Ariane
 
 		public virtual void StartReading()
 		{
-			GlobalConfiguration.Configuration.Logger.Info("Start reading all {0} configured queues", m_Register.List.Count);
-            foreach (var item in m_Register.List)
+			lock(m_Register.List.SyncRoot)
 			{
-				GlobalConfiguration.Configuration.Logger.Info("Try to start queue {0}", item.QueueName);
-				var queue = item.Queue;
-				if (item.Reader != null)
+				GlobalConfiguration.Configuration.Logger.Info("Start reading all {0} configured queues", m_Register.List.Count);
+				foreach (var item in m_Register.List)
 				{
-					if(item.AutoStartReading)
+					GlobalConfiguration.Configuration.Logger.Info("Try to start queue {0}", item.QueueName);
+					var queue = item.Queue;
+					if (item.Reader != null)
 					{
-						item.Reader.Start(queue);
+						if (item.AutoStartReading)
+						{
+							item.Reader.Start(queue);
+						}
+						else
+						{
+							GlobalConfiguration.Configuration.Logger.Info("queue {0} is not autostarted", item.QueueName);
+						}
 					}
 					else
 					{
-						GlobalConfiguration.Configuration.Logger.Info("queue {0} is not autostarted", item.QueueName);
+						GlobalConfiguration.Configuration.Logger.Info("queue {0} is already started", item.QueueName);
 					}
-				}
-				else
-				{
-					GlobalConfiguration.Configuration.Logger.Info("queue {0} is already started", item.QueueName);
 				}
 			}
 		}
@@ -163,19 +166,22 @@ namespace Ariane
 			{
 				this.m_ActionQueue.Stop();
 			}
-			foreach (var item in m_Register.List)
+			lock(m_Register.List.SyncRoot)
 			{
-				if (!item.AutoStartReading)
+				foreach (var item in m_Register.List)
 				{
-					continue;
-				}
-				if (!item.IsReaderCreated)
-				{
-					continue;
-				}
-				if (item.Reader != null)
-				{
-					item.Reader.Stop();
+					if (!item.AutoStartReading)
+					{
+						continue;
+					}
+					if (!item.IsReaderCreated)
+					{
+						continue;
+					}
+					if (item.Reader != null)
+					{
+						item.Reader.Stop();
+					}
 				}
 			}
 		}
@@ -243,17 +249,20 @@ namespace Ariane
 			{
 				this.m_ActionQueue.Dispose();
 			}
-			foreach (var item in m_Register.List)
+			lock(m_Register.List.SyncRoot)
 			{
-				if (!item.AutoStartReading)
+				foreach (var item in m_Register.List)
 				{
-					continue;
+					if (!item.AutoStartReading)
+					{
+						continue;
+					}
+					if (item.Reader == null)
+					{
+						continue;
+					}
+					item.Reader.Dispose();
 				}
-				if (item.Reader == null)
-				{
-					continue;
-				}
-				item.Reader.Dispose();
 			}
 		}
 
@@ -261,7 +270,11 @@ namespace Ariane
 
 		private Registration GetRegistrationByQueueName(string queueName)
 		{
-			var result = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			Registration result = null;
+			lock(m_Register.List.SyncRoot)
+			{
+				result = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+			}
 			return result;
 		}
 

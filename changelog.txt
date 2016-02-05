@@ -1,4 +1,7 @@
-﻿3.1.40.6
+﻿3.1.41.7
+- Fix bug with registration list not threadsafe on StartReading() or StopReading()
+
+3.1.40.6
 - Fix bug with timeout for manual receive (min 60 seconds)
 
 3.1.38.4
