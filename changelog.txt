@@ -1,4 +1,7 @@
-﻿3.1.41.7
+﻿3.2.42.0
+- Priority managed for msmq message
+
+3.1.41.7
 - Fix bug with registration list not threadsafe on StartReading() or StopReading()
 
 3.1.40.6

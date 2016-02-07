@@ -11,6 +11,10 @@ namespace Ariane
 	/// <typeparam name="T"></typeparam>
 	public class Message<T>
 	{
+		public Message()
+		{
+			Recoverable = true;
+		}
 		/// <summary>
 		/// Name of queue
 		/// </summary>
@@ -27,6 +31,10 @@ namespace Ariane
 		/// Indicates whether the message should persist in the queue for a subsequent recovery
 		/// </summary>
 		public bool Recoverable { get; set; }
+		/// <summary>
+		/// Priority of message, 0 = normal, 1 = high, 2 = hightest, 3 = veryhigh
+		/// </summary>
+		public int Priority { get; set; }
 		/// <summary>
 		/// Dispose
 		/// </summary>

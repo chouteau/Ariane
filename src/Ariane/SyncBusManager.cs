@@ -28,9 +28,9 @@ namespace Ariane
 			get { return m_Decorated.Register; }
 		}
 
-		public void Send<T>(string queueName, T body, string label = null)
+		public void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
-			m_Decorated.SyncProcess(queueName, body, label);
+			m_Decorated.SyncProcess(queueName, body, label, priority);
 		}
 
 		public void StartReading()
@@ -58,9 +58,9 @@ namespace Ariane
 			m_Decorated.StopReading(queueName);
 		}
 
-		public void SyncProcess<T>(string queueName, T body, string label = null)
+		public void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
 		{
-			m_Decorated.SyncProcess(queueName, body, label);
+			m_Decorated.SyncProcess(queueName, body, label, priority);
 		}
 
 		public dynamic CreateMessage(string name)

@@ -55,6 +55,7 @@
     <Compile Include="BusManagerTest.cs" />
     <Compile Include="ConfigFileManualStartTests.cs" />
     <Compile Include="ConfigFileSyncBusTests.cs" />
+    <Compile Include="MsmqPriorityTests.cs" />
     <Compile Include="MyDynamicMessageReader.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonMessageReader.cs" />

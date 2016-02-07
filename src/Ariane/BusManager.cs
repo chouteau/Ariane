@@ -33,15 +33,15 @@ namespace Ariane
 			} 
 		}
 
-		public virtual void Send<T>(string queueName, T body, string label = null)
+		public virtual void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			m_ActionQueue.Add(() =>
 			{
-				SendInternal(queueName, body, label);
+				SendInternal(queueName, body, label, priority);
 			});
 		}
 
-		protected virtual void SendInternal<T>(string queueName, T body, string label = null)
+		protected virtual void SendInternal<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			var registration = GetRegistrationByQueueName(queueName);
 			if (registration == null)
@@ -52,6 +52,7 @@ namespace Ariane
 			var m = new Message<T>();
 			m.Label = label ?? Guid.NewGuid().ToString();
 			m.Body = body;
+			m.Priority = Math.Max(0, priority);
 			mq.Send(m);
 		}
 
@@ -204,7 +205,8 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="body"></param>
 		/// <param name="label"></param>
-		public virtual void SyncProcess<T>(string queueName, T body, string label = null)
+		/// <param name="priority"></param>
+		public virtual void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			var registration = GetRegistrationByQueueName(queueName); 
 			if (registration == null)
@@ -219,7 +221,7 @@ namespace Ariane
 			}
 			else
 			{
-				SendInternal(queueName, body);
+				SendInternal(queueName, body, label, priority);
 			}
 		}
 

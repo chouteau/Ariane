@@ -48,14 +48,17 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="body"></param>
 		/// <param name="label"></param>
-		void Send<T>(string queueName, T body, string label = null);
+		/// <param name="priority"></param>
+		void Send<T>(string queueName, T body, string label = null, int priority = 0);
 		/// <summary>
 		/// Process message directly synchronously for unit tests 
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="queueName"></param>
 		/// <param name="body"></param>
-		void SyncProcess<T>(string queueName, T body, string label = null);
+		/// <param name="label"></param>
+		/// <param name="priority"></param>
+		void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0);
 		/// <summary>
 		/// Create dynamic message with name
 		/// </summary>
@@ -67,7 +70,6 @@ namespace Ariane
 		/// Replace existing action queue service by an other instance
 		/// used by unit test
 		/// </summary>
-		/// <param name="serviceType"></param>
 		/// <param name="service"></param>
 		void ReplaceActionQueue(IActionQueue service);
 

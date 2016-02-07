@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using System.Messaging;
 
 namespace Ariane.QueueProviders
 {
@@ -55,10 +56,31 @@ namespace Ariane.QueueProviders
 			}
 
 			object body = obj.GetType().GetProperty("Body").GetValue(obj, null);
+			var priority = (int)obj.GetType().GetProperty("Priority").GetValue(obj, null);
+			var label = (string)obj.GetType().GetProperty("Label").GetValue(obj, null);
+			var recoverable = (bool)obj.GetType().GetProperty("Recoverable").GetValue(obj, null);
+
 			var json = JsonConvert.SerializeObject(body, Formatting.None);
 			var buffer = System.Text.Encoding.UTF8.GetBytes(json);
 			message.BodyStream = new System.IO.MemoryStream(buffer);
 			message.BodyType = 0;
+			switch (priority)
+			{
+				case 0:
+					message.Priority = MessagePriority.Normal;
+					break;
+				case 1:
+					message.Priority = MessagePriority.High;
+					break;
+				case 2:
+					message.Priority = MessagePriority.VeryHigh;
+					break;
+				case 3:
+					message.Priority = MessagePriority.Highest;
+					break;
+			}
+			message.Label = label;
+			message.Recoverable = recoverable;
 		}
 
 		#endregion
