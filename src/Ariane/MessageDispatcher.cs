@@ -84,6 +84,9 @@ namespace Ariane
 				m_Queue.SetTimeout();
 			}
 
+			long tooManyErrorCount = 0;
+			var lastSentError = DateTime.MinValue;
+			bool fatalSent = false;
 			while (!m_Terminated 
 				&& m_Queue != null)
 			{
@@ -126,7 +129,22 @@ namespace Ariane
 				}
 				catch (Exception ex)
 				{
-					Logger.Error(ex);
+					if ((DateTime.Now - lastSentError).TotalMilliseconds > 1000)
+					{
+						Logger.Error(ex);
+					}
+					else
+					{
+						tooManyErrorCount++;
+					}
+
+					if (!fatalSent 
+						&& tooManyErrorCount > 100)
+					{
+						Logger.Fatal("Too many error {0}", ex.Message);
+						tooManyErrorCount = 0;
+						fatalSent = true;
+					}
 				}
 				finally
 				{
