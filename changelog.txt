@@ -1,4 +1,7 @@
-﻿3.2.42.0
+﻿3.2.43.0
+- Fix log too many errors if msmq fail
+
+3.2.42.0
 - Priority managed for msmq message
 
 3.1.41.7

@@ -132,6 +132,7 @@ namespace Ariane
 					if ((DateTime.Now - lastSentError).TotalMilliseconds > 1000)
 					{
 						Logger.Error(ex);
+						lastSentError = DateTime.Now;
 					}
 					else
 					{
