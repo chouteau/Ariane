@@ -61,7 +61,6 @@ namespace Ariane.QueueProviders
 		{
 			var message = m_Queue.EndReceive(result);
 			var body = GetBody<T>(message);
-			GlobalConfiguration.Configuration.Logger.Debug("Receive message");
 			return body;
 		}
 
