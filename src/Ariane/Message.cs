@@ -36,6 +36,11 @@ namespace Ariane
 		/// </summary>
 		public int Priority { get; set; }
 		/// <summary>
+		/// Message expire at UTC Date
+		/// </summary>
+		public TimeSpan? TimeToLive { get; set; }
+
+		/// <summary>
 		/// Dispose
 		/// </summary>
 		public void Dispose()

@@ -15,6 +15,11 @@ namespace Ariane
 		/// The name of queue
 		/// </summary>
 		string QueueName { get; }
+
+		/// <summary>
+		/// Name of topic for multiple subscribers
+		/// </summary>
+		string TopicName { get; }
 		/// <summary>
 		/// Receive syncrhonized message
 		/// </summary>

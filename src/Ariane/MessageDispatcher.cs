@@ -54,6 +54,7 @@ namespace Ariane
 			foreach (var item in MessageSubscriberList.Value)
 			{
 				item.FromQueueName = m_Queue.QueueName;
+				item.FromTopicName = m_Queue.TopicName;
 			}
 		}
 

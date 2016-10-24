@@ -8,18 +8,24 @@ using Microsoft.ServiceBus.Messaging;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageQueue : IMessageQueue, IDisposable
+	public class AzureMessageTopic : IMessageQueue, IDisposable
 	{
-		private QueueClient m_Queue;
 		private ManualResetEvent m_Event;
-		private AzureQueueAsyncResult m_AzureAsyncResult;
+		private AzureTopicAsyncResult m_AzureAsyncResult;
+		private SubscriptionClient m_SubscriptionClient;
+		private TopicClient m_Topic;
 
-		public AzureMessageQueue(QueueClient queueClient)
+		public AzureMessageTopic(TopicClient topicClient, SubscriptionClient subscriptionClient)
 		{
-			QueueName = queueClient.Path;
-			m_Queue = queueClient;
+			QueueName = topicClient.Path;
+			TopicName = subscriptionClient?.Name;
 			m_Event = new ManualResetEvent(false);
-			m_AzureAsyncResult = new AzureQueueAsyncResult(m_Event, m_Queue);
+			m_Topic = topicClient;
+			m_SubscriptionClient = subscriptionClient;
+			if (subscriptionClient != null)
+			{
+				m_AzureAsyncResult = new AzureTopicAsyncResult(m_Event, subscriptionClient);
+			}
 		}
 
 		public int? Timeout
@@ -59,14 +65,8 @@ namespace Ariane.QueueProviders
 
 		public T Receive<T>()
 		{
-			T result = default(T);
-			var mre = new ManualResetEvent(false);
-			m_Queue.OnMessage(message =>
-			{
-				result = message.GetBody<T>();
-				mre.Set();
-			});
-			mre.WaitOne(10 * 1000);
+			var message = m_SubscriptionClient.Receive();
+			var result = message.GetBody<T>();
 			return result;
 		}
 
@@ -83,7 +83,7 @@ namespace Ariane.QueueProviders
 			{
 				brokeredMessage.TimeToLive = message.TimeToLive.Value;
 			}
-			m_Queue.Send(brokeredMessage);
+			m_Topic.Send(brokeredMessage);
 		}
 
 		#endregion

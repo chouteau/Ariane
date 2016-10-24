@@ -36,5 +36,9 @@ namespace Ariane
 		/// </summary>
 		[Obsolete("planified in next version", true)]
 		public string ConnectionStringName { get; set; }
+		/// <summary>
+		/// Topic name for multiple subscriptions
+		/// </summary>
+		public string TopicName { get; set; }
 	}
 }

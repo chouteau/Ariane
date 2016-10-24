@@ -15,6 +15,6 @@ namespace Ariane
 		/// </summary>
 		/// <param name="queueName"></param>
 		/// <returns></returns>
-		IMessageQueue CreateMessageQueue(string queueName);
+		IMessageQueue CreateMessageQueue(string queueName, string topicName = null);
 	}
 }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Ariane.QueueProviders
 {
-	internal class AsyncResult : IAsyncResult
+	public class AsyncResult : IAsyncResult
 	{
 		private ManualResetEvent m_Event;
 

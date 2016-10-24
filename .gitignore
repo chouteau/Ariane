@@ -191,3 +191,4 @@ ModelManifest.xml
 /packages
 /.nuget
 /nuget
+/src/Ariane.Azure.Tests/localconfig/connectionStrings.config

@@ -7,16 +7,18 @@ using Ariane;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NFluent;
+
 namespace Ariane.Azure.Tests
 {
 	[TestClass]
-	public class AzureTests
+	public class AzureQueueTests
 	{
 		[TestMethod]
 		public void Send_Person()
 		{
 			var bus = new BusManager(); 
-			bus.Register.AddAzureWriter("test.azure");
+			bus.Register.AddAzureQueueWriter("test.azure");
 
 			var person = new Person();
 			person.FirsName = Guid.NewGuid().ToString();
@@ -25,19 +27,21 @@ namespace Ariane.Azure.Tests
 			bus.Send("test.azure", person);
 
 			System.Threading.Thread.Sleep(5 * 1000);
+
+			bus.Dispose();
 		}
 
 		[TestMethod]
 		public void Receive_Person()
 		{
 			var bus = new BusManager();
-			bus.Register.AddAzureReader("test.azure", typeof(PersonMessageReader));
+			bus.Register.AddAzureQueueReader("test.azure", typeof(PersonMessageReader));
 
 			bus.StartReading();
 
 			System.Threading.Thread.Sleep(5 * 1000);
 
-
+			bus.Dispose();
 		}
 	}
 }

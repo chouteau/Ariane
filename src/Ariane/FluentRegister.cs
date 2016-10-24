@@ -94,14 +94,25 @@ namespace Ariane
 
 			lock (List.SyncRoot)
 			{
-				var registration = List.SingleOrDefault(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				var queueName = queueSetting.Name;
+				var registrationList = List.Where(i => i.QueueName.Equals(queueSetting.Name, StringComparison.InvariantCultureIgnoreCase));
+				if (queueSetting.TopicName != null)
+				{
+					registrationList = registrationList.Where(i => queueSetting.TopicName.Equals(i.TopicName, StringComparison.InvariantCultureIgnoreCase));
+				}
+				else
+				{
+					registrationList = registrationList.Where(i => i.TopicName == null);
+				}
+				var registration = registrationList.SingleOrDefault();
 				if (registration == null)
 				{
 					registration = new Registration()
 					{
 						QueueName = queueSetting.Name,
 						TypeMedium = queueSetting.TypeMedium,
-						AutoStartReading = queueSetting.AutoStartReading
+						AutoStartReading = queueSetting.AutoStartReading,
+						TopicName = queueSetting.TopicName
 					};
 					List.Add(registration);
 				}

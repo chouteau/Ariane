@@ -80,6 +80,7 @@ namespace Ariane.QueueProviders
 		{
 			get { return m_QueueName; }
 		}
+		public string TopicName { get; private set; }
 
 		public T Receive<T>()
 		{

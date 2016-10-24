@@ -33,15 +33,39 @@ namespace Ariane
 			} 
 		}
 
+		public virtual void Send<T>(string queueName, T body)
+		{
+			var options = new MessageOptions()
+			{
+				Label = null,
+				Priority = 0
+			};
+			Send(queueName, body, options);
+		}
+
+		[Obsolete("Use MessageOptions instead", false)]
 		public virtual void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			m_ActionQueue.Add(() =>
 			{
-				SendInternal(queueName, body, label, priority);
+				var options = new MessageOptions()
+				{
+					Label = label,
+					Priority = priority
+				};
+				SendInternal(queueName, body, options);
 			});
 		}
 
-		protected virtual void SendInternal<T>(string queueName, T body, string label = null, int priority = 0)
+		public virtual void Send<T>(string queueName, T body, MessageOptions options)
+		{
+			m_ActionQueue.Add(() =>
+			{
+				SendInternal(queueName, body, options);
+			});
+		}
+
+		protected virtual void SendInternal<T>(string queueName, T body, MessageOptions options)
 		{
 			var registration = GetRegistrationByQueueName(queueName);
 			if (registration == null)
@@ -50,9 +74,10 @@ namespace Ariane
 			}
 			var mq = registration.Queue;
 			var m = new Message<T>();
-			m.Label = label ?? Guid.NewGuid().ToString();
+			m.Label = options.Label ?? Guid.NewGuid().ToString();
 			m.Body = body;
-			m.Priority = Math.Max(0, priority);
+			m.Priority = Math.Max(0, options.Priority);
+			m.TimeToLive = options.TimeToLive;
 			mq.Send(m);
 		}
 
@@ -206,7 +231,26 @@ namespace Ariane
 		/// <param name="body"></param>
 		/// <param name="label"></param>
 		/// <param name="priority"></param>
+		[Obsolete("Use MessageOptions instead", false)]
 		public virtual void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
+		{
+			var options = new MessageOptions()
+			{
+				Label = label,
+				Priority = priority
+			};
+			SyncProcess(queueName, body, options);
+		}
+
+		/// <summary>
+		/// Used by Unit Test
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		/// <param name="label"></param>
+		/// <param name="priority"></param>
+		public virtual void SyncProcess<T>(string queueName, T body, MessageOptions options)
 		{
 			var registration = GetRegistrationByQueueName(queueName); 
 			if (registration == null)
@@ -221,7 +265,7 @@ namespace Ariane
 			}
 			else
 			{
-				SendInternal(queueName, body, label, priority);
+				SendInternal(queueName, body, options);
 			}
 		}
 
@@ -275,7 +319,10 @@ namespace Ariane
 			Registration result = null;
 			lock(m_Register.List.SyncRoot)
 			{
-				result = m_Register.List.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase));
+				result = m_Register.List.SingleOrDefault(i =>
+									i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase)
+									&& i.TopicName == null
+						);
 			}
 			return result;
 		}

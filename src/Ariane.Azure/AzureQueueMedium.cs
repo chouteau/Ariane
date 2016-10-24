@@ -5,15 +5,14 @@ using System.Text;
 
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
-using Microsoft.WindowsAzure;
 
 namespace Ariane
 {
-	public class AzureMedium : IMedium
+	public class AzureQueueMedium : IMedium
 	{
 		#region IMedium Members
 
-		public IMessageQueue CreateMessageQueue(string queueName)
+		public IMessageQueue CreateMessageQueue(string queueName, string topicName = null)
 		{
 			var cs = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
 
@@ -25,7 +24,7 @@ namespace Ariane
 			}
 
 			var queueClient = QueueClient.CreateFromConnectionString(cs, queueName);
-			return new QueueProviders.AzureMessageQueue(queueClient, queueName);
+			return new QueueProviders.AzureMessageQueue(queueClient);
 		}
 
 		#endregion

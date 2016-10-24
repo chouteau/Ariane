@@ -22,6 +22,7 @@ namespace Ariane
 		}
 
 		public string QueueName { get; set; }
+		public string TopicName { get; set; }
 
 		public bool IsReaderCreated
 		{
@@ -69,7 +70,7 @@ namespace Ariane
 			IMessageQueue result = null;
 			try
 			{
-				result = Medium.CreateMessageQueue(QueueName);
+				result = Medium.CreateMessageQueue(QueueName, TopicName);
 			}
 			catch(Exception ex)
 			{

@@ -3,43 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
 using Microsoft.ServiceBus.Messaging;
 
 namespace Ariane.QueueProviders
 {
-	internal class AzureAsyncResult : IAsyncResult
+	internal class AzureTopicAsyncResult : IAsyncResult, IDisposable
 	{
 		private ManualResetEvent m_Event;
-		private QueueClient m_Queue;
+		private SubscriptionClient m_SubscriptionClient;
 		private BrokeredMessage m_BrokeredMessage;
 
-		public AzureAsyncResult(ManualResetEvent @event, QueueClient queueClient)
+		public AzureTopicAsyncResult(ManualResetEvent @event, SubscriptionClient subscriptionClient)
 		{
 			m_Event = @event;
-			m_Queue = queueClient;
+			m_SubscriptionClient = subscriptionClient;
 			IsCompleted = false;
 			CompletedSynchronously = false;
-			m_Queue.BeginReceive(ProcessEndReceive, m_Queue);
-		}
-
-
-		void ProcessEndReceive(IAsyncResult result)
-		{
-			var qc = result.AsyncState as QueueClient;
-			var m = qc.EndReceive(result);
-			if (m != null)
+			var options = new OnMessageOptions();
+			options.AutoComplete = false;
+			m_SubscriptionClient.OnMessage(message =>
 			{
-				m.BeginComplete(ProcessEndComplete, m);
-			}
-		}
-
-		void ProcessEndComplete(IAsyncResult result)
-		{
-			m_BrokeredMessage = result.AsyncState as BrokeredMessage;
-			m_BrokeredMessage.EndComplete(result);
-			IsCompleted = true;
-			CompletedSynchronously = true;
-			m_Event.Set();
+				m_BrokeredMessage = message.Clone();
+				CompletedSynchronously = true;
+				message.Complete();
+				m_Event.Set();
+			}, options);
 		}
 
 		#region IAsyncResult Members
@@ -58,6 +47,18 @@ namespace Ariane.QueueProviders
 		public bool IsCompleted { get; private set; }
 
 		#endregion
+
+		public void Dispose()
+		{
+			if (m_Event != null)
+			{
+				m_Event.Dispose();
+			}
+			if (m_BrokeredMessage != null)
+			{
+				m_BrokeredMessage.Dispose();
+			}
+		}
 
 	}
 }

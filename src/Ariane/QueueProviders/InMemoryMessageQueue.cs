@@ -35,6 +35,7 @@ namespace Ariane.QueueProviders
 		#region IMessageQueue Members
 
 		public string QueueName { get; private set; }
+		public string TopicName { get; private set; }
 
 		public T Receive<T>()
 		{

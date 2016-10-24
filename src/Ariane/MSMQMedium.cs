@@ -16,7 +16,7 @@ namespace Ariane
 		/// </summary>
 		/// <param name="queueName"></param>
 		/// <returns></returns>
-		public virtual IMessageQueue CreateMessageQueue(string queueName)
+		public virtual IMessageQueue CreateMessageQueue(string queueName, string topicName = null)
 		{
 			var pathConfig = System.Configuration.ConfigurationManager.ConnectionStrings[queueName];
 			if (pathConfig == null)

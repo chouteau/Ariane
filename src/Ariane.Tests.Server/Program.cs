@@ -31,7 +31,7 @@ namespace Ariane.Tests.Server
 		static Ariane.IServiceBus AzureServer()
 		{
 			var bus = new BusManager();
-			bus.Register.AddAzureReader("test.azure", typeof(PersonMessageReader));
+			bus.Register.AddAzureQueueReader("test.azure", typeof(PersonMessageReader));
 
 			return bus;
 		}

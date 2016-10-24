@@ -1,18 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane", "src\Ariane\Ariane.csproj", "{D71050CE-F15A-4A94-9438-C755C1A28D5D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests", "src\Ariane.Tests\Ariane.Tests.csproj", "{FC82E343-83B8-425C-B7F3-D287B11F47F4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C2C4C346-6109-4C92-855D-08C1E661AAF9}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane.Tests.Server", "src\Ariane.Tests.Server\Ariane.Tests.Server.csproj", "{D7E87EE2-30DC-49C3-846B-6790BF466BDA}"
 EndProject
