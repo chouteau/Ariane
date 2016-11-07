@@ -42,13 +42,14 @@ namespace Ariane.Azure.Tests
 
 			bus.StartReading();
 
-			bus.Register.AddAzureTopicWriter("MyTopic");
-
 			var person = new Person();
 			person.FirsName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("MyTopic", person);
+			bus.Send("MyTopic", person, new MessageOptions()
+			{
+				TimeToLive = TimeSpan.FromHours(1)
+			});
 
 			System.Threading.Thread.Sleep(5 * 1000);
 
