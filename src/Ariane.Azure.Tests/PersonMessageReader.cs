@@ -13,6 +13,7 @@ namespace Ariane.Azure.Tests
 			System.Diagnostics.Trace.WriteLine($"{System.Threading.Thread.CurrentThread.Name},{message.FirsName},{FromTopicName}");
 			message.TopicName = FromTopicName;
 			message.IsProcessed = true;
+			MessageCollector.AddPerson(message);
 		}
 	}
 }

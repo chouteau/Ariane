@@ -92,7 +92,8 @@ namespace Ariane
 					var queue = item.Queue;
 					if (item.Reader != null)
 					{
-						if (item.AutoStartReading)
+						if (item.AutoStartReading
+							&& queue != null)
 						{
 							item.Reader.Start(queue);
 						}
@@ -319,9 +320,8 @@ namespace Ariane
 			Registration result = null;
 			lock(m_Register.List.SyncRoot)
 			{
-				result = m_Register.List.SingleOrDefault(i =>
+				result = m_Register.List.FirstOrDefault(i =>
 									i.QueueName.Equals(queueName, StringComparison.CurrentCultureIgnoreCase)
-									&& i.TopicName == null
 						);
 			}
 			return result;

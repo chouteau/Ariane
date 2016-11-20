@@ -102,6 +102,10 @@ namespace Ariane
 					System.Threading.Thread.Sleep(500);
 					continue;
 				}
+				if (result == null)
+				{
+					continue;
+				}
 				var waitHandles = new WaitHandle[] { m_EventStop, result.AsyncWaitHandle };
 				int index = 0;
 				if (m_Queue.Timeout.HasValue)

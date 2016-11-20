@@ -1,4 +1,4 @@
-# Welcome to Ariane (4.0.46.0)
+# Welcome to Ariane (4.0.47.0)
 
 Ariane is a super simple bus manager for asynchronous messages based on type or dynamic objects for later treatment, Ariane manage queueing system in one place with one thread by queue and multi readers by queue
 
