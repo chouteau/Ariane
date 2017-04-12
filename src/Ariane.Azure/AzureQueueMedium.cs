@@ -14,7 +14,15 @@ namespace Ariane
 
 		public IMessageQueue CreateMessageQueue(string queueName, string topicName = null)
 		{
-			var cs = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
+			string cs = null;
+			if (!string.IsNullOrWhiteSpace(Azure.GlobalConfiguration.Current.DefaultAzureConnectionString))
+			{
+				cs = Azure.GlobalConfiguration.Current.DefaultAzureConnectionString;
+			}
+			else
+			{
+				cs = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
+			}
 
 			var nsManager = NamespaceManager.CreateFromConnectionString(cs);
 			if (!nsManager.QueueExists(queueName))

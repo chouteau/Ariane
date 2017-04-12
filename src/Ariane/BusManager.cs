@@ -73,6 +73,11 @@ namespace Ariane
 				return;
 			}
 			var mq = registration.Queue;
+			if (mq == null)
+			{
+				GlobalConfiguration.Configuration.Logger.Fatal($"queue not defined for {queueName} {registration.TypeMedium}");
+				return;
+			}
 			var m = new Message<T>();
 			m.Label = options.Label ?? Guid.NewGuid().ToString();
 			m.Body = body;

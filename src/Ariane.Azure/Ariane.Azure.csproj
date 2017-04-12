@@ -58,6 +58,7 @@
     <Compile Include="AzureTopicMedium.cs" />
     <Compile Include="AzureQueueMedium.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="GlobalConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueProviders\AzureTopicAsyncResult.cs" />
     <Compile Include="QueueProviders\AzureQueueAsyncResult.cs" />
