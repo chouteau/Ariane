@@ -11,9 +11,10 @@ namespace Ariane.QueueProviders
 	public class AzureMessageTopic : IMessageQueue, IDisposable
 	{
 		private ManualResetEvent m_Event;
-		private AzureTopicAsyncResult m_AzureAsyncResult;
+		private Ariane.QueueProviders.AsyncResult m_AzureAsyncResult;
 		private SubscriptionClient m_SubscriptionClient;
 		private TopicClient m_Topic;
+		private string m_MessageContent;
 
 		public AzureMessageTopic(TopicClient topicClient, SubscriptionClient subscriptionClient)
 		{
@@ -22,9 +23,20 @@ namespace Ariane.QueueProviders
 			m_Event = new ManualResetEvent(false);
 			m_Topic = topicClient;
 			m_SubscriptionClient = subscriptionClient;
+
 			if (subscriptionClient != null)
 			{
-				m_AzureAsyncResult = new AzureTopicAsyncResult(m_Event, subscriptionClient);
+				var options = new OnMessageOptions();
+				options.AutoComplete = false;
+				options.AutoRenewTimeout = TimeSpan.FromMinutes(1);
+				m_SubscriptionClient.OnMessage(message =>
+				{
+					var clone = message.Clone();
+					m_AzureAsyncResult.AsyncState = clone;
+					m_Event.Set();
+				}, options);
+
+				m_AzureAsyncResult = new Ariane.QueueProviders.AsyncResult(m_Event); //  AzureTopicAsyncResult(m_Event, subscriptionClient);
 			}
 		}
 
@@ -55,11 +67,11 @@ namespace Ariane.QueueProviders
 		{
 			var message = result.AsyncState as BrokeredMessage;
 			if (message == null)
-			{
+			{ 
 				return default(T);
 			}
+
 			var body = message.GetBody<T>();
-			message.Dispose();
 			return body;
 		}
 
@@ -90,14 +102,14 @@ namespace Ariane.QueueProviders
 
 		public virtual void Dispose()
 		{
-			if (this.m_Event != null)
-			{
-				this.m_Event.Dispose();
-			}
-			if (m_AzureAsyncResult != null)
-			{
-				m_AzureAsyncResult.Dispose();
-			}
+			//if (this.m_Event != null)
+			//{
+			//	this.m_Event.Dispose();
+			//}
+			//if (m_AzureAsyncResult != null)
+			//{
+			//	m_AzureAsyncResult.Dispose();
+			//}
 		}
 	}
 }

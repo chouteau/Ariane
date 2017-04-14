@@ -17,10 +17,7 @@ namespace Ariane.QueueProviders
 
 		#region IAsyncResult Members
 
-		public object AsyncState
-		{
-			get { return m_Event; }
-		}
+		public object AsyncState { get; set; }
 
 		public System.Threading.WaitHandle AsyncWaitHandle
 		{

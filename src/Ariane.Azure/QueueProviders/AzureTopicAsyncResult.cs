@@ -51,10 +51,10 @@ namespace Ariane.QueueProviders
 
 		public void Dispose()
 		{
-			if (m_Event != null)
-			{
-				m_Event.Dispose();
-			}
+			//if (m_Event != null)
+			//{
+			//	m_Event.Dispose();
+			//}
 			if (m_BrokeredMessage != null)
 			{
 				m_BrokeredMessage.Dispose();
