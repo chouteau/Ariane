@@ -22,11 +22,12 @@ namespace Ariane.QueueProviders
 			CompletedSynchronously = false;
 			var options = new OnMessageOptions();
 			options.AutoComplete = false;
+			options.AutoRenewTimeout = TimeSpan.FromMinutes(1);
 			m_SubscriptionClient.OnMessage(message =>
 			{
 				m_BrokeredMessage = message.Clone();
-				CompletedSynchronously = true;
 				message.Complete();
+				CompletedSynchronously = true;
 				m_Event.Set();
 			}, options);
 		}
