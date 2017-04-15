@@ -39,6 +39,8 @@ namespace Ariane.Azure.Tests
 			bus.Register.AddAzureTopicReader("MyTopic", "sub2", typeof(PersonMessageReader));
 			bus.Register.AddAzureTopicReader("MyTopic", "sub3", typeof(PersonMessageReader));
 
+			MessageCollector.Current.Clear();
+
 			bus.StartReading();
 
 			var person = new Person();
@@ -52,8 +54,7 @@ namespace Ariane.Azure.Tests
 
 			System.Threading.Thread.Sleep(5 * 1000);
 
-			var receiveCount = MessageCollector.PersonCount;
-			Check.That(receiveCount).IsEqualTo(3);
+			Check.That(MessageCollector.Current.Count).IsEqualTo(3);
 
 			bus.Dispose();
 		}

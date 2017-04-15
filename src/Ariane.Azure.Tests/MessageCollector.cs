@@ -12,11 +12,11 @@ namespace Ariane.Azure.Tests
 		{
 			return new MessageCollector();
 		}, true);
-		private SynchronizedCollection<Person> m_PersonCollection;
+		private List<Person> m_PersonList;
 
 		public MessageCollector()
 		{
-			m_PersonCollection = new SynchronizedCollection<Person>();
+			m_PersonList = new List<Person>();
 		}
 
 		public static MessageCollector Current
@@ -27,25 +27,23 @@ namespace Ariane.Azure.Tests
 			}
 		}
 
-		public static void AddPerson(Person person)
-		{
-			lock(Current.m_PersonCollection.SyncRoot)
-			{
-				Current.m_PersonCollection.Add(person);
-			}
-		}
-
-		public static int PersonCount
+		public int Count
 		{
 			get
 			{
-				var result = 0;
-				lock(Current.m_PersonCollection.SyncRoot)
-				{
-					result = Current.m_PersonCollection.Count;
-				}
-				return result;
+				return m_PersonList.Count;
 			}
 		}
+
+		public void Clear()
+		{
+			m_PersonList.Clear();
+		}
+
+		public void AddPerson(Person person)
+		{
+			m_PersonList.Add(person);
+		}
+
 	}
 }

@@ -10,11 +10,13 @@ namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IDisposable
 	{
+		private static object m_Lock = new object();
+
 		private ManualResetEvent m_Event;
 		private Ariane.QueueProviders.AsyncResult m_AzureAsyncResult;
 		private SubscriptionClient m_SubscriptionClient;
 		private TopicClient m_Topic;
-		private string m_MessageContent;
+		private OnMessageOptions m_MessageOptions;
 
 		public AzureMessageTopic(TopicClient topicClient, SubscriptionClient subscriptionClient)
 		{
@@ -23,20 +25,20 @@ namespace Ariane.QueueProviders
 			m_Event = new ManualResetEvent(false);
 			m_Topic = topicClient;
 			m_SubscriptionClient = subscriptionClient;
-
-			if (subscriptionClient != null)
+			if (m_SubscriptionClient != null)
 			{
-				var options = new OnMessageOptions();
-				options.AutoComplete = false;
-				options.AutoRenewTimeout = TimeSpan.FromMinutes(1);
+				m_AzureAsyncResult = new Ariane.QueueProviders.AsyncResult(m_Event);
+
+				m_MessageOptions = new OnMessageOptions();
+				m_MessageOptions.AutoComplete = true;
+				m_MessageOptions.AutoRenewTimeout = TimeSpan.FromMinutes(1);
 				m_SubscriptionClient.OnMessage(message =>
 				{
-					var clone = message.Clone();
-					m_AzureAsyncResult.AsyncState = clone;
+					var bm = message.Clone();
+					m_AzureAsyncResult.AsyncState = bm;
 					m_Event.Set();
-				}, options);
+				}, m_MessageOptions);
 
-				m_AzureAsyncResult = new Ariane.QueueProviders.AsyncResult(m_Event); //  AzureTopicAsyncResult(m_Event, subscriptionClient);
 			}
 		}
 
@@ -65,13 +67,9 @@ namespace Ariane.QueueProviders
 
 		public T EndReceive<T>(IAsyncResult result)
 		{
-			var message = result.AsyncState as BrokeredMessage;
-			if (message == null)
-			{ 
-				return default(T);
-			}
-
-			var body = message.GetBody<T>();
+			var bm = result.AsyncState as BrokeredMessage;
+			var body = bm.GetBody<T>();
+			bm.Dispose();
 			return body;
 		}
 

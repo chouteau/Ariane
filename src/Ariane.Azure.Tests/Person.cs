@@ -9,11 +9,9 @@ namespace Ariane.Azure.Tests
 	{
 		public Person()
 		{
-			IsProcessed = false;
 		}
 		public string FirsName { get; set; }
 		public string LastName { get; set; }
-		public bool IsProcessed { get; set; }
 		public string TopicName { get; set; }
 	}
 }
