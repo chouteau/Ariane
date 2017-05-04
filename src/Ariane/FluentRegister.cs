@@ -107,6 +107,7 @@ namespace Ariane
 						TopicName = queueSetting.TopicName
 					};
 					List.Add(registration);
+					GlobalConfiguration.Configuration.Logger.Info($"Add queue {List.Count} {registration.QueueName} {registration.TypeMedium} {registration.TopicName} {queueSetting.TypeReader} {registration.AutoStartReading}");
 					registration.AddSubscriberType(queueSetting.TypeReader);
 				}
 			}

@@ -35,6 +35,7 @@ namespace Ariane.Azure.Tests
 		public void Receivers_Person()
 		{
 			var bus = new BusManager();
+			bus.Register.AddAzureTopicWriter("MyTopic");
 			bus.Register.AddAzureTopicReader("MyTopic", "sub1", typeof(PersonMessageReader));
 			bus.Register.AddAzureTopicReader("MyTopic", "sub2", typeof(PersonMessageReader));
 			bus.Register.AddAzureTopicReader("MyTopic", "sub3", typeof(PersonMessageReader));

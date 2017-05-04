@@ -75,7 +75,7 @@ namespace Ariane
 			var mq = registration.Queue;
 			if (mq == null)
 			{
-				GlobalConfiguration.Configuration.Logger.Fatal($"queue not defined for {queueName} {registration.TypeMedium}");
+				GlobalConfiguration.Configuration.Logger.Error($"queue not defined for {queueName} {registration.TypeMedium}");
 				return;
 			}
 			var m = new Message<T>();
