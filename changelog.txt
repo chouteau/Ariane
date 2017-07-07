@@ -1,4 +1,7 @@
-﻿2.1.2 (Ariane.Azure)
+﻿4.2.52
+- Add overridable Elapsed method in message reader raised every 60s by default
+
+2.1.2 (Ariane.Azure)
 - Add global connectionstring for Azure
 
 4.0.47.0

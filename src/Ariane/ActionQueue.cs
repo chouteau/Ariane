@@ -56,7 +56,12 @@ namespace Ariane
 			while (!m_Terminated)
 			{
 				var waitHandles = new WaitHandle[] { m_Terminate, m_NewMessage };
-				int result = ManualResetEvent.WaitAny(waitHandles, Timeout * 1000, false);
+				int result = 0;
+				try
+				{
+					result = ManualResetEvent.WaitAny(waitHandles, Timeout * 1000, false);
+				}
+				catch { }
 				if (result == 0)
 				{
 					m_Terminated = true;

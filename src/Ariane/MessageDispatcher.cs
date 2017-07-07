@@ -121,9 +121,10 @@ namespace Ariane
 					m_Terminated = true;
 					break;
 				}
-				else if (index == 258)
+				else if (index == 258) // Timeout
 				{
 					m_Queue.SetTimeout();
+					Elapsed();
 					continue;
 				}
 
@@ -173,6 +174,21 @@ namespace Ariane
 				try
 				{
 					subscriber.ProcessMessage(message);
+				}
+				catch (Exception ex)
+				{
+					Logger.Error(ex);
+				}
+			}
+		}
+
+		public virtual void Elapsed()
+		{
+			foreach (var subscriber in MessageSubscriberList.Value)
+			{
+				try
+				{
+					subscriber.Elapsed();
 				}
 				catch (Exception ex)
 				{

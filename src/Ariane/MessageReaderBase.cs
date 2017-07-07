@@ -24,5 +24,12 @@ namespace Ariane
 		/// </summary>
 		/// <param name="message"></param>
 		public abstract void ProcessMessage(T message);
+		/// <summary>
+		/// Raised when timeout
+		/// </summary>
+		public virtual void Elapsed()
+		{
+			// Do nothing
+		}
 	}
 }

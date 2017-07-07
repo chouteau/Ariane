@@ -21,7 +21,16 @@ namespace Ariane
 			}
 			else
 			{
-				cs = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
+				var item = System.Configuration.ConfigurationManager.ConnectionStrings[queueName];
+				if (item != null)
+				{
+					cs = item.ConnectionString;
+				}
+				else
+				{
+					GlobalConfiguration.Configuration.Logger.Error($"queue {queueName} does not exists");
+					cs = "off";
+				}
 			}
 
 			if (cs == "off")
