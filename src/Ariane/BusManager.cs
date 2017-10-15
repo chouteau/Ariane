@@ -14,7 +14,7 @@ namespace Ariane
 	public class BusManager : IServiceBus, IDisposable
 	{
 		private static object m_Lock = new object();
-		private IActionQueue m_ActionQueue;
+		private ActionQueue m_ActionQueue;
 		private FluentRegister m_Register;
 
 		public BusManager()
@@ -194,10 +194,10 @@ namespace Ariane
 
 		public virtual void StopReading()
 		{
-			if (m_ActionQueue != null)
-			{
-				this.m_ActionQueue.Stop();
-			}
+			//if (m_ActionQueue != null)
+			//{
+			//	this.m_ActionQueue.Stop();
+			//}
 			lock(m_Register.List.SyncRoot)
 			{
 				foreach (var item in m_Register.List)
@@ -282,14 +282,14 @@ namespace Ariane
 			return result;
 		}
 
-		public void ReplaceActionQueue(IActionQueue actionQueue)
-		{
-			if (actionQueue == null)
-			{
-				return;
-			}
-			m_ActionQueue = actionQueue;
-		}
+		//public void ReplaceActionQueue(IActionQueue actionQueue)
+		//{
+		//	//if (actionQueue == null)
+		//	//{
+		//	//	return;
+		//	//}
+		//	//m_ActionQueue = actionQueue;
+		//}
 
 		#endregion
 
@@ -297,10 +297,10 @@ namespace Ariane
 
 		public virtual void Dispose()
 		{
-			if (this.m_ActionQueue != null)
-			{
-				this.m_ActionQueue.Dispose();
-			}
+			//if (this.m_ActionQueue != null)
+			//{
+			//	this.m_ActionQueue.Dispose();
+			//}
 			lock(m_Register.List.SyncRoot)
 			{
 				foreach (var item in m_Register.List)

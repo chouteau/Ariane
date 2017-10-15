@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ariane
 {
-	public class SyncActionQueue : IActionQueue
+	public class SyncActionQueue // : IActionQueue
 	{
 		public void Add(Action action)
 		{

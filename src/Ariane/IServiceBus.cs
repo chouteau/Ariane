@@ -71,11 +71,6 @@ namespace Ariane
 		/// used by unit test
 		/// </summary>
 		/// <param name="service"></param>
-		void ReplaceActionQueue(IActionQueue service);
-
-		/// <summary>
-		/// Dispose service bus
-		/// </summary>
-		void Dispose();
+		//void ReplaceActionQueue(IActionQueue service);
 	}
 }

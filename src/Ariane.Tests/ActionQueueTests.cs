@@ -15,7 +15,6 @@ namespace Ariane.Tests
 		public void Add_Action_From_MultiThreads()
 		{
 			var actionQueue = new Ariane.ActionQueue();
-			actionQueue.Timeout = 1;
 
 			int endProcess = 0;
 			Action write = () => 
@@ -44,7 +43,7 @@ namespace Ariane.Tests
 				System.Threading.Thread.Sleep(100);
 			}
 
-			actionQueue.Dispose();
+			// actionQueue.Dispose();
 		}
 
 	}

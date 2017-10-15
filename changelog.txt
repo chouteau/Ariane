@@ -1,4 +1,5 @@
-﻿4.2.52
+﻿4.2.54.2
+- Fix error on Add item to ActionQueue when thread pool is full
 - Add overridable Elapsed method in message reader raised every 60s by default
 
 2.1.2 (Ariane.Azure)
