@@ -20,6 +20,12 @@ namespace Ariane.QueueProviders
 			m_Queue = queueClient;
 			IsCompleted = false;
 			CompletedSynchronously = false;
+			var options = new OnMessageOptions();
+			options.AutoComplete = false;
+			options.ExceptionReceived += (s, ex) =>
+			{
+				GlobalConfiguration.Configuration.Logger.Error(ex.Exception);
+			};
 			m_Queue.OnMessage(message =>
 			{
 				m_BrokeredMessage = message.Clone();

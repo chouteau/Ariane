@@ -1,4 +1,12 @@
-﻿4.2.54.2
+﻿2.3.7.0 (Ariane.Azure)
+- Upgrate Microsoft.ServiceBus nuget to 4.1.6
+- LazyAsyncResult for AzureMessageQueue
+- Change default ttl when create Queue to 24 hours
+- Change default behaviour for receive (delete after read) for MessageQueue
+- Improve logging en exceptions for MessageQueue
+- Add 2 projects for stress Azure Queue
+
+4.2.54.2
 - Fix error on Add item to ActionQueue when thread pool is full
 - Add overridable Elapsed method in message reader raised every 60s by default
 

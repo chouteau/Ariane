@@ -10,16 +10,14 @@ namespace Ariane.QueueProviders
 {
 	public class AzureMessageQueue : IMessageQueue, IDisposable
 	{
+		private AzureQueueAsyncResult m_LazyAsyncResult = null;
 		private QueueClient m_Queue;
 		private ManualResetEvent m_Event;
-		private AzureQueueAsyncResult m_AzureAsyncResult;
 
 		public AzureMessageQueue(QueueClient queueClient)
 		{
 			QueueName = queueClient.Path;
 			m_Queue = queueClient;
-			m_Event = new ManualResetEvent(false);
-			m_AzureAsyncResult = new AzureQueueAsyncResult(m_Event, m_Queue);
 		}
 
 		public int? Timeout
@@ -42,7 +40,11 @@ namespace Ariane.QueueProviders
 
 		public IAsyncResult BeginReceive()
 		{
-			return m_AzureAsyncResult;
+			if (m_LazyAsyncResult == null)
+			{
+				m_LazyAsyncResult = InitializeAsyncResult();
+			}
+			return m_LazyAsyncResult;
 		}
 
 		public T EndReceive<T>(IAsyncResult result)
@@ -94,10 +96,17 @@ namespace Ariane.QueueProviders
 			{
 				this.m_Event.Dispose();
 			}
-			if (m_AzureAsyncResult != null)
+			if (m_LazyAsyncResult != null)
 			{
-				m_AzureAsyncResult.Dispose();
+				m_LazyAsyncResult.Dispose();
 			}
+		}
+
+		private AzureQueueAsyncResult InitializeAsyncResult()
+		{
+			m_Event = new ManualResetEvent(false);
+			var result = new AzureQueueAsyncResult(m_Event, m_Queue);
+			return result;
 		}
 	}
 }

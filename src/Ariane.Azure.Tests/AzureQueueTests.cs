@@ -14,32 +14,32 @@ namespace Ariane.Azure.Tests
 	[TestClass]
 	public class AzureQueueTests
 	{
+		public const string QUEUE_NAME = "test.azure2";
+
 		[TestMethod]
-		public void Send_Person()
+		public void Send_Person_Queue()
 		{
 			var bus = new BusManager(); 
-			bus.Register.AddAzureQueueWriter("test.azure");
+			bus.Register.AddAzureQueueWriter(QUEUE_NAME);
 
 			var person = new Person();
 			person.FirsName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("test.azure", person);
-
-			System.Threading.Thread.Sleep(5 * 1000);
-
+			bus.Send(QUEUE_NAME, person);
 			bus.Dispose();
 		}
 
 		[TestMethod]
-		public void Receive_Person()
+		public void Receive_Person_Queue()
 		{
 			var bus = new BusManager();
-			bus.Register.AddAzureQueueReader("test.azure", typeof(PersonMessageReader));
+			bus.Register.AddAzureQueueReader(QUEUE_NAME, typeof(PersonMessageReader));
 
 			bus.StartReading();
 
-			System.Threading.Thread.Sleep(5 * 1000);
+			System.Threading.Thread.Sleep(20 * 1000);
+			Check.That(MessageCollector.Current.Count).IsGreaterThan(0);
 
 			bus.Dispose();
 		}

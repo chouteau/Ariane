@@ -28,6 +28,8 @@ namespace Ariane
 			if (!nsManager.QueueExists(queueName))
 			{
 				var qd = new QueueDescription(queueName);
+				qd.DefaultMessageTimeToLive = TimeSpan.FromHours(24);
+				qd.MaxDeliveryCount = 1;
 				nsManager.CreateQueue(qd);
 			}
 

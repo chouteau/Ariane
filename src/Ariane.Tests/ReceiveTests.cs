@@ -44,6 +44,24 @@ namespace Ariane.Tests
 		}
 
 		[TestMethod]
+		public void Receive_Empty_Queue_With_MSMQ_Medium()
+		{
+			var bus = new BusManager();
+			bus.Register.AddQueue(new QueueSetting()
+			{
+				AutoStartReading = false,
+				Name = "receive.msmq",
+				TypeMedium = typeof(Ariane.MSMQMedium)
+			});
+
+			var personList = bus.Receive<Person>("receive.msmq", 10, 5 * 1000);
+
+			Check.That(personList.Count()).IsEqualTo(0);
+
+			bus.Dispose();
+		}
+
+		[TestMethod]
 		public void Receive_With_Unkwnow_Queue()
 		{
 			var bus = new Ariane.BusManager();

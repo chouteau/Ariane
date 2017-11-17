@@ -15,7 +15,7 @@ namespace Ariane.Azure.Tests
 	public class AzureTopicTests
 	{
 		[TestMethod]
-		public void Send_Person()
+		public void Send_Person_Topic()
 		{
 			var bus = new BusManager(); 
 			bus.Register.AddAzureTopicWriter("MyTopic");
@@ -32,7 +32,7 @@ namespace Ariane.Azure.Tests
 		}
 
 		[TestMethod]
-		public void Receivers_Person()
+		public void Receive_Person_Topic()
 		{
 			var bus = new BusManager();
 			bus.Register.AddAzureTopicWriter("MyTopic");

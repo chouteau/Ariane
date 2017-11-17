@@ -192,3 +192,9 @@ ModelManifest.xml
 /.nuget
 /nuget
 /src/Ariane.Azure.Tests/localconfig/connectionStrings.config
+/.vs/Ariane/v15/Server/sqlite3
+/.vs/Ariane/v15/sqlite3/db.lock
+/src/ArianeAzureQueueSenderConsole/localconfig/connectionStrings.config
+/.vs/Ariane/v15/sqlite3/storage.ide-shm
+/.vs/Ariane/v15/sqlite3/storage.ide-wal
+/src/ArianeAzureQueueReaderConsole/localconfig/connectionStrings.config
