@@ -61,9 +61,10 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueueProviders\AzureMessageQueue.cs" />
     <Compile Include="QueueProviders\AzureQueueAsyncResult.cs" />
     <Compile Include="QueueProviders\AzureMessageTopic.cs" />
-    <Compile Include="QueueProviders\AzureMessageQueue.cs" />
+    <Compile Include="QueueProviders\AzureDefaultMessageQueue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ariane\Ariane.csproj">

@@ -83,6 +83,7 @@ namespace Ariane
 			m.Body = body;
 			m.Priority = Math.Max(0, options.Priority);
 			m.TimeToLive = options.TimeToLive;
+			m.ScheduledEnqueueTimeUtc = options.ScheduledEnqueueTimeUtc;
 			mq.Send(m);
 		}
 

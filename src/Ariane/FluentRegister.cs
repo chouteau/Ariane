@@ -108,8 +108,13 @@ namespace Ariane
 					};
 					List.Add(registration);
 					GlobalConfiguration.Configuration.Logger.Info($"Add queue {List.Count} {registration.QueueName} {registration.TypeMedium} {registration.TopicName} {queueSetting.TypeReader} {registration.AutoStartReading}");
-					registration.AddSubscriberType(queueSetting.TypeReader);
 				}
+				else
+				{
+					registration.AddSubscriberType(queueSetting.TypeReader);
+					GlobalConfiguration.Configuration.Logger.Info($"Add subscriber {queueSetting.TypeReader} for queue {registration.QueueName} {registration.TopicName} {registration.AutoStartReading}");
+				}
+				registration.AddSubscriberType(queueSetting.TypeReader);
 			}
 			return this;
 		}

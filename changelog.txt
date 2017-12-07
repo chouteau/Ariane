@@ -1,4 +1,12 @@
-﻿2.3.7.0 (Ariane.Azure)
+﻿2.4.9.1 (Ariane.Azure)
+- JSon Serialization by defaut for Queue
+
+4.3.56 (Ariane)
+- Add ScheduledEnqueueTimeUtc for send message
+- Add many message readers for 1 queue by configuration
+- Action queue refactorized for remove 1 thread
+
+2.3.7.0 (Ariane.Azure)
 - Upgrate Microsoft.ServiceBus nuget to 4.1.6
 - LazyAsyncResult for AzureMessageQueue
 - Change default ttl when create Queue to 24 hours

@@ -8,13 +8,13 @@ using Microsoft.ServiceBus.Messaging;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageQueue : IMessageQueue, IDisposable
+	public class AzureDefaultMessageQueue : IMessageQueue, IDisposable
 	{
 		private AzureQueueAsyncResult m_LazyAsyncResult = null;
 		private QueueClient m_Queue;
 		private ManualResetEvent m_Event;
 
-		public AzureMessageQueue(QueueClient queueClient)
+		public AzureDefaultMessageQueue(QueueClient queueClient)
 		{
 			QueueName = queueClient.Path;
 			m_Queue = queueClient;
@@ -55,7 +55,7 @@ namespace Ariane.QueueProviders
 			{
 				return body;
 			}
-			body = GetAndDeserializeBody<T>(brokeredMessage);
+			body = brokeredMessage.GetBody<T>();
 			return body;
 		}
 
@@ -65,7 +65,7 @@ namespace Ariane.QueueProviders
 			var mre = new ManualResetEvent(false);
 			m_Queue.OnMessage(message =>
 			{
-				result = GetAndDeserializeBody<T>(message);
+				result = message.GetBody<T>();
 				mre.Set();
 			});
 			mre.WaitOne(10 * 1000);
@@ -82,12 +82,8 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			var brokeredMessage = CreateSerializedBrokeredMessage(message.Body);
+			var brokeredMessage = new BrokeredMessage(message.Body);
 			brokeredMessage.Label = message.Label;
-			if (message.ScheduledEnqueueTimeUtc.HasValue)
-			{
-				brokeredMessage.ScheduledEnqueueTimeUtc = message.ScheduledEnqueueTimeUtc.Value;
-			}
 			if (message.TimeToLive.HasValue)
 			{
 				brokeredMessage.TimeToLive = message.TimeToLive.Value;
@@ -114,28 +110,6 @@ namespace Ariane.QueueProviders
 			m_Event = new ManualResetEvent(false);
 			var result = new AzureQueueAsyncResult(m_Event, m_Queue);
 			return result;
-		}
-
-		private BrokeredMessage CreateSerializedBrokeredMessage(object body)
-		{
-			var content = Newtonsoft.Json.JsonConvert.SerializeObject(body);
-			var bytes = Encoding.UTF8.GetBytes(content);
-			var stream = new System.IO.MemoryStream(bytes);
-			var brokeredMessage = new BrokeredMessage(stream);
-			brokeredMessage.ContentType = "application/json";
-			return brokeredMessage;
-		}
-
-		private T GetAndDeserializeBody<T>(BrokeredMessage brokeredMessage)
-		{
-			var body = default(T);
-			var stream = brokeredMessage.GetBody<System.IO.Stream>();
-			using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
-			{
-				var content = reader.ReadToEnd();
-				body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
-			}
-			return body;
 		}
 	}
 }

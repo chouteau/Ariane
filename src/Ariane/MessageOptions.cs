@@ -14,5 +14,6 @@ namespace Ariane
 		public string Label { get; set; }
 		public int Priority { get; set; }
 		public TimeSpan? TimeToLive { get; set; }
+		public DateTime? ScheduledEnqueueTimeUtc { get; set; }
 	}
 }

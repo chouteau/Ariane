@@ -39,6 +39,12 @@ namespace Ariane
 		/// Message expire at UTC Date
 		/// </summary>
 		public TimeSpan? TimeToLive { get; set; }
+		/// <summary>
+		/// Gets or sets the date and time in UTC at which the message will be enqueued.
+		/// This property returns the time in UTC; when setting the property, the supplied
+		/// DateTime value must also be in UTC.
+		/// </summary>
+		public DateTime? ScheduledEnqueueTimeUtc { get; set; }
 
 		/// <summary>
 		/// Dispose
