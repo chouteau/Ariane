@@ -133,7 +133,15 @@ namespace Ariane.QueueProviders
 			using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
 			{
 				var content = reader.ReadToEnd();
-				body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+				try
+				{
+					body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+				}
+				catch(Exception ex)
+				{
+					ex.Data.Add("content", content);
+					throw ex;
+				}
 			}
 			return body;
 		}

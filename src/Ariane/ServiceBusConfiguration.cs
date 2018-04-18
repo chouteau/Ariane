@@ -21,5 +21,9 @@ namespace Ariane
 		/// Logger
 		/// </summary>
 		public ILogger Logger { get; set; }
+		/// <summary>
+		/// Unique name of topics for test
+		/// </summary>
+		public string UniqueTopicNameForTest { get; set; }
 	}
 }

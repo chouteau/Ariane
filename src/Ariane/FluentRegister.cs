@@ -92,6 +92,11 @@ namespace Ariane
 				throw new ArgumentNullException();
 			}
 
+			if (GlobalConfiguration.Configuration.UniqueTopicNameForTest != null)
+			{
+				queueSetting.TopicName = GlobalConfiguration.Configuration.UniqueTopicNameForTest;
+			}
+
 			lock (List.SyncRoot)
 			{
 				var queueName = queueSetting.Name;
