@@ -34,7 +34,8 @@ namespace Ariane
 			}
 
 			var queueClient = QueueClient.CreateFromConnectionString(cs, queueName);
-			return new QueueProviders.AzureMessageQueue(queueClient);
+			var mq = new QueueProviders.AzureMessageQueue(queueClient);
+			return mq;
 		}
 
 		#endregion

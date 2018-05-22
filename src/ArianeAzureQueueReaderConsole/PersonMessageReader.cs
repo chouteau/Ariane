@@ -11,7 +11,7 @@ namespace ArianeAzureQueueReaderConsole
 	{
 		public override void ProcessMessage(ArianeAzureQueueSenderConsole.Person message)
 		{
-			Console.WriteLine($"person\t{message.FirsName}\t{message.LastName}");
+			Console.WriteLine($"{message}");
 		}
 	}
 }

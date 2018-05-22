@@ -1,4 +1,8 @@
-﻿2.4.9.1 (Ariane.Azure)
+﻿2.4.10.1 (Ariane.Azure)
+- Add 30s timeout by defaut 
+- Update WindowsAzure.ServiceBus to 4.1.9 
+
+2.4.9.1 (Ariane.Azure)
 - JSon Serialization by defaut for Queue
 
 4.3.56 (Ariane)

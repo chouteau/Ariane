@@ -46,7 +46,7 @@ namespace Ariane.QueueProviders
 		{
 			get
 			{
-				return null;
+				return 30 * 1000;
 			}
 		}
 

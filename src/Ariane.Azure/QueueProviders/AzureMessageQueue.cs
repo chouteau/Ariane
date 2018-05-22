@@ -1,4 +1,6 @@
-﻿using System;
+﻿// #define Watch
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +26,7 @@ namespace Ariane.QueueProviders
 		{
 			get
 			{
-				return null;
+				return 30 * 1000; // Toutes les 30 secondes
 			}
 		}
 
@@ -82,6 +84,9 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
+#if Watch
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+#endif
 			var brokeredMessage = CreateSerializedBrokeredMessage(message.Body);
 			brokeredMessage.Label = message.Label;
 			if (message.ScheduledEnqueueTimeUtc.HasValue)
@@ -93,6 +98,10 @@ namespace Ariane.QueueProviders
 				brokeredMessage.TimeToLive = message.TimeToLive.Value;
 			}
 			m_Queue.Send(brokeredMessage);
+#if Watch
+			watch.Stop();
+			Console.WriteLine($"message sent = {watch.ElapsedMilliseconds}ms");
+#endif
 		}
 
 		#endregion
@@ -120,7 +129,7 @@ namespace Ariane.QueueProviders
 		{
 			var content = Newtonsoft.Json.JsonConvert.SerializeObject(body);
 			var bytes = Encoding.UTF8.GetBytes(content);
-			var stream = new System.IO.MemoryStream(bytes);
+			var stream = new System.IO.MemoryStream(bytes, false);
 			var brokeredMessage = new BrokeredMessage(stream);
 			brokeredMessage.ContentType = "application/json";
 			return brokeredMessage;

@@ -19,10 +19,8 @@ namespace ArianeAzureQueueSenderConsole
 			while(count < 1000)
 			{
 				var person = new Person();
-				bus.Send("stress.person", person, new MessageOptions()
-				{
-					ScheduledEnqueueTimeUtc = DateTime.UtcNow.AddMinutes(5)
-				});
+				person.Id = count;
+				bus.Send("stress.person", person);
 				count++;
 				Console.WriteLine($"{count} items sent");
 			}
