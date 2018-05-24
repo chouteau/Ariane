@@ -24,6 +24,11 @@ namespace Ariane
 				cs = System.Configuration.ConfigurationManager.ConnectionStrings[queueName].ConnectionString;
 			}
 
+			if (cs == "off")
+			{
+				return null;
+			}
+
 			var nsManager = NamespaceManager.CreateFromConnectionString(cs);
 			if (!nsManager.QueueExists(queueName))
 			{
