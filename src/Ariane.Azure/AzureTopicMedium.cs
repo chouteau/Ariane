@@ -42,6 +42,7 @@ namespace Ariane
 			if (!nsManager.TopicExists(queueName))
 			{
 				var qd = new TopicDescription(queueName);
+				qd.DefaultMessageTimeToLive = TimeSpan.FromHours(24);
 				nsManager.CreateTopic(qd);
 			}
 

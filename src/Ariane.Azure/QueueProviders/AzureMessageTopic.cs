@@ -3,43 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+
+using Ariane.Azure;
 
 namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IDisposable
 	{
-		private static object m_Lock = new object();
-
 		private ManualResetEvent m_Event;
-		private Ariane.QueueProviders.AsyncResult m_AzureAsyncResult;
+		private System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage> m_BrokeredMessageQueue;
 		private SubscriptionClient m_SubscriptionClient;
 		private TopicClient m_Topic;
 		private OnMessageOptions m_MessageOptions;
 
 		public AzureMessageTopic(TopicClient topicClient, SubscriptionClient subscriptionClient)
 		{
-			QueueName = topicClient.Path;
-			TopicName = subscriptionClient?.Name;
-			m_Event = new ManualResetEvent(false);
 			m_Topic = topicClient;
 			m_SubscriptionClient = subscriptionClient;
-			if (m_SubscriptionClient != null)
-			{
-				m_AzureAsyncResult = new Ariane.QueueProviders.AsyncResult(m_Event);
 
-				m_MessageOptions = new OnMessageOptions();
-				m_MessageOptions.AutoComplete = true;
-				m_MessageOptions.AutoRenewTimeout = TimeSpan.FromMinutes(1);
-				m_SubscriptionClient.OnMessage(message =>
-				{
-					var bm = message.Clone();
-					m_AzureAsyncResult.AsyncState = bm;
-					m_Event.Set();
-				}, m_MessageOptions);
-
-			}
+			QueueName = topicClient.Path;
+			TopicName = subscriptionClient?.Name;
 		}
 
 		public int? Timeout
@@ -62,33 +48,68 @@ namespace Ariane.QueueProviders
 
 		public IAsyncResult BeginReceive()
 		{
-			return m_AzureAsyncResult;
+			if (m_Event == null)
+			{
+				m_Event = new ManualResetEvent(false);
+				m_BrokeredMessageQueue = new System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage>();
+				if (m_SubscriptionClient != null)
+				{
+					m_MessageOptions = new OnMessageOptions();
+					m_MessageOptions.AutoComplete = true;
+					m_MessageOptions.AutoRenewTimeout = TimeSpan.FromMinutes(1);
+					m_SubscriptionClient.OnMessage(message =>
+					{
+						var bm = message.Clone();
+						m_BrokeredMessageQueue.Enqueue(bm);
+						m_Event.Set();
+					}, m_MessageOptions);
+				}
+			}
+			return new AsyncResult(m_Event);
 		}
 
-		public T EndReceive<T>(IAsyncResult result)
+		public T EndReceive<T>(IAsyncResult asyncResult)
 		{
-			var bm = result.AsyncState as BrokeredMessage;
-			var body = bm.GetBody<T>();
-			bm.Dispose();
-			return body;
+			BrokeredMessage brokeredMessage = null;
+			bool result = m_BrokeredMessageQueue.TryDequeue(out brokeredMessage);
+			if (result)
+			{
+				var body = default(T);
+				if (brokeredMessage == null)
+				{
+					return body;
+				}
+				body = brokeredMessage.GetAndDeserializeBody<T>();
+				brokeredMessage.Dispose();
+				return body;
+			}
+			return default(T);
 		}
 
 		public T Receive<T>()
 		{
 			var message = m_SubscriptionClient.Receive();
-			var result = message.GetBody<T>();
+			var result = message.GetAndDeserializeBody<T>();
 			return result;
 		}
 
 		public void Reset()
 		{
-			m_Event.Reset();
+			if (m_Event != null
+				&& m_BrokeredMessageQueue.Count == 0)
+			{
+				m_Event.Reset();
+			}
 		}
 
 		public void Send<T>(Message<T> message)
 		{
-			var brokeredMessage = new BrokeredMessage(message.Body);
+			var brokeredMessage = message.Body.CreateSerializedBrokeredMessage();
 			brokeredMessage.Label = message.Label;
+			if (message.ScheduledEnqueueTimeUtc.HasValue)
+			{
+				brokeredMessage.ScheduledEnqueueTimeUtc = message.ScheduledEnqueueTimeUtc.Value;
+			}
 			if (message.TimeToLive.HasValue)
 			{
 				brokeredMessage.TimeToLive = message.TimeToLive.Value;

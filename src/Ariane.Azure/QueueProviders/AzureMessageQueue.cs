@@ -5,16 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+
+using Ariane.Azure;
 
 namespace Ariane.QueueProviders
 {
 	public class AzureMessageQueue : IMessageQueue, IDisposable
 	{
-		private AzureQueueAsyncResult m_LazyAsyncResult = null;
 		private QueueClient m_Queue;
 		private ManualResetEvent m_Event;
+		private System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage> m_BrokeredMessageQueue;
 
 		public AzureMessageQueue(QueueClient queueClient)
 		{
@@ -42,23 +45,42 @@ namespace Ariane.QueueProviders
 
 		public IAsyncResult BeginReceive()
 		{
-			if (m_LazyAsyncResult == null)
+			if (m_Event == null)
 			{
-				m_LazyAsyncResult = InitializeAsyncResult();
+				m_Event = new ManualResetEvent(false);
+				m_BrokeredMessageQueue = new System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage>();
+				var options = new OnMessageOptions();
+				options.AutoComplete = false;
+				options.ExceptionReceived += (s, ex) =>
+				{
+					GlobalConfiguration.Configuration.Logger.Error(ex.Exception);
+				};
+				m_Queue.OnMessage(message =>
+				{
+					var bm = message.Clone();
+					m_BrokeredMessageQueue.Enqueue(bm);
+					m_Event.Set();
+				}, options);
 			}
-			return m_LazyAsyncResult;
+			return new AsyncResult(m_Event);
 		}
 
-		public T EndReceive<T>(IAsyncResult result)
+		public T EndReceive<T>(IAsyncResult asyncResult)
 		{
-			var brokeredMessage = result.AsyncState as BrokeredMessage;
-			var body = default(T);
-			if (brokeredMessage == null)
+			BrokeredMessage brokeredMessage = null;
+			bool result = m_BrokeredMessageQueue.TryDequeue(out brokeredMessage);
+			if (result)
 			{
+				var body = default(T);
+				if (brokeredMessage == null)
+				{
+					return body;
+				}
+				body = brokeredMessage.GetAndDeserializeBody<T>();
+				brokeredMessage.Dispose();
 				return body;
 			}
-			body = GetAndDeserializeBody<T>(brokeredMessage);
-			return body;
+			return default(T);
 		}
 
 		public T Receive<T>()
@@ -67,7 +89,7 @@ namespace Ariane.QueueProviders
 			var mre = new ManualResetEvent(false);
 			m_Queue.OnMessage(message =>
 			{
-				result = GetAndDeserializeBody<T>(message);
+				result = message.GetAndDeserializeBody<T>();
 				mre.Set();
 			});
 			mre.WaitOne(10 * 1000);
@@ -76,7 +98,8 @@ namespace Ariane.QueueProviders
 
 		public void Reset()
 		{
-			if (m_Event != null)
+			if (m_Event != null
+				&& m_BrokeredMessageQueue.Count == 0)
 			{
 				m_Event.Reset();
 			}
@@ -87,7 +110,7 @@ namespace Ariane.QueueProviders
 #if Watch
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 #endif
-			var brokeredMessage = CreateSerializedBrokeredMessage(message.Body);
+			var brokeredMessage = message.Body.CreateSerializedBrokeredMessage();
 			brokeredMessage.Label = message.Label;
 			if (message.ScheduledEnqueueTimeUtc.HasValue)
 			{
@@ -112,47 +135,7 @@ namespace Ariane.QueueProviders
 			{
 				this.m_Event.Dispose();
 			}
-			if (m_LazyAsyncResult != null)
-			{
-				m_LazyAsyncResult.Dispose();
-			}
 		}
 
-		private AzureQueueAsyncResult InitializeAsyncResult()
-		{
-			m_Event = new ManualResetEvent(false);
-			var result = new AzureQueueAsyncResult(m_Event, m_Queue);
-			return result;
-		}
-
-		private BrokeredMessage CreateSerializedBrokeredMessage(object body)
-		{
-			var content = Newtonsoft.Json.JsonConvert.SerializeObject(body);
-			var bytes = Encoding.UTF8.GetBytes(content);
-			var stream = new System.IO.MemoryStream(bytes, false);
-			var brokeredMessage = new BrokeredMessage(stream);
-			brokeredMessage.ContentType = "application/json";
-			return brokeredMessage;
-		}
-
-		private T GetAndDeserializeBody<T>(BrokeredMessage brokeredMessage)
-		{
-			var body = default(T);
-			var stream = brokeredMessage.GetBody<System.IO.Stream>();
-			using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
-			{
-				var content = reader.ReadToEnd();
-				try
-				{
-					body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
-				}
-				catch(Exception ex)
-				{
-					ex.Data.Add("content", content);
-					throw ex;
-				}
-			}
-			return body;
-		}
 	}
 }

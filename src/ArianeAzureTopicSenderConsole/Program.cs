@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Ariane;
 
-namespace ArianeAzureQueueSenderConsole
+namespace ArianeAzureTopicSenderConsole
 {
 	class Program
 	{
@@ -17,14 +17,14 @@ namespace ArianeAzureQueueSenderConsole
 			var cs = System.Configuration.ConfigurationManager.ConnectionStrings["AzureQueue"].ConnectionString;
 			Ariane.Azure.GlobalConfiguration.Current.DefaultAzureConnectionString = cs;
 
-			bus.Register.AddAzureQueueWriter("stress.person2");
+			bus.Register.AddAzureTopicWriter("stress.person.topic");
 
 			int count = 0;
-			while(count < 1000)
+			while (count < 1000)
 			{
 				var person = new Person();
 				person.Id = count;
-				bus.Send("stress.person2", person);
+				bus.Send("stress.person.topic", person);
 				count++;
 				Console.WriteLine($"{count} items sent");
 			}

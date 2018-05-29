@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BB7B092D-60ED-4089-A06B-558C41A0823F}</ProjectGuid>
+    <ProjectGuid>{289138D9-CBF2-422A-BACE-6252E41058A4}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ArianeAzureQueueReaderConsole</RootNamespace>
-    <AssemblyName>ArianeAzureQueueReaderConsole</AssemblyName>
+    <RootNamespace>ArianeAzureTopicSenderConsole</RootNamespace>
+    <AssemblyName>ArianeAzureTopicSenderConsole</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,10 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\ArianeAzureQueueSenderConsole\Person.cs">
-      <Link>Person.cs</Link>
-    </Compile>
-    <Compile Include="PersonMessageReader.cs" />
+    <Compile Include="Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

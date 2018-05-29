@@ -198,3 +198,6 @@ ModelManifest.xml
 /.vs/Ariane/v15/sqlite3/storage.ide-shm
 /.vs/Ariane/v15/sqlite3/storage.ide-wal
 /src/ArianeAzureQueueReaderConsole/localconfig/connectionStrings.config
+/src/ArianeAzureTopicSenderConsole/localconfig/connectionStrings.config
+/src/ArianeAzureTopicReaderConsole/localconfig/connectionStrings.config
+/.vs/Ariane/DesignTimeBuild/.dtbcache

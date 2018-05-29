@@ -6,30 +6,23 @@ using System.Threading.Tasks;
 
 using Ariane;
 
-namespace ArianeAzureQueueSenderConsole
+namespace ArianeAzureTopicReaderConsole
 {
 	class Program
 	{
 		static void Main(string[] args)
 		{
 			var bus = new BusManager();
-
 			var cs = System.Configuration.ConfigurationManager.ConnectionStrings["AzureQueue"].ConnectionString;
 			Ariane.Azure.GlobalConfiguration.Current.DefaultAzureConnectionString = cs;
+			bus.Register.AddAzureTopicReader("stress.person.topic", System.Environment.MachineName, typeof(PersonMessageReader));
 
-			bus.Register.AddAzureQueueWriter("stress.person2");
+			bus.StartReading();
 
-			int count = 0;
-			while(count < 1000)
-			{
-				var person = new Person();
-				person.Id = count;
-				bus.Send("stress.person2", person);
-				count++;
-				Console.WriteLine($"{count} items sent");
-			}
+			Console.Read();
 
 			bus.Dispose();
+
 		}
 	}
 }

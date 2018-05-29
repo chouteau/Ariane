@@ -9,9 +9,12 @@ namespace ArianeAzureQueueReaderConsole
 {
 	public class PersonMessageReader : MessageReaderBase<ArianeAzureQueueSenderConsole.Person>
 	{
+		private int m_Count;
+
 		public override void ProcessMessage(ArianeAzureQueueSenderConsole.Person message)
 		{
-			Console.WriteLine($"{message}");
+			m_Count++;
+			Console.WriteLine($"{message} / {m_Count}");
 		}
 	}
 }

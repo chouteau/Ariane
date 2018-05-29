@@ -14,7 +14,9 @@ namespace ArianeAzureQueueReaderConsole
 		static void Main(string[] args)
 		{
 			var bus = new BusManager();
-			bus.Register.AddAzureQueueReader("stress.person", typeof(PersonMessageReader));
+			var cs = System.Configuration.ConfigurationManager.ConnectionStrings["AzureQueue"].ConnectionString;
+			Ariane.Azure.GlobalConfiguration.Current.DefaultAzureConnectionString = cs;
+			bus.Register.AddAzureQueueReader("stress.person2", typeof(PersonMessageReader));
 
 			bus.StartReading();
 

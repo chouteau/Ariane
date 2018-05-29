@@ -18,8 +18,6 @@ namespace Ariane.QueueProviders
 		{
 			m_Event = @event;
 			m_Queue = queueClient;
-			IsCompleted = false;
-			CompletedSynchronously = false;
 			var options = new OnMessageOptions();
 			options.AutoComplete = false;
 			options.ExceptionReceived += (s, ex) =>
@@ -28,17 +26,16 @@ namespace Ariane.QueueProviders
 			};
 			m_Queue.OnMessage(message =>
 			{
-				m_BrokeredMessage = message.Clone();
-				CompletedSynchronously = true;
+				var m_BrokeredMessage = message.Clone();
 				m_Event.Set();
-			});
+			}, options);
 		}
 
 		#region IAsyncResult Members
 
 		public object AsyncState
 		{
-			get { return m_BrokeredMessage; }
+			get { return m_AzureAsyncResult; }
 		}
 
 		public System.Threading.WaitHandle AsyncWaitHandle
