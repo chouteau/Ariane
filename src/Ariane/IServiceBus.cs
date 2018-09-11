@@ -51,6 +51,14 @@ namespace Ariane
 		/// <param name="priority"></param>
 		void Send<T>(string queueName, T body, string label = null, int priority = 0);
 		/// <summary>
+		/// Send typed object in queue with options
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		/// <param name="options"></param>
+		void Send<T>(string queueName, T body, MessageOptions options);
+		/// <summary>
 		/// Process message directly synchronously for unit tests 
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -58,7 +66,16 @@ namespace Ariane
 		/// <param name="body"></param>
 		/// <param name="label"></param>
 		/// <param name="priority"></param>
+		[Obsolete("use message options instead", false)]
 		void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0);
+		/// <summary>
+		/// Process message directly synchronously for unit tests with options
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="queueName"></param>
+		/// <param name="body"></param>
+		/// <param name="options"></param>
+		void SyncProcess<T>(string queueName, T body, MessageOptions options);
 		/// <summary>
 		/// Create dynamic message with name
 		/// </summary>

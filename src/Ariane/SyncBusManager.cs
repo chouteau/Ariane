@@ -33,6 +33,11 @@ namespace Ariane
 			m_Decorated.SyncProcess(queueName, body, label, priority);
 		}
 
+		public void Send<T>(string queueName, T body, MessageOptions options)
+		{
+			m_Decorated.SyncProcess(queueName, body, options);
+		}
+
 		public void StartReading()
 		{
 			m_Decorated.StartReading();
@@ -61,6 +66,11 @@ namespace Ariane
 		public void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			m_Decorated.SyncProcess(queueName, body, label, priority);
+		}
+
+		public void SyncProcess<T>(string queueName, T body, MessageOptions options)
+		{
+			m_Decorated.SyncProcess(queueName, body, options);
 		}
 
 		public dynamic CreateMessage(string name)

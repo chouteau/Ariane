@@ -17,7 +17,6 @@ namespace Ariane.QueueProviders
 		private System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage> m_BrokeredMessageQueue;
 		private SubscriptionClient m_SubscriptionClient;
 		private TopicClient m_Topic;
-		private OnMessageOptions m_MessageOptions;
 
 		public AzureMessageTopic(TopicClient topicClient, SubscriptionClient subscriptionClient)
 		{
@@ -54,15 +53,29 @@ namespace Ariane.QueueProviders
 				m_BrokeredMessageQueue = new System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage>();
 				if (m_SubscriptionClient != null)
 				{
-					m_MessageOptions = new OnMessageOptions();
-					m_MessageOptions.AutoComplete = true;
-					m_MessageOptions.AutoRenewTimeout = TimeSpan.FromMinutes(1);
+					var options = new OnMessageOptions();
+					options.AutoComplete = true;
+					options.MaxConcurrentCalls = 1;
+					// m_MessageOptions.AutoRenewTimeout = TimeSpan.FromMinutes(1);
+					options.ExceptionReceived += (s, ex) =>
+					{
+						var x = ex.Exception;
+						x.Data.Add("QueueType", "Topic");
+						x.Data.Add("Action", ex.Action);
+						x.Data.Add("QueueName", this.QueueName);
+						GlobalConfiguration.Configuration.Logger.Error(x);
+					};
 					m_SubscriptionClient.OnMessage(message =>
 					{
+						// GlobalConfiguration.Configuration.Logger.Debug($"receive topic message {message.MessageId} {this.QueueName} {this.TopicName}");
 						var bm = message.Clone();
 						m_BrokeredMessageQueue.Enqueue(bm);
+						//if (!message.IsBodyConsumed || message.State == MessageState.Active)
+						//{
+						//	message.Complete();
+						//}
 						m_Event.Set();
-					}, m_MessageOptions);
+					}, options);
 				}
 			}
 			return new AsyncResult(m_Event);
@@ -81,6 +94,7 @@ namespace Ariane.QueueProviders
 				}
 				body = brokeredMessage.GetAndDeserializeBody<T>();
 				brokeredMessage.Dispose();
+				// GlobalConfiguration.Configuration.Logger.Debug($"dequeue {QueueName} topic {TopicName} with type {body.GetType().Name}");
 				return body;
 			}
 			return default(T);
@@ -88,8 +102,12 @@ namespace Ariane.QueueProviders
 
 		public T Receive<T>()
 		{
-			var message = m_SubscriptionClient.Receive();
-			var result = message.GetAndDeserializeBody<T>();
+			T result = default(T);
+			var message = m_SubscriptionClient.Receive(TimeSpan.FromSeconds(10));
+			if (message != null)
+			{
+				result = message.GetAndDeserializeBody<T>();
+			}
 			return result;
 		}
 

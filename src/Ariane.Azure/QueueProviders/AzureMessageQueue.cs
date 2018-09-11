@@ -50,15 +50,24 @@ namespace Ariane.QueueProviders
 				m_Event = new ManualResetEvent(false);
 				m_BrokeredMessageQueue = new System.Collections.Concurrent.ConcurrentQueue<BrokeredMessage>();
 				var options = new OnMessageOptions();
-				options.AutoComplete = false;
+				options.AutoComplete = true;
 				options.ExceptionReceived += (s, ex) =>
 				{
-					GlobalConfiguration.Configuration.Logger.Error(ex.Exception);
+					var x = ex.Exception;
+					x.Data.Add("QueueType", "Queue");
+					x.Data.Add("Action", ex.Action);
+					x.Data.Add("QueueName", this.QueueName);
+					GlobalConfiguration.Configuration.Logger.Error(x);
 				};
 				m_Queue.OnMessage(message =>
 				{
+					GlobalConfiguration.Configuration.Logger.Debug($"receive queue message {message.MessageId} {this.QueueName} {this.TopicName}");
 					var bm = message.Clone();
 					m_BrokeredMessageQueue.Enqueue(bm);
+					//if (!message.IsBodyConsumed || message.State == MessageState.Active)
+					//{
+					//	message.Complete();
+					//}
 					m_Event.Set();
 				}, options);
 			}
@@ -86,13 +95,11 @@ namespace Ariane.QueueProviders
 		public T Receive<T>()
 		{
 			T result = default(T);
-			var mre = new ManualResetEvent(false);
-			m_Queue.OnMessage(message =>
+			var bm = m_Queue.Receive(TimeSpan.FromSeconds(10));
+			if (bm != null)
 			{
-				result = message.GetAndDeserializeBody<T>();
-				mre.Set();
-			});
-			mre.WaitOne(10 * 1000);
+				result = bm.GetAndDeserializeBody<T>();
+			}
 			return result;
 		}
 
@@ -125,6 +132,27 @@ namespace Ariane.QueueProviders
 			watch.Stop();
 			Console.WriteLine($"message sent = {watch.ElapsedMilliseconds}ms");
 #endif
+		}
+
+		public void SendBatch<T>(IList<Message<T>> messages)
+		{
+			var brokeredMessageList = new List<BrokeredMessage>();
+			foreach (var message in messages)
+			{
+				var bm = message.CreateSerializedBrokeredMessage();
+				bm.Label = message.Label;
+				if (message.ScheduledEnqueueTimeUtc.HasValue)
+				{
+					bm.ScheduledEnqueueTimeUtc = message.ScheduledEnqueueTimeUtc.Value;
+				}
+				if (message.TimeToLive.HasValue)
+				{
+					bm.TimeToLive = message.TimeToLive.Value;
+				}
+				brokeredMessageList.Add(bm);
+			}
+
+			m_Queue.SendBatch(brokeredMessageList);
 		}
 
 		#endregion

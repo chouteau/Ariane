@@ -1,4 +1,8 @@
-﻿2.4.10.1 (Ariane.Azure)
+﻿2.5.18.0 (Ariane.Azure)
+- Improve logs on error
+- Add RetryPolicy Exponential by defaut on namespace manager
+
+2.4.10.1 (Ariane.Azure)
 - Add 30s timeout by defaut 
 - Update WindowsAzure.ServiceBus to 4.1.9 
 

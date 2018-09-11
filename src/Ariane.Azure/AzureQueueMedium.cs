@@ -38,6 +38,11 @@ namespace Ariane
 				nsManager.CreateQueue(qd);
 			}
 
+			nsManager.Settings.RetryPolicy = new RetryExponential(
+				minBackoff: TimeSpan.FromSeconds(0),
+				maxBackoff: TimeSpan.FromSeconds(30),
+				maxRetryCount: 3);
+
 			var queueClient = QueueClient.CreateFromConnectionString(cs, queueName);
 			var mq = new QueueProviders.AzureMessageQueue(queueClient);
 			return mq;

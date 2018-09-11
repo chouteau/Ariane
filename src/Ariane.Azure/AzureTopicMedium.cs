@@ -46,6 +46,11 @@ namespace Ariane
 				nsManager.CreateTopic(qd);
 			}
 
+			nsManager.Settings.RetryPolicy = new RetryExponential(
+				minBackoff: TimeSpan.FromSeconds(0),
+				maxBackoff: TimeSpan.FromSeconds(30),
+				maxRetryCount: 3);
+
 			var topicClient = TopicClient.CreateFromConnectionString(cs, queueName);
 
 			SubscriptionClient receiver = null;
@@ -56,6 +61,8 @@ namespace Ariane
 					&& !nsManager.SubscriptionExists(queueName, topicName))
 				{
 					var sd = new SubscriptionDescription(queueName, topicName);
+					sd.DefaultMessageTimeToLive = TimeSpan.FromHours(24);
+					sd.MaxDeliveryCount = 1;
 					nsManager.CreateSubscription(sd);
 				}
 			}

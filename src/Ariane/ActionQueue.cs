@@ -25,6 +25,10 @@ namespace Ariane
 		public void Add(Action action)
 		{
 			m_Queue.Enqueue(action);
+			if (m_Queue.Count > 15)
+			{
+				GlobalConfiguration.Configuration.Logger.Warn("Ariane action queue is greater than 15");
+			}
 			if (IsSending)
 			{
 				return;
@@ -35,9 +39,15 @@ namespace Ariane
 		private void InvokeAction()
 		{
 			Action action;
-			while(m_Queue.TryDequeue(out action))
+			while(true)
 			{
-				InternalInvokeAction(action);
+				bool result = m_Queue.TryDequeue(out action);
+				if (result)
+				{
+					InternalInvokeAction(action);
+					continue;
+				}
+				break;
 			}
 		}
 

@@ -105,6 +105,7 @@ namespace Ariane.QueueProviders
 					mqex.Data.Add("MessageType", message.GetType().FullName);
 					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
 					mqex.Data.Add("Message", json);
+					GlobalConfiguration.Configuration.Logger.Error(mqex);
 				}
 				catch { /* Dead for science */ }
 			}
@@ -116,6 +117,7 @@ namespace Ariane.QueueProviders
 					ex.Data.Add("MessageType", message.GetType().FullName);
 					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
 					ex.Data.Add("Message", json);
+					GlobalConfiguration.Configuration.Logger.Error(ex);
 				}
 				catch { /* Dead for science */ }
 			}
