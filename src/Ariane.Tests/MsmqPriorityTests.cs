@@ -58,10 +58,10 @@ namespace Ariane.Tests
 			personHighest.FirstName = "highest";
 			personHighest.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("test.msmq", personNormal, priority : 0);
-			bus.Send("test.msmq", personHigh, priority: 1);
-			bus.Send("test.msmq", personVeryHigh, priority: 2);
-			bus.Send("test.msmq", personHighest, priority: 3);
+			bus.Send("test.msmq", personNormal, new MessageOptions() { Priority = 0 });
+			bus.Send("test.msmq", personHigh, new MessageOptions() { Priority = 1 });
+			bus.Send("test.msmq", personVeryHigh, new MessageOptions() { Priority = 2 });
+			bus.Send("test.msmq", personHighest, new MessageOptions() { Priority = 3 });
 
 			IEnumerable<Person> list = null;
 			while (true)

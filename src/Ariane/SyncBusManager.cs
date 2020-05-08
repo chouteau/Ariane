@@ -30,7 +30,11 @@ namespace Ariane
 
 		public void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
-			m_Decorated.SyncProcess(queueName, body, label, priority);
+			m_Decorated.SyncProcess(queueName, body, new MessageOptions()
+			{
+				Label = label,
+				Priority = priority
+			});
 		}
 
 		public void Send<T>(string queueName, T body, MessageOptions options)
@@ -65,7 +69,11 @@ namespace Ariane
 
 		public void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
 		{
-			m_Decorated.SyncProcess(queueName, body, label, priority);
+			m_Decorated.SyncProcess(queueName, body, new MessageOptions()
+			{
+				Label = label,
+				Priority = priority
+			});
 		}
 
 		public void SyncProcess<T>(string queueName, T body, MessageOptions options)

@@ -1,4 +1,11 @@
-﻿2.5.18.0 (Ariane.Azure)
+﻿5.0.59.0 (Ariane)
+- .Net 4.7.2 Migration
+
+3.0.19.0 (Ariane.Azure)
+- .Net 4.7.2 Migration
+- Windows.AzureBus 6.0.1 Migration 
+
+2.5.18.0 (Ariane.Azure)
 - Improve logs on error
 - Add RetryPolicy Exponential by defaut on namespace manager
 
