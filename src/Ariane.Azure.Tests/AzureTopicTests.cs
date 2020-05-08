@@ -15,7 +15,7 @@ namespace Ariane.Azure.Tests
 	public class AzureTopicTests
 	{
 		[TestMethod]
-		public void Send_Person_Topic()
+		public void Send_And_Receive_Person_Topic()
 		{
 			var bus = new BusManager(); 
 			bus.Register.AddAzureTopicWriter("MyTopic");
@@ -26,15 +26,6 @@ namespace Ariane.Azure.Tests
 
 			bus.Send("MyTopic", person);
 
-			System.Threading.Thread.Sleep(5 * 1000);
-
-			bus.Dispose();
-		}
-
-		[TestMethod]
-		public void Receive_Person_Topic()
-		{
-			var bus = new BusManager();
 			bus.Register.AddAzureTopicWriter("MyTopic");
 			bus.Register.AddAzureTopicReader("MyTopic", "sub1", typeof(PersonMessageReader));
 			bus.Register.AddAzureTopicReader("MyTopic", "sub2", typeof(PersonMessageReader));
@@ -44,16 +35,7 @@ namespace Ariane.Azure.Tests
 
 			bus.StartReading();
 
-			var person = new Person();
-			person.FirsName = Guid.NewGuid().ToString();
-			person.LastName = Guid.NewGuid().ToString();
-
-			bus.Send("MyTopic", person, new MessageOptions()
-			{
-				TimeToLive = TimeSpan.FromHours(1)
-			});
-
-			System.Threading.Thread.Sleep(5 * 1000);
+			System.Threading.Thread.Sleep(10 * 1000);
 
 			Check.That(MessageCollector.Current.Count).IsEqualTo(3);
 

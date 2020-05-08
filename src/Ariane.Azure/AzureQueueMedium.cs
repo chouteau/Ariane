@@ -45,6 +45,7 @@ namespace Ariane
 
 			var queueClient = QueueClient.CreateFromConnectionString(cs, queueName);
 			var mq = new QueueProviders.AzureMessageQueue(queueClient);
+
 			return mq;
 		}
 
