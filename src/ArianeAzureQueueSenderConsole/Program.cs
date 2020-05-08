@@ -19,15 +19,16 @@ namespace ArianeAzureQueueSenderConsole
 
 			bus.Register.AddAzureQueueWriter("stress.person2");
 
-			int count = 0;
-			while(count < 1000)
+			var loop = new int[1000];
+			var count = 0;
+			Parallel.ForEach(loop, (i) =>
 			{
 				var person = new Person();
 				person.Id = count;
 				bus.Send("stress.person2", person);
 				count++;
 				Console.WriteLine($"{count} items sent");
-			}
+			});
 
 			bus.Dispose();
 		}

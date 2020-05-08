@@ -201,3 +201,5 @@ ModelManifest.xml
 /src/ArianeAzureTopicSenderConsole/localconfig/connectionStrings.config
 /src/ArianeAzureTopicReaderConsole/localconfig/connectionStrings.config
 /.vs/Ariane/DesignTimeBuild/.dtbcache
+/.vs/Ariane/v16/Server/sqlite3
+/.vs/Ariane/v16/TestStore/0

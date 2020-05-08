@@ -35,7 +35,7 @@ namespace Ariane.QueueProviders
 
 		public void SetTimeout()
 		{
-
+			
 		}
 
 		#region IMessageQueue Members
