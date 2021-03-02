@@ -1,0 +1,21 @@
+name: .NET Framework
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+      - name: NuGetToolInstaller
+        uses : action/checkout@v1
+      - name: Build DotNET472
+        run: |
+          restoreSolution: '$(solution)'
+            cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
+            .\MSBuild.exe $Env:GITHUB_WORKSPACE\ariane
