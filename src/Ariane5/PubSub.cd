@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ariane.Message&lt;T&gt;">
+    <Position X="9.25" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAECAAAAAEAAABAABAAAAAAwAAAAAAAAAAAAA=</HashCode>
+      <FileName>Message.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ariane.BusManager">
+    <Position X="0.75" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AgKAAAAACAIAAAAAAEAAAAAAAAABCECQAAAAgQAAAAA=</HashCode>
+      <FileName>BusManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ariane.Register">
+    <Position X="5.25" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAIABAgQAAAAAEAAAAAAAAAAAAgAAAAQBAAAA=</HashCode>
+      <FileName>Register.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ariane.QueueSetting">
+    <Position X="8.25" Y="6" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABIEAAAAAAQAAACIACAAAAAAAAAAAAA=</HashCode>
+      <FileName>QueueSetting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ariane.MessageDispatcher&lt;T&gt;">
+    <Position X="3.5" Y="6" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAgAAACIABAAAABgAAACAAAAAAQQCAQAQIEAAAEA=</HashCode>
+      <FileName>MessageDispatcher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
