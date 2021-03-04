@@ -18,13 +18,30 @@ namespace Ariane.QueueProviders
 		private ManualResetEvent m_Event;
 		private ServiceBusClient m_ServiceBusClient;
 		private BinaryData m_BinaryMessage;
+		private ServiceBusSender m_ServiceBusSender;
+		private ServiceBusReceiver m_ServiceBusReceiver;
+		private ServiceBusProcessor m_ServiceBusProcessor;
 
 		public AzureMessageTopic(ServiceBusClient serviceBusClient, string topicName, string subscriptionName, ILogger logger)
 		{
 			this.Logger = logger;
-			m_ServiceBusClient = serviceBusClient;
 			Name = topicName;
 			SubscriptionName = subscriptionName;
+			m_ServiceBusClient = serviceBusClient;
+			m_ServiceBusSender = m_ServiceBusClient.CreateSender(topicName);
+			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(topicName, subscriptionName, new ServiceBusReceiverOptions()
+			{
+				PrefetchCount = 10,
+				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
+			});
+			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(topicName, SubscriptionName, new ServiceBusProcessorOptions()
+			{
+				AutoCompleteMessages = true,
+				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
+				PrefetchCount = 10,
+			});
+			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
+			m_ServiceBusProcessor.ProcessErrorAsync += ProcessError;
 		}
 
 		protected ILogger Logger { get; }
@@ -50,13 +67,10 @@ namespace Ariane.QueueProviders
 		{
 			if (m_Event == null)
 			{
-				var processor = m_ServiceBusClient.CreateProcessor(Name, SubscriptionName, new ServiceBusProcessorOptions()
+				Task.Run(async ()  =>
 				{
-					AutoCompleteMessages = true,
+					await m_ServiceBusProcessor.StartProcessingAsync();
 				});
-				processor.ProcessMessageAsync += MessageHandler;
-				processor.ProcessErrorAsync += ProcessError;
-				processor.StartProcessingAsync(new CancellationToken());
 				m_Event = new ManualResetEvent(false);
 			}
 			return new AsyncResult(m_Event);
@@ -66,8 +80,8 @@ namespace Ariane.QueueProviders
 		{
 			if (m_BinaryMessage != null)
 			{
-				var receiveMessage = JsonConvert.DeserializeObject<ReceivedMessage>(m_BinaryMessage.ToString());
-				return receiveMessage.Body.ToObject<T>();
+				var receiveMessage = JsonConvert.DeserializeObject<T>(m_BinaryMessage.ToString());
+				return receiveMessage; //.Body.ToObject<T>();
 			}
 			return default(T);
 		}
@@ -75,13 +89,12 @@ namespace Ariane.QueueProviders
 		public async Task<T> ReceiveAsync<T>()
 		{
 			T result = default(T);
-			var receiver = m_ServiceBusClient.CreateReceiver(SubscriptionName, Name);
-			var receivedMassage = await receiver.ReceiveMessageAsync();
-			if (receivedMassage != null
-				&& receivedMassage.Body != null)
+			var receivedMessage = await m_ServiceBusReceiver.ReceiveMessageAsync();
+			if (receivedMessage != null
+				&& receivedMessage.Body != null)
 			{
-				var body = System.Text.Encoding.UTF8.GetString(receivedMassage.Body);
-				result = JsonConvert.DeserializeObject<T>(body);
+				var receiveMessage = JsonConvert.DeserializeObject<T>(receivedMessage.Body.ToString());
+				result = receiveMessage; //.Body.ToObject<T>();
 			}
 			return result;
 		}
@@ -96,11 +109,32 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			var client = new ServiceBusClient(ConnectionString);
-			var sender = client.CreateSender(Name);
-			var data = JsonConvert.SerializeObject(message);
-			var busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
-			sender.SendMessageAsync(busMessage).Wait();
+			Task.Run(async () =>
+			{
+				var data = JsonConvert.SerializeObject(message.Body);
+				var busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
+				busMessage.Subject = message.Label;
+				if (message.ScheduledEnqueueTimeUtc.HasValue)
+                {
+					busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
+				}
+				if (message.TimeToLive.HasValue)
+				{
+					busMessage.TimeToLive = message.TimeToLive.Value;
+				}
+
+				try
+				{
+					await m_ServiceBusSender.SendMessageAsync(busMessage);
+				}
+				catch(Exception ex)
+                {
+					ex.Data.Add("QueueName", Name);
+					ex.Data.Add("Message", data);
+					Logger.LogError(ex, ex.Message);
+					await Task.Delay(200);
+				}
+			});
 		}
 
 		public virtual void Dispose()

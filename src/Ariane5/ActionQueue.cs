@@ -15,6 +15,9 @@ namespace Ariane
 		private readonly SemaphoreSlim semaphore
 			= new SemaphoreSlim(1, 1);
 
+		private readonly int m_WarningCount = 50;
+		private int m_ProcessedQueue = 0;
+
 		public ActionQueue(ILogger<ActionQueue> logger)
         {
 			this.Logger = logger;
@@ -22,7 +25,7 @@ namespace Ariane
 
 		protected ILogger<ActionQueue> Logger { get; }
 
-		private bool IsSending
+		private bool IsProcessing
 		{
 			get
 			{
@@ -33,11 +36,11 @@ namespace Ariane
 		public void Add(Action action)
 		{
 			m_Queue.Enqueue(action);
-			if (m_Queue.Count > 20)
+			if (m_Queue.Count > m_WarningCount)
 			{
-				Logger.LogWarning("Ariane action queue is greater than 20");
+				Logger.LogWarning($"Ariane action in queue is high {m_Queue.Count}, processed {m_ProcessedQueue}");
 			}
-			if (IsSending)
+			if (IsProcessing)
 			{
 				return;
 			}
@@ -65,6 +68,7 @@ namespace Ariane
 			try
 			{
 				action();
+				m_ProcessedQueue++;
 			}
 			finally
 			{

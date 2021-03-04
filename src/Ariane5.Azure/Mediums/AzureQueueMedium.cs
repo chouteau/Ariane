@@ -66,7 +66,16 @@ namespace Ariane
 				Logger.LogInformation($"Azure queue {queueSetting.Name} created");
 			}
 
-			var serviceBusClient = new ServiceBusClient(cs);
+			var serviceBusClient = new ServiceBusClient(cs, new ServiceBusClientOptions()
+			{
+				TransportType = ServiceBusTransportType.AmqpTcp,
+				RetryOptions = new ServiceBusRetryOptions()
+				{
+					Mode = ServiceBusRetryMode.Exponential,
+					MaxRetries = 3,
+					MaxDelay = TimeSpan.FromSeconds(10)
+				}
+			});
 			var mq = new QueueProviders.AzureMessageQueue(serviceBusClient, queueSetting.Name, Logger);
 			mq.ConnectionString = cs;
 			return mq;
