@@ -210,3 +210,5 @@ ModelManifest.xml
 /.vs/Ariane/DesignTimeBuild
 /src/Ariane.AzureQueueClientReaders/localconfig
 /src/Ariane5.AzureTopicClientWriters/localconfig
+/.vs/Ariane/v16/TestStore/OutputMessages/19c186ac-70d7-218f-6505-01a419a1f15f
+/.vs/Ariane/v16/TestStore/OutputMessages/8edc6a74-3c0d-db85-8c2c-3b838daf25f3
