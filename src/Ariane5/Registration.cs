@@ -66,9 +66,11 @@ namespace Ariane
 
 		private IMedium InitializeMedium()
 		{
-			using var scope = m_ServiceProvider.CreateScope();
-			var instance = (IMedium)ActivatorUtilities.CreateInstance(scope.ServiceProvider, TypeMedium);
-			return instance;
+			using (var scope = m_ServiceProvider.CreateScope())
+            {
+				var instance = (IMedium)ActivatorUtilities.CreateInstance(scope.ServiceProvider, TypeMedium);
+				return instance;
+			}
 		}
 
 		private IMessageQueue InitializeMessageQueue()
@@ -150,9 +152,11 @@ namespace Ariane
 				messageType = messageType.BaseType;
 			}
 			var typeReader = baseType.MakeGenericType(messageType);
-			using var scope = m_ServiceProvider.CreateScope();
-			var result = (IMessageDispatcher)ActivatorUtilities.CreateInstance(scope.ServiceProvider, typeReader);
-			return result;
+			using (var scope = m_ServiceProvider.CreateScope())
+            {
+				var result = (IMessageDispatcher)ActivatorUtilities.CreateInstance(scope.ServiceProvider, typeReader);
+				return result;
+			}
 		}
 	}
 }

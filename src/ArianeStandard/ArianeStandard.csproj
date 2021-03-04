@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Ariane</RootNamespace>
+    <Version>5.0.0</Version>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Experimental.System.Messaging" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+    <Compile Include="..\Ariane5\ActionQueue.cs" Link="ActionQueue.cs" />
+    <Compile Include="..\Ariane5\AnonymousMessageSubscriber.cs" Link="AnonymousMessageSubscriber.cs" />
+    <Compile Include="..\Ariane5\ArianeSettings.cs" Link="ArianeSettings.cs" />
+    <Compile Include="..\Ariane5\BusManager.cs" Link="BusManager.cs" />
+    <Compile Include="..\Ariane5\DynamicMessageReaderBase.cs" Link="DynamicMessageReaderBase.cs" />
+    <Compile Include="..\Ariane5\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\Ariane5\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <Compile Include="..\Ariane5\IMedium.cs" Link="IMedium.cs" />
+    <Compile Include="..\Ariane5\IMessageDispatcher.cs" Link="IMessageDispatcher.cs" />
+    <Compile Include="..\Ariane5\IMessageQueue.cs" Link="IMessageQueue.cs" />
+    <Compile Include="..\Ariane5\IRegister.cs" Link="IRegister.cs" />
+    <Compile Include="..\Ariane5\IServiceBus.cs" Link="IServiceBus.cs" />
+    <Compile Include="..\Ariane5\Mediums\FileMedium.cs" Link="Mediums\FileMedium.cs" />
+    <Compile Include="..\Ariane5\Mediums\InMemoryMedium.cs" Link="Mediums\InMemoryMedium.cs" />
+    <Compile Include="..\Ariane5\Mediums\MSMQMedium.cs" Link="Mediums\MSMQMedium.cs" />
+    <Compile Include="..\Ariane5\Message.cs" Link="Message.cs" />
+    <Compile Include="..\Ariane5\MessageDispatcher.cs" Link="MessageDispatcher.cs" />
+    <Compile Include="..\Ariane5\MessageOptions.cs" Link="MessageOptions.cs" />
+    <Compile Include="..\Ariane5\MessageReaderBase.cs" Link="MessageReaderBase.cs" />
+    <Compile Include="..\Ariane5\MiddlewareExtensions.cs" Link="MiddlewareExtensions.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\AsyncResult.cs" Link="QueueProviders\AsyncResult.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\FastDirectoryEnumerator.cs" Link="QueueProviders\FastDirectoryEnumerator.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\FileMessageQueue.cs" Link="QueueProviders\FileMessageQueue.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\InMemoryMessageQueue.cs" Link="QueueProviders\InMemoryMessageQueue.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\MSMQJSonMessageFormatter.cs" Link="QueueProviders\MSMQJSonMessageFormatter.cs" />
+    <Compile Include="..\Ariane5\QueueProvider\MSMQMessageQueue.cs" Link="QueueProviders\MSMQMessageQueue.cs" />
+    <Compile Include="..\Ariane5\QueueSetting.cs" Link="QueueSetting.cs" />
+    <Compile Include="..\Ariane5\Register.cs" Link="Register.cs" />
+    <Compile Include="..\Ariane5\RegisterExtensions.cs" Link="RegisterExtensions.cs" />
+    <Compile Include="..\Ariane5\SyncBusManager.cs" Link="SyncBusManager.cs" />
+  </ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Mediums\" />
+	  <Folder Include="QueueProviders\" />
+	</ItemGroup>
+
+</Project>
