@@ -9,7 +9,7 @@ jobs:
 
     runs-on: windows-latest
     env:
-      APP_SETTINGS: ${{ secrets.APPSETTINGS_TEST }}
+      APP_SETTINGS: ${{secrets.APPSETTINGS_TEST}}
 
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
       run: dotnet restore ariane5.sln
     - shell: cmd
       run: |
-        echo ${{ env.APPSETTINGS_TEST }} > ${{ env.HOME }}\src\Ariane5.Tests\bin\Release\net5.0\localconfig\appsettings.json
+        echo ${{env.APPSETTINGS_TEST}} > ${{env.base-directory}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig\appsettings.json
     - name: Build
       run: dotnet build ariane5.sln --configuration Release --no-restore
     - name: Test
