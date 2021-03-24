@@ -15,7 +15,7 @@ Ariane is a simple bus manager for asynchronous messages based on type or dynami
 You can download http://nuget.org/packages/Ariane5 from NuGet in Visual Studio, With Package Manager Console type:
 
 ```
-PM> Install-Package Ariane
+PM> Install-Package Ariane5
 ```
 
 #### Example 
