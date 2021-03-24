@@ -8,8 +8,6 @@ jobs:
   build:
 
     runs-on: windows-latest
-    env:
-      APP_SETTINGS: ${{secrets.APPSETTINGS_TEST}}
 
     steps:
     - uses: actions/checkout@v2
@@ -24,6 +22,6 @@ jobs:
     - shell: cmd
       run: |
         md ${{github.workspace}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig
-        echo ${{env.APPSETTINGS_TEST}} > ${{github.workspace}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig\appsettings.json
+        echo ${{secrets.APPSETTINGS_TEST}} > ${{github.workspace}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig\appsettings.json
     - name: Test
       run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
