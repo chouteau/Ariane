@@ -34,10 +34,18 @@ namespace Ariane
 		{
 			string path = null;
 			path = Configuration.GetConnectionString(queueSetting.ConnectionStringName ?? queueSetting.Name);
-			if (path == null
-				|| !System.IO.Directory.Exists(path))
+			if (path == null)
             {
-				throw new Exception(string.Format("Queue {0} not declared in configuration file or path does not exists", queueSetting.Name));
+				throw new Exception(string.Format("Queue {0} not declared in configuration file", queueSetting.Name));
+			}
+			if (path.StartsWith(".\\"))
+			{
+				path = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
+			}
+			if (!System.IO.Directory.Exists(path))
+			{
+				Logger.LogInformation($"try to create folder {path}");
+				System.IO.Directory.CreateDirectory(path);
 			}
 			return new QueueProviders.FileMessageQueue(queueSetting.Name, path, Logger);
 		}
