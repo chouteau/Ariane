@@ -65,7 +65,7 @@ namespace Ariane.Tests
 		}
 
 		[TestMethod]
-		public async Task Write_In_Azure_Queue_And_Receive()
+		public async Task Write_In_Azure_Topic_And_Receive()
 		{
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
