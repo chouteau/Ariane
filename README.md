@@ -1,4 +1,4 @@
-# Welcome to Ariane (5.0.59)
+# Welcome to Ariane (5.0.1) for Dotnet5 or Dotnet Standard 2.0
 
 Ariane is a simple bus manager for asynchronous messages based on type or dynamic objects for later treatment, Ariane manage queueing system in one place with one thread by queue and multi readers by queue
 
@@ -9,6 +9,35 @@ Ariane is a simple bus manager for asynchronous messages based on type or dynami
 * Azure Service Bus 
 * File System
 * Custom...
+
+## Installing
+
+You can download http://nuget.org/packages/Ariane5 from NuGet in Visual Studio, With Package Manager Console type:
+
+```
+PM> Install-Package Ariane
+```
+
+#### Example 
+* *Client*
+
+##### Get service bus
+
+```c#
+
+serviceCollection.ConfigureAriane(register =>
+{
+    register.AddMSMQReader<Person>("q1");
+});
+
+var serviceProvider = serviceCollection.BuildServiceProvider();
+
+var sb = serviceProvider.GetRequiredService<IServiceBus>();
+await sb.StartReadingAsync();
+
+```
+
+# Welcome to Ariane (5.0.59) for Dotnet4.7
 
 ## Installing
 
