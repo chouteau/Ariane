@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build ariane5.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test ariane5.sln --no-build --verbosity normal
+      run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
