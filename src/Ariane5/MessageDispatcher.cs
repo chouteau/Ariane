@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Ariane
 {
-	internal class MessageDispatcher<T> : BackgroundService, IMessageDispatcher, IDisposable
+	internal class MessageDispatcher<T> : IMessageDispatcher, IDisposable
 	{
 		private IList<Type> m_MessageSubscriberTypeList;
 		private Task m_runningTask;
@@ -80,7 +80,7 @@ namespace Ariane
 			MessageSubscriberList = result;
 		}
 
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync()
         {
 			if (!AutoStart)
             {
@@ -94,7 +94,7 @@ namespace Ariane
 			return Task.CompletedTask;
 		}
 
-		public override async Task StopAsync(CancellationToken cancellationToken)
+		public async Task StopAsync(CancellationToken cancellationToken)
         {
 			if (m_runningTask == null)
             {
@@ -111,7 +111,7 @@ namespace Ariane
 			m_StoppingTask = new CancellationTokenSource();
 		}
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected async Task ExecuteAsync(CancellationToken stoppingToken)
         {
 			if (MessageQueue == null)
             {
@@ -238,11 +238,10 @@ namespace Ariane
 
 		#region IDisposable Members
 
-		public override void Dispose()
+		public void Dispose()
 		{
 			m_MessageSubscriberTypeList.Clear();
 			m_StoppingTask.Cancel();
-			base.Dispose();
 		}
 
 		#endregion

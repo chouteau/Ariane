@@ -74,7 +74,7 @@ namespace Ariane
 		{
 			foreach (var dispatcher in MessageDispatcherList)
 			{
-				await dispatcher.StartAsync(new CancellationToken());
+				await dispatcher.StartAsync();
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace Ariane
                 {
 					continue;
                 }
-				dispatcher.StartAsync(new CancellationToken());
+				dispatcher.StartAsync();
             }
 			return Task.CompletedTask;
 		}
