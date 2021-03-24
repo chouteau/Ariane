@@ -19,9 +19,8 @@ jobs:
       run: dotnet restore ariane5.sln
     - name: Build
       run: dotnet build ariane5.sln --configuration Release --no-restore
-    - shell: cmd
-      run: |
-        md ${{github.workspace}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig
-        echo "${{secrets.APPSETTINGS_TEST}}" > ${{github.workspace}}\src\Ariane5.Tests\bin\Release\net5.0\localconfig\appsettings.json
+    - uses: edgarrc/action-7z@v1.0.4
+      with:
+        args: 7z x ${{github.workspace}}\src\Ariane5.Tests\localconfig.7z -p'${{secrets.localconfig}}' -o ${{github.workspace}}\src\Ariane5.Tests
     - name: Test
       run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
