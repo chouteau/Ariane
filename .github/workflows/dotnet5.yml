@@ -24,7 +24,6 @@ jobs:
     - name: Test
       run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
     - name: Publish Ariane5 to nuget
-      id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5\Ariane5.csproj
@@ -32,7 +31,6 @@ jobs:
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
     - name: Publish Ariane5.Azure to nuget
-      id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5.Azure\Ariane5.Azure.csproj
@@ -40,7 +38,6 @@ jobs:
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
     - name: Publish Ariane5 Standare to nuget
-      id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5Standard\Ariane5Standard.csproj
@@ -48,7 +45,6 @@ jobs:
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
     - name: Publish Ariane5.Azure Standard to nuget
-      id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5Standard.Azure\Ariane5Standard.Azure.csproj
