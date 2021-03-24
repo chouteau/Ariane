@@ -23,3 +23,11 @@ jobs:
       run: dotnet build ariane5.sln --configuration Release --no-restore
     - name: Test
       run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
+    - name: Publish to nuget
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5\Ariane5.csproj
+        PACKAGE_NAME: Ariane5
+        NUGET_SOURCE: https://api.nuget.org
+        NUGET_KEY: ${{secrets.nuget}}
