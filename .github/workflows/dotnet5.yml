@@ -20,6 +20,6 @@ jobs:
     - name: Build
       run: dotnet build ariane5.sln --configuration Release --no-restore
     - name: Extract config
-      run: 7z x ${{github.workspace}}\src\Ariane5.Tests\localconfig.7z -p'${{secrets.localconfig}}' -o ${{github.workspace}}\src\Ariane5.Tests
+      run: 7z x ${{github.workspace}}\src\Ariane5.Tests\localconfig.7z -p'${{secrets.localconfig}}' -o${{github.workspace}}\src\Ariane5.Tests
     - name: Test
       run: dotnet test ariane5.sln -c Release --no-build --verbosity normal
