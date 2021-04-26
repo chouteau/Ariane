@@ -19,20 +19,19 @@ namespace Ariane
 		public BusManager(IRegister register,
 			ActionQueue actionQueue,
 			ILogger<BusManager> logger,
-			IEnumerable<IMessageQueue> messageQueues,
-			IEnumerable<IMessageDispatcher> messageDispatchers)
+			IEnumerable<IMessageQueue> messageQueues)
 		{
 			m_ActionQueue = actionQueue;
 			this.Logger = logger;
 			this.Register = register;
 			this.MessageQueueList = messageQueues;
-			this.MessageDispatcherList = messageDispatchers;
+			this.MessageDispatcherList = new List<IMessageDispatcher>();
 		}
 
         protected ILogger<BusManager> Logger { get; }
 		internal IRegister Register { get; }
 		protected IEnumerable<IMessageQueue> MessageQueueList { get; }
-		protected IEnumerable<IMessageDispatcher> MessageDispatcherList { get; }
+		internal IList<IMessageDispatcher> MessageDispatcherList { get; }
 
 		public virtual void Send<T>(string queueName, T body)
 		{

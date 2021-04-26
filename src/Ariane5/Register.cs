@@ -72,24 +72,27 @@ namespace Ariane
 			return this;
 		}
 
-		public void Initialize()
+		public List<IMessageDispatcher> CreateMessageDispatcherList(IServiceProvider serviceProvider)
 		{
 			if (m_IsInitialized)
             {
-				return;
+				return null;
             }
 
+			var messageDispatcherList = new List<IMessageDispatcher>();
 			foreach (var item in SubscriberByQueueList)
 			{
 				var dispatcherTypeList = item.Value;
 				var queueSettingsList = QueueList.Where(i => i.Name == item.Key).ToList();
                 foreach (var queueSettings in queueSettingsList)
                 {
-					ServiceCollection.AddSingleton(sp => CreateMessageDispatcher(sp, dispatcherTypeList, queueSettings));
+					var md = CreateMessageDispatcher(serviceProvider, dispatcherTypeList, queueSettings);
+					messageDispatcherList.Add(md);
 				}
 			}
 
 			m_IsInitialized = true;
+			return messageDispatcherList;
 		}
 
 		public IEnumerable<string> GetRegisteredQueues()
@@ -102,8 +105,8 @@ namespace Ariane
 			var baseType = typeof(MessageDispatcher<>);
 			Type messageType = null;
 			var singleTypeList = new List<Type>();
-            foreach (var item in messageTypeList)
-            {
+			foreach (var item in messageTypeList)
+			{
 				var mt = item;
 				while (true)
 				{
@@ -118,9 +121,9 @@ namespace Ariane
 				}
 				if (singleTypeList.Any()
 					&& !singleTypeList.Contains(messageType))
-                {
+				{
 					throw new Exception($"Reader for queue {queueSettings.Name} must contain single messageType {messageType}");
-                }
+				}
 				singleTypeList.Add(messageType);
 			}
 			var typeDispatcher = baseType.MakeGenericType(messageType);
@@ -129,14 +132,14 @@ namespace Ariane
 			messageDispatcher.AutoStart = queueSettings.AutoStartReading;
 			messageDispatcher.InitializeMedium(sp, queueSettings);
 			foreach (var item in SubscriberByQueueList)
-            {
+			{
 				if (item.Key != queueSettings.Name)
-                {
+				{
 					continue;
-                }
+				}
 
-                foreach (var subscriberType in item.Value)
-                {
+				foreach (var subscriberType in item.Value)
+				{
 					messageDispatcher.AddMessageSubscriberType(subscriberType);
 				}
 			}

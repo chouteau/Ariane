@@ -18,9 +18,8 @@ namespace Ariane
 			IRegister register,
 			ActionQueue actionQueue,
 			ILogger<BusManager> logger,
-			IEnumerable<IMessageQueue> messageQueues,
-			IEnumerable<IMessageDispatcher> messageDispatchers)
-			: this(new BusManager(register, actionQueue, logger, messageQueues, messageDispatchers))
+			IEnumerable<IMessageQueue> messageQueues)
+			: this(new BusManager(register, actionQueue, logger, messageQueues))
 		{
 		}
 

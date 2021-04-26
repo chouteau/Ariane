@@ -55,7 +55,7 @@ namespace Ariane.Tests
 			var firstName = person.FirstName;
 			bus.Send("test3.msmq", person);
 
-			await Task.Delay(5 * 1000);
+			await Task.Delay(10 * 1000);
 
 			person = messageCollector.GetList().First();
 

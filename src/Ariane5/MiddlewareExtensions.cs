@@ -44,7 +44,11 @@ namespace Ariane
                 services.AddSingleton<IServiceBus>(sp =>
                 {
                     var instance = (BusManager)ActivatorUtilities.CreateInstance(sp, typeof(BusManager));
-                    ((Register)instance.Register).Initialize();
+                    var mdList = ((Register)instance.Register).CreateMessageDispatcherList(sp);
+					foreach (var md in mdList)
+					{
+                        instance.MessageDispatcherList.Add(md);
+					}
                     return instance;
                 });
             }
