@@ -60,7 +60,7 @@ namespace Ariane.Tests
         }
 
         [TestMethod]
-        public void Register_Same_Queues_With_2_Readers_With_Different_MessageType()
+        public async Task Register_Same_Queues_With_2_Readers_With_Different_MessageType()
         {
             var sp = RootTests.Initialize(services =>
             {
@@ -75,6 +75,7 @@ namespace Ariane.Tests
             try
             {
                 var bus = sp.GetRequiredService<IServiceBus>();
+                await bus.StartReadingAsync();
             }
             catch(Exception ex)
             {

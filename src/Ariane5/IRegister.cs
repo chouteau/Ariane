@@ -22,5 +22,9 @@ namespace Ariane
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<string> GetRegisteredQueues();
+		/// <summary>
+		/// 
+		/// </summary>
+		Exception ConfigurationException { get; }
 	}
 }

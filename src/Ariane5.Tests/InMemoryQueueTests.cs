@@ -38,6 +38,8 @@ namespace Ariane.Tests
 						TypeReader = typeof(PersonMessageReader)
 					});
 
+					register.AddMemoryReader<BusDependencyPersonMessageReader>("sendreceivetest2");
+
 					register.AddMemoryWriter("same");
                     register.AddMemoryWriter("same");
 				});
@@ -118,6 +120,28 @@ namespace Ariane.Tests
 			Check.That(personList.Count()).Equals(40);
 		}
 
+		[TestMethod]
+		public async Task Send_Then_Receive_Person_With_Dependency_Memory_Medium()
+		{
+			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
+			await bus.StartReadingAsync(); // Test if reader not autostarted
+
+			for (int i = 0; i < 50; i++)
+			{
+				var person = new Person();
+				person.FirstName = Guid.NewGuid().ToString();
+				person.LastName = Guid.NewGuid().ToString();
+				bus.Send("sendreceivetest2", person);
+			}
+
+			var personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 10, 5 * 1000);
+
+			Check.That(personList.Count()).Equals(10);
+
+			personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 50, 5 * 1000);
+
+			Check.That(personList.Count()).Equals(40);
+		}
 	}
 }
