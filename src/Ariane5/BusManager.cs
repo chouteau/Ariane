@@ -30,7 +30,7 @@ namespace Ariane
 		}
 
         protected ILogger<BusManager> Logger { get; }
-		protected IRegister Register { get; }
+		internal IRegister Register { get; }
 		protected IEnumerable<IMessageQueue> MessageQueueList { get; }
 		protected IEnumerable<IMessageDispatcher> MessageDispatcherList { get; }
 

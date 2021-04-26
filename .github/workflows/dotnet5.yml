@@ -37,17 +37,17 @@ jobs:
         PACKAGE_NAME: Ariane5.Azure
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
-    - name: Publish Ariane5 Standare to nuget
+    - name: Publish Ariane5 Standard to nuget
       uses: rohith/publish-nuget@v2
       with:
-        PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5Standard\Ariane5Standard.csproj
-        PACKAGE_NAME: Ariane5Standard
+        PROJECT_FILE_PATH: ${{github.workspace}}\src\ArianeStandard\ArianeStandard.csproj
+        PACKAGE_NAME: ArianeStandard
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
     - name: Publish Ariane5.Azure Standard to nuget
       uses: rohith/publish-nuget@v2
       with:
-        PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5Standard.Azure\Ariane5Standard.Azure.csproj
-        PACKAGE_NAME: Ariane5Standard.Azure
+        PROJECT_FILE_PATH: ${{github.workspace}}\src\ArianeStandard.Azure\ArianeStandard.Azure.csproj
+        PACKAGE_NAME: ArianeStandard.Azure
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
