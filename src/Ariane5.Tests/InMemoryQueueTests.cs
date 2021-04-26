@@ -135,7 +135,7 @@ namespace Ariane.Tests
 				bus.Send("sendreceivetest2", person);
 			}
 
-			var personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 10, 5 * 1000);
+			var personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 10, 10 * 1000);
 
 			Check.That(personList.Count()).Equals(10);
 		}
