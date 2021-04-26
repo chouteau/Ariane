@@ -81,7 +81,7 @@ namespace Ariane.QueueProviders
 			if (m_BinaryMessage != null)
 			{
 				var receiveMessage = JsonConvert.DeserializeObject<T>(m_BinaryMessage.ToString());
-				return receiveMessage; //.Body.ToObject<T>();
+				return receiveMessage;
 			}
 			return default(T);
 		}
