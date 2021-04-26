@@ -138,10 +138,6 @@ namespace Ariane.Tests
 			var personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 10, 5 * 1000);
 
 			Check.That(personList.Count()).Equals(10);
-
-			personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 50, 5 * 1000);
-
-			Check.That(personList.Count()).Equals(40);
 		}
 	}
 }
