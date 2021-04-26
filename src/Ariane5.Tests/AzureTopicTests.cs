@@ -59,7 +59,7 @@ namespace Ariane.Tests
 
 			await bus.StartReadingAsync();
 
-			await Task.Delay(5 * 1000);
+			await Task.Delay(10 * 1000);
 
 			Check.That(messageCollector.Count).IsEqualTo(3);
 		}
