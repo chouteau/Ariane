@@ -41,10 +41,13 @@ namespace Ariane
             }
             else
             {
-                services.AddSingleton<IServiceBus, BusManager>();
+                services.AddSingleton<IServiceBus>(sp =>
+                {
+                    var instance = (BusManager)ActivatorUtilities.CreateInstance(sp, typeof(BusManager));
+                    ((Register)instance.Register).Initialize();
+                    return instance;
+                });
             }
-
-            register.Initialize();
 
             return services;
         }

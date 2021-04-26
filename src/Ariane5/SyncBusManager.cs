@@ -22,7 +22,6 @@ namespace Ariane
 			IEnumerable<IMessageDispatcher> messageDispatchers)
 			: this(new BusManager(register, actionQueue, logger, messageQueues, messageDispatchers))
 		{
-
 		}
 
 		public SyncBusManager(Ariane.IServiceBus decorated)

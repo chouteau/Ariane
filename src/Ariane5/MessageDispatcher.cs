@@ -25,19 +25,19 @@ namespace Ariane
 		}
 
 		protected ILogger Logger { get; set; }
-		protected IList<MessageReaderBase<T>> MessageSubscriberList { get; private set; }
+		protected IList<MessageReaderBase<T>> MessageSubscriberList { get; set; }
 		protected IMessageQueue MessageQueue { get; private set; }
 		public string QueueName { get; private set; }
         public bool AutoStart { get; set; }
 
-        public void AddMessageSubscriberType(Type subscriberType)
+		public void AddMessageSubscriberType(Type subscriberType)
 		{
 			if (subscriberType == null)
-            {
+			{
 				throw new ArgumentNullException();
-            }
+			}
 			if (!m_MessageSubscriberTypeList.Contains(subscriberType))
-            {
+			{
 				m_MessageSubscriberTypeList.Add(subscriberType);
 			}
 		}
