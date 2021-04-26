@@ -15,11 +15,12 @@ namespace Ariane
 		private Ariane.IServiceBus m_Decorated;
 
 		public SyncBusManager(
-			IRegister register,
+			/* IRegister register, */
 			ActionQueue actionQueue,
 			ILogger<BusManager> logger,
-			IEnumerable<IMessageQueue> messageQueues)
-			: this(new BusManager(register, actionQueue, logger, messageQueues))
+			IEnumerable<IMessageQueue> messageQueues,
+			IServiceProvider serviceProvider)
+			: this(new BusManager(/* register, */ actionQueue, logger, messageQueues, serviceProvider))
 		{
 		}
 

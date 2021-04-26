@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ariane
 {
@@ -16,22 +17,43 @@ namespace Ariane
 	{
 		private readonly ActionQueue m_ActionQueue;
 
-		public BusManager(IRegister register,
+		public BusManager(/* IRegister register, */
 			ActionQueue actionQueue,
 			ILogger<BusManager> logger,
-			IEnumerable<IMessageQueue> messageQueues)
+			IEnumerable<IMessageQueue> messageQueues,
+			IServiceProvider serviceProvider)
 		{
 			m_ActionQueue = actionQueue;
 			this.Logger = logger;
-			this.Register = register;
+			// this.Register = register;
 			this.MessageQueueList = messageQueues;
-			this.MessageDispatcherList = new List<IMessageDispatcher>();
+			this.ServiceProvider = serviceProvider;
 		}
 
         protected ILogger<BusManager> Logger { get; }
-		internal IRegister Register { get; }
+		// protected IRegister Register { get; }
 		protected IEnumerable<IMessageQueue> MessageQueueList { get; }
-		internal IList<IMessageDispatcher> MessageDispatcherList { get; }
+		protected IServiceProvider ServiceProvider { get; }
+
+
+		private IList<IMessageDispatcher> _messageDispatchers;
+		protected IList<IMessageDispatcher> MessageDispatcherList 
+		{ 
+			get
+			{
+				if (_messageDispatchers == null)
+				{
+					var list = ServiceProvider.GetServices<IMessageDispatcher>().ToList();
+					var register = ServiceProvider.GetRequiredService<IRegister>();
+					if (register.ConfigurationException != null)
+					{
+						throw register.ConfigurationException;
+					}
+					_messageDispatchers = list;
+				}
+				return _messageDispatchers;
+			}
+		}
 
 		public virtual void Send<T>(string queueName, T body)
 		{
@@ -127,7 +149,6 @@ namespace Ariane
 			return result;
 		}
 
-
 		public virtual async Task<IEnumerable<T>> ReceiveAsync<T>(string queueName, int count, int timeoutInMillisecond)
 		{
 			timeoutInMillisecond = Math.Min(60 * 1000, timeoutInMillisecond);
@@ -212,7 +233,7 @@ namespace Ariane
 
 		public virtual IEnumerable<string> GetRegisteredQueueList()
         {
-			return Register.GetRegisteredQueues();
+			return MessageQueueList.Select(i => i.Name); // Register.GetRegisteredQueues();
         }
 	}
 }

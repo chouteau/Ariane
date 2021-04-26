@@ -27,6 +27,8 @@ namespace Ariane
 		protected ArianeSettings Settings { get; }
 		protected IList<QueueSetting> QueueList { get; }
 		protected IDictionary<string, List<Type>> SubscriberByQueueList { get; }
+		protected ILogger Logger { get; }
+		public Exception ConfigurationException { get; set; }
 
 		public IRegister AddQueue(QueueSetting queueSetting)
 		{
@@ -72,27 +74,40 @@ namespace Ariane
 			return this;
 		}
 
-		public List<IMessageDispatcher> CreateMessageDispatcherList(IServiceProvider serviceProvider)
+		public void Initialize(IServiceCollection services)
 		{
 			if (m_IsInitialized)
             {
-				return null;
+				return;
             }
 
-			var messageDispatcherList = new List<IMessageDispatcher>();
 			foreach (var item in SubscriberByQueueList)
 			{
 				var dispatcherTypeList = item.Value;
 				var queueSettingsList = QueueList.Where(i => i.Name == item.Key).ToList();
                 foreach (var queueSettings in queueSettingsList)
                 {
-					var md = CreateMessageDispatcher(serviceProvider, dispatcherTypeList, queueSettings);
-					messageDispatcherList.Add(md);
+					services.AddSingleton(sp =>
+					{
+						IMessageDispatcher md = null;
+						try
+						{
+							md = CreateMessageDispatcher(sp, dispatcherTypeList, queueSettings);
+						}
+						catch(Exception ex)
+						{
+							ConfigurationException = ex;
+						}
+						return md;
+					});
+					if (ConfigurationException != null)
+					{
+						break;
+					}
 				}
 			}
 
 			m_IsInitialized = true;
-			return messageDispatcherList;
 		}
 
 		public IEnumerable<string> GetRegisteredQueues()
