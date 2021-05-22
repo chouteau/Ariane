@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Ariane5.Tests")]
+
 namespace Ariane
 {
     public static class MiddlewareExtensions
@@ -34,15 +36,21 @@ namespace Ariane
             services.AddSingleton<FileMedium>();
             services.AddSingleton<InMemoryMedium>();
             services.AddSingleton<MSMQMedium>();
-            
+
+
             if (s.WorkSynchronized)
             {
-                services.AddSingleton<IServiceBus, SyncBusManager>();
+                services.AddSingleton<IServiceBus>(sp =>
+                {
+                    var bus = (IServiceBus)ActivatorUtilities.CreateInstance(sp, typeof(BusManager));
+                    return new SyncBusManager(sp, bus);
+                });
             }
-            else
-            {
+			else
+			{
                 services.AddSingleton<IServiceBus, BusManager>();
-            }
+
+           }
 
             register.Initialize(services);
             return services;

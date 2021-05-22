@@ -11,9 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Ariane
 {
-	internal class MessageDispatcher<T> : IMessageDispatcher, IDisposable
+	internal class MessageDispatcher<T> : IMessageDispatcher
 	{
-		private IList<Type> m_MessageSubscriberTypeList;
+		private readonly IList<Type> m_MessageSubscriberTypeList;
 		private Task m_runningTask;
 		private CancellationTokenSource m_StoppingTask = new CancellationTokenSource();
 
