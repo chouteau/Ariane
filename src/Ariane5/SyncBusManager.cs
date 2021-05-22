@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,26 +13,18 @@ namespace Ariane
 	/// </summary>
 	internal class SyncBusManager : Ariane.IServiceBus
 	{
-		private Ariane.IServiceBus m_Decorated;
+		private readonly IServiceBus m_Decorated;
+		private readonly IServiceProvider m_ServiceProvider;
 
-		public SyncBusManager(
-			/* IRegister register, */
-			ActionQueue actionQueue,
-			ILogger<BusManager> logger,
-			IEnumerable<IMessageQueue> messageQueues,
-			IServiceProvider serviceProvider)
-			: this(new BusManager(/* register, */ actionQueue, logger, messageQueues, serviceProvider))
-		{
-		}
-
-		public SyncBusManager(Ariane.IServiceBus decorated)
+		public SyncBusManager(IServiceProvider serviceProvider, Ariane.IServiceBus decorated)
 		{
 			m_Decorated = decorated;
+			m_ServiceProvider = serviceProvider;
 		}
 
 		public void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
-			m_Decorated.SyncProcess(queueName, body, new MessageOptions()
+			Send(queueName, body, new MessageOptions()
 			{
 				Label = label,
 				Priority = priority
@@ -40,7 +33,17 @@ namespace Ariane
 
 		public void Send<T>(string queueName, T body, MessageOptions options)
 		{
-			m_Decorated.SyncProcess(queueName, body, options);
+			var registeredQueues = m_ServiceProvider.GetServices<IMessageDispatcher>();
+			var registered = registeredQueues.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			if (registered != null)
+			{
+				var md = registered as MessageDispatcher<T>;
+				md.ProcessMessageAsync(body).Wait();
+			}
+			else
+			{
+				m_Decorated.Send(queueName, body, options);
+			}
 		}
 
 		public async Task StartReadingAsync()

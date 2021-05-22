@@ -25,13 +25,11 @@ namespace Ariane
 		{
 			m_ActionQueue = actionQueue;
 			this.Logger = logger;
-			// this.Register = register;
 			this.MessageQueueList = messageQueues;
 			this.ServiceProvider = serviceProvider;
 		}
 
         protected ILogger<BusManager> Logger { get; }
-		// protected IRegister Register { get; }
 		protected IEnumerable<IMessageQueue> MessageQueueList { get; }
 		protected IServiceProvider ServiceProvider { get; }
 
@@ -233,7 +231,7 @@ namespace Ariane
 
 		public virtual IEnumerable<string> GetRegisteredQueueList()
         {
-			return MessageQueueList.Select(i => i.Name); // Register.GetRegisteredQueues();
+			return MessageQueueList.Select(i => i.Name);
         }
 	}
 }
