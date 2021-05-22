@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Microsoft.Azure.Management.ServiceBus.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

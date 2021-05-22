@@ -3,12 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Ariane</RootNamespace>
-    <Version>5.1.4</Version>
+    <Version>5.1.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.1.0" />
-    <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.37.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>
 

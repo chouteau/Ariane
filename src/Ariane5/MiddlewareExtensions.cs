@@ -49,10 +49,9 @@ namespace Ariane
 			else
 			{
                 services.AddSingleton<IServiceBus, BusManager>();
+            }
 
-           }
-
-            register.Initialize(services);
+            register.Initialize();
             return services;
         }
     }
