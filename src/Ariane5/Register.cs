@@ -15,7 +15,8 @@ namespace Ariane
 		private bool m_IsInitialized = false;
 
 		public Register(ArianeSettings arianeSettings,
-			IServiceCollection serviceServiceCollection)
+			IServiceCollection serviceServiceCollection
+			)
 		{
 			this.Settings = arianeSettings;
 			this.ServiceCollection = serviceServiceCollection;
@@ -27,7 +28,6 @@ namespace Ariane
 		protected ArianeSettings Settings { get; }
 		protected IList<QueueSetting> QueueList { get; }
 		protected IDictionary<string, List<Type>> SubscriberByQueueList { get; }
-		protected ILogger Logger { get; }
 		public Exception ConfigurationException { get; set; }
 
 		public IRegister AddQueue(QueueSetting queueSetting)
@@ -57,6 +57,11 @@ namespace Ariane
 				ServiceCollection.AddSingleton(sp =>
 				{
 					var medium = (IMedium)sp.GetService(queueSetting.TypeMedium);
+					if (medium == null)
+					{
+						var message = $"Ariane medium {queueSetting.TypeMedium} not registed";
+						throw new KeyNotFoundException(message);
+					}
 					var messageQueue = medium.CreateMessageQueue(queueSetting);
 					return messageQueue;
 				});
@@ -74,7 +79,7 @@ namespace Ariane
 			return this;
 		}
 
-		public void Initialize(IServiceCollection services)
+		public void Initialize()
 		{
 			if (m_IsInitialized)
             {
@@ -87,7 +92,7 @@ namespace Ariane
 				var queueSettingsList = QueueList.Where(i => i.Name == item.Key).ToList();
                 foreach (var queueSettings in queueSettingsList)
                 {
-					services.AddSingleton(sp =>
+					ServiceCollection.AddSingleton(sp =>
 					{
 						IMessageDispatcher md = null;
 						try
