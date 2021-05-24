@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Ariane</RootNamespace>
-    <Version>5.1.4</Version>
+    <Version>5.1.5</Version>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -24,6 +24,7 @@
     <Compile Include="..\Ariane5\ActionQueue.cs" Link="ActionQueue.cs" />
     <Compile Include="..\Ariane5\AnonymousMessageSubscriber.cs" Link="AnonymousMessageSubscriber.cs" />
     <Compile Include="..\Ariane5\ArianeSettings.cs" Link="ArianeSettings.cs" />
+    <Compile Include="..\Ariane5\AutoStartBackgroundService.cs" Link="AutoStartBackgroundService.cs" />
     <Compile Include="..\Ariane5\BusManager.cs" Link="BusManager.cs" />
     <Compile Include="..\Ariane5\DynamicMessageReaderBase.cs" Link="DynamicMessageReaderBase.cs" />
     <Compile Include="..\Ariane5\Extensions.cs" Link="Extensions.cs" />

@@ -49,6 +49,10 @@ namespace Ariane
 			else
 			{
                 services.AddSingleton<IServiceBus, BusManager>();
+                if (s.AutoStart)
+				{
+                    services.AddHostedService<AutoStartBackgroundService>();
+				}
             }
 
             register.Initialize();

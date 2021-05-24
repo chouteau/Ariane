@@ -11,9 +11,11 @@ namespace Ariane
         public ArianeSettings()
         {
             WorkSynchronized = false;
+            AutoStart = false;
         }
         public bool WorkSynchronized { get; set; }
         public string UniqueTopicNameForTest { get; set; }
         public string DefaultAzureConnectionString { get; set; }
-    }
+		public bool AutoStart { get; set; }
+	}
 }
