@@ -13,14 +13,14 @@ using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageTopic : IMessageQueue, IDisposable
+	public class AzureMessageTopic : IMessageQueue
 	{
 		private ManualResetEvent m_Event;
-		private ServiceBusClient m_ServiceBusClient;
+		private readonly ServiceBusClient m_ServiceBusClient;
 		private BinaryData m_BinaryMessage;
-		private ServiceBusSender m_ServiceBusSender;
-		private ServiceBusReceiver m_ServiceBusReceiver;
-		private ServiceBusProcessor m_ServiceBusProcessor;
+		private readonly ServiceBusSender m_ServiceBusSender;
+		private readonly ServiceBusReceiver m_ServiceBusReceiver;
+		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
 		public AzureMessageTopic(ServiceBusClient serviceBusClient, string topicName, string subscriptionName, ILogger logger)
 		{
