@@ -13,11 +13,11 @@ using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageTopic : IMessageQueue
+	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable
 	{
 		private ManualResetEvent m_Event;
-		private readonly ServiceBusClient m_ServiceBusClient;
 		private BinaryData m_BinaryMessage;
+		private readonly ServiceBusClient m_ServiceBusClient;
 		private readonly ServiceBusSender m_ServiceBusSender;
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
@@ -39,6 +39,7 @@ namespace Ariane.QueueProviders
 				AutoCompleteMessages = true,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
 				PrefetchCount = 10,
+				MaxConcurrentCalls = 1
 			});
 			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
 			m_ServiceBusProcessor.ProcessErrorAsync += ProcessError;
@@ -69,7 +70,14 @@ namespace Ariane.QueueProviders
 			{
 				Task.Run(async ()  =>
 				{
-					await m_ServiceBusProcessor.StartProcessingAsync();
+					try
+					{
+						await m_ServiceBusProcessor.StartProcessingAsync();
+					}
+					catch(Exception ex)
+					{
+						Logger.LogError(ex, ex.Message);
+					}
 				});
 				m_Event = new ManualResetEvent(false);
 			}
@@ -94,7 +102,7 @@ namespace Ariane.QueueProviders
 				&& receivedMessage.Body != null)
 			{
 				var receiveMessage = JsonConvert.DeserializeObject<T>(receivedMessage.Body.ToString());
-				result = receiveMessage; //.Body.ToObject<T>();
+				result = receiveMessage;
 			}
 			return result;
 		}
@@ -109,18 +117,36 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
+			if (message == null
+				|| message.Body == null)
+			{
+				return;
+			}
+
 			Task.Run(async () =>
 			{
-				var data = JsonConvert.SerializeObject(message.Body);
-				var busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
-				busMessage.Subject = message.Label;
-				if (message.ScheduledEnqueueTimeUtc.HasValue)
-                {
-					busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
-				}
-				if (message.TimeToLive.HasValue)
+				ServiceBusMessage busMessage = null;
+				string data = null;
+				try
 				{
-					busMessage.TimeToLive = message.TimeToLive.Value;
+					data = JsonConvert.SerializeObject(message.Body);
+					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
+					busMessage.Subject = message.Label;
+					if (message.ScheduledEnqueueTimeUtc.HasValue)
+					{
+						busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
+					}
+					if (message.TimeToLive.HasValue)
+					{
+						busMessage.TimeToLive = message.TimeToLive.Value;
+					}
+				}
+				catch (Exception ex)
+				{
+					ex.Data.Add("QueueName", Name);
+					ex.Data.Add("Message", data);
+					Logger.LogError(ex, ex.Message);
+					return;
 				}
 
 				try
@@ -137,18 +163,6 @@ namespace Ariane.QueueProviders
 			});
 		}
 
-		public virtual void Dispose()
-		{
-			if (m_ServiceBusClient != null)
-            {
-				m_ServiceBusClient.DisposeAsync();
-			}
-			if (m_Event != null)
-            {
-				m_Event.Dispose();
-            }
-		}
-
 		private Task MessageHandler(ProcessMessageEventArgs args)
 		{
 			m_BinaryMessage = args.Message.Body;
@@ -161,5 +175,33 @@ namespace Ariane.QueueProviders
 			Logger.LogError(args.Exception, args.Exception.Message);
 			return Task.CompletedTask;
 		}
+
+		public async ValueTask DisposeAsync()
+		{
+			if (this.m_Event != null)
+			{
+				this.m_Event.Dispose();
+			}
+			var disposeList = new List<Task>();
+			if (m_ServiceBusProcessor != null)
+			{
+				await m_ServiceBusProcessor.StopProcessingAsync();
+				disposeList.Add(m_ServiceBusProcessor.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusSender != null)
+			{
+				disposeList.Add(m_ServiceBusSender.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusReceiver != null)
+			{
+				disposeList.Add(m_ServiceBusReceiver.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusClient != null)
+			{
+				disposeList.Add(m_ServiceBusClient.DisposeAsync().AsTask());
+			}
+			await Task.WhenAll(disposeList);
+		}
+
 	}
 }

@@ -14,11 +14,11 @@ using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageQueue : IMessageQueue
+	public class AzureMessageQueue : IMessageQueue, IAsyncDisposable
 	{
 		private ManualResetEvent m_Event;
-		private readonly ServiceBusClient m_ServiceBusClient;
 		private BinaryData m_BinaryMessage;
+		private readonly ServiceBusClient m_ServiceBusClient;
 		private readonly ServiceBusSender m_ServiceBusSender;
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
@@ -37,7 +37,8 @@ namespace Ariane.QueueProviders
 			{
 				AutoCompleteMessages = true,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = 10
+				PrefetchCount = 10,
+				MaxConcurrentCalls = 1
 			});
 			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
 			m_ServiceBusProcessor.ProcessErrorAsync += ProcessError;
@@ -112,19 +113,36 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
+			if (message == null
+				|| message.Body == null)
+			{
+				return;
+			}
+
 			Task.Run(async ()  => 
 			{
-				// var client = new ServiceBusClient(ConnectionString);
-				var data = JsonConvert.SerializeObject(message.Body);
-				var busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
-				busMessage.Subject = message.Label;
-				if (message.ScheduledEnqueueTimeUtc.HasValue)
+				ServiceBusMessage busMessage = null;
+				string data = null;
+				try
 				{
-					busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
+					data = JsonConvert.SerializeObject(message.Body);
+					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
+					busMessage.Subject = message.Label;
+					if (message.ScheduledEnqueueTimeUtc.HasValue)
+					{
+						busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
+					}
+					if (message.TimeToLive.HasValue)
+					{
+						busMessage.TimeToLive = message.TimeToLive.Value;
+					}
 				}
-				if (message.TimeToLive.HasValue)
+				catch(Exception ex)
 				{
-					busMessage.TimeToLive = message.TimeToLive.Value;
+					ex.Data.Add("QueueName", Name);
+					ex.Data.Add("Message", data);
+					Logger.LogError(ex, ex.Message);
+					return;
 				}
 				try
 				{
@@ -166,27 +184,6 @@ namespace Ariane.QueueProviders
 
 		#endregion
 
-		public virtual void Dispose()
-		{
-			if (this.m_Event != null)
-			{
-				this.m_Event.Dispose();
-			}
-			var disposeList = new List<Task>();
-			if (m_ServiceBusSender != null)
-            {
-				disposeList.Add(m_ServiceBusSender.DisposeAsync().AsTask());
-            }
-			if (m_ServiceBusReceiver != null)
-            {
-				disposeList.Add(m_ServiceBusReceiver.DisposeAsync().AsTask());
-            }
-			if (m_ServiceBusClient != null)
-            {
-				disposeList.Add(m_ServiceBusClient.DisposeAsync().AsTask());
-            }
-			Task.WhenAll(disposeList).GetAwaiter().GetResult();
-		}
 
 		private Task MessageHandler(ProcessMessageEventArgs args)
         {
@@ -201,6 +198,32 @@ namespace Ariane.QueueProviders
 			return Task.CompletedTask;
 		}
 
+		public async ValueTask DisposeAsync()
+		{
+			if (this.m_Event != null)
+			{
+				this.m_Event.Dispose();
+			}
+			var disposeList = new List<Task>();
+			if (m_ServiceBusProcessor != null)
+			{
+				await m_ServiceBusProcessor.StopProcessingAsync();
+				disposeList.Add(m_ServiceBusProcessor.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusSender != null)
+			{
+				disposeList.Add(m_ServiceBusSender.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusReceiver != null)
+			{
+				disposeList.Add(m_ServiceBusReceiver.DisposeAsync().AsTask());
+			}
+			if (m_ServiceBusClient != null)
+			{
+				disposeList.Add(m_ServiceBusClient.DisposeAsync().AsTask());
+			}
+			await Task.WhenAll(disposeList);
+		}
 
 	}
 }

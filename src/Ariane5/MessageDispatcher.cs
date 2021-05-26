@@ -238,10 +238,15 @@ namespace Ariane
 
 		#region IDisposable Members
 
-		public void Dispose()
+		public async ValueTask DisposeAsync()
 		{
-			m_MessageSubscriberTypeList.Clear();
+			var disposableQueue = MessageQueue as IAsyncDisposable;
+			if (disposableQueue != null)
+			{
+				await disposableQueue.DisposeAsync();
+			}
 			m_StoppingTask.Cancel();
+			m_MessageSubscriberTypeList.Clear();
 		}
 
 		#endregion

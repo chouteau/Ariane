@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
+using System.Threading.Tasks;
 
 namespace Ariane
 {
@@ -103,6 +104,5 @@ namespace Ariane
 			mq.ConnectionString = cs;
 			return mq;
 		}
-
 	}
 }
