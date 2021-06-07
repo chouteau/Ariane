@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
-	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable
+	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable, IDisposable
 	{
 		private ManualResetEvent m_Event;
 		private BinaryData m_BinaryMessage;
@@ -203,5 +203,9 @@ namespace Ariane.QueueProviders
 			await Task.WhenAll(disposeList);
 		}
 
+		public void Dispose()
+		{
+			DisposeAsync().ConfigureAwait(false);
+		}
 	}
 }
