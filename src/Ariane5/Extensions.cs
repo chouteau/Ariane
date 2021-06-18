@@ -15,5 +15,21 @@ namespace Ariane
 			}
 			return ((IDictionary<String, object>)obj).ContainsKey(propertyName);
 		}
+
+		public static string ToJsonStringTraceLog(this object message)
+		{
+			if (message == null)
+			{
+				return string.Empty;
+			}
+
+			string result = string.Empty;
+			try
+			{
+				result = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+			}
+			catch { /* */ }
+			return result;
+		}
 	}
 }

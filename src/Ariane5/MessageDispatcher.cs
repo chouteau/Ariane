@@ -198,6 +198,7 @@ namespace Ariane
 
 				if (message == null)
 				{
+					Logger.LogTrace($"receive message null");
 					continue;
 				}
 
@@ -212,6 +213,8 @@ namespace Ariane
 			{
 				try
 				{
+					Logger.LogTrace($"Receive message {message.ToJsonStringTraceLog()}");
+					Logger.LogTrace($"try to process it by {subscriber.FromQueueName}");
 					await subscriber.ProcessMessageAsync(message);
 				}
 				catch (Exception ex)
@@ -247,6 +250,11 @@ namespace Ariane
 			}
 			m_StoppingTask.Cancel();
 			m_MessageSubscriberTypeList.Clear();
+		}
+
+		public void Dispose()
+		{
+			DisposeAsync().ConfigureAwait(false);
 		}
 
 		#endregion

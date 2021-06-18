@@ -86,6 +86,7 @@ namespace Ariane
 			m.Priority = Math.Max(0, options.Priority);
 			m.TimeToLive = options.TimeToLive;
 			m.ScheduledEnqueueTimeUtc = options.ScheduledEnqueueTimeUtc;
+			Logger.LogTrace($"Try to send {m.ToJsonStringTraceLog()} in queue {queueName}");
 			mq.Send(m);
 		}
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Ariane
 {
-	internal interface IMessageDispatcher : IAsyncDisposable
+	internal interface IMessageDispatcher : IAsyncDisposable, IDisposable
 	{
 		string QueueName { get; }
         bool AutoStart { get; set; }
