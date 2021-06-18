@@ -98,7 +98,7 @@ namespace Ariane.QueueProviders
 				&& receivedMessage.Body != null)
             {
 				var receiveMessage = JsonConvert.DeserializeObject<T>(receivedMessage.Body.ToString());
-				result = receiveMessage; // .Body.ToObject<T>();
+				result = receiveMessage; 
 			}
 			return result;
 		}
