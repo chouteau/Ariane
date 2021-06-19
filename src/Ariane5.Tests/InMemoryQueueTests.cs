@@ -38,7 +38,14 @@ namespace Ariane.Tests
 						TypeReader = typeof(PersonMessageReader)
 					});
 
-					register.AddMemoryReader<BusDependencyPersonMessageReader>("sendreceivetest2");
+					register.AddQueue(new QueueSetting()
+					{
+						AutoStartReading = false,
+						Name = "sendreceivetest2",
+						TypeMedium = typeof(Ariane.InMemoryMedium),
+						TypeReader = typeof(BusDependencyPersonMessageReader)
+					});
+
 
 					register.AddMemoryWriter("same");
                     register.AddMemoryWriter("same");
