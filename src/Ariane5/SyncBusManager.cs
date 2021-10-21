@@ -15,15 +15,20 @@ namespace Ariane
 	{
 		private readonly IServiceBus m_Decorated;
 		private readonly IServiceProvider m_ServiceProvider;
+		private readonly ArianeSettings m_ArianeSettings;
 
-		public SyncBusManager(IServiceProvider serviceProvider, Ariane.IServiceBus decorated)
+		public SyncBusManager(IServiceProvider serviceProvider, 
+			Ariane.IServiceBus decorated,
+			ArianeSettings arianeSettings)
 		{
 			m_Decorated = decorated;
 			m_ServiceProvider = serviceProvider;
+			m_ArianeSettings = arianeSettings;
 		}
 
 		public void Send<T>(string queueName, T body, string label = null, int priority = 0)
 		{
+			queueName = $"{m_ArianeSettings.UniquePrefixName}{queueName}";
 			Send(queueName, body, new MessageOptions()
 			{
 				Label = label,
@@ -33,8 +38,9 @@ namespace Ariane
 
 		public void Send<T>(string queueName, T body, MessageOptions options)
 		{
+			var localQueueName = $"{m_ArianeSettings.UniquePrefixName}{queueName}";
 			var registeredQueues = m_ServiceProvider.GetServices<IMessageDispatcher>();
-			var registered = registeredQueues.SingleOrDefault(i => i.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase));
+			var registered = registeredQueues.SingleOrDefault(i => i.QueueName.Equals(localQueueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registered != null)
 			{
 				var md = registered as MessageDispatcher<T>;

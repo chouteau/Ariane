@@ -47,6 +47,7 @@ namespace Ariane
 				queueSetting.SubscriptionName = Settings.UniqueTopicNameForTest;
 			}
 
+			queueSetting.Name = $"{Settings.UniquePrefixName}{queueSetting.Name}";
 			var queueName = queueSetting.Name;
 			var existing = QueueList.SingleOrDefault(i => queueSetting.Name.Equals(i.Name, StringComparison.InvariantCultureIgnoreCase)
 													&& (i.SubscriptionName??string.Empty).Equals(queueSetting.SubscriptionName??string.Empty, StringComparison.InvariantCultureIgnoreCase));

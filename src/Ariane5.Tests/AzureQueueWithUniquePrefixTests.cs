@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Ariane;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,7 +14,7 @@ using NFluent;
 namespace Ariane.Tests
 {
 	[TestClass]
-	public class AzureTopicTests
+	public class AzureQueueWithUniquePrefixTests
 	{
 		[ClassInitialize()]
 		public static void MyClassInitialize(TestContext testContext)
@@ -22,29 +24,25 @@ namespace Ariane.Tests
 				services.ConfigureArianeAzure();
 				services.ConfigureAriane(register =>
 				{
-					register.AddAzureTopicWriter("MyTopic");
-					register.AddAzureTopicReader<PersonMessageReader>("MyTopic", "sub1");
-					register.AddAzureTopicReader<PersonMessageReader>("MyTopic", "sub2");
-					register.AddAzureTopicReader<PersonMessageReader>("MyTopic", "sub3");
-
+					register.AddAzureQueueReader<PersonMessageReader>("test.azure2");
 					register.AddQueue(new QueueSetting()
 					{
 						AutoStartReading = false,
-						Name = "MyTopic2",
-						SubscriptionName = "Sub1",
-						TypeMedium = typeof(AzureTopicMedium),
+						Name = "test.azure3",
+						TypeMedium = typeof(AzureQueueMedium),
 						TypeReader = typeof(PersonMessageReader)
 					});
-
+				}, settings =>
+				{
+					settings.UniquePrefixName = "MyPrefix";
 				});
 			});
 		}
 
 		private static IServiceProvider ServiceProvider { get; set; }
 
-
 		[TestMethod]
-		public async Task Send_And_Receive_Person_Topic()
+		public async Task Send_And_Receive_Person_Queue()
 		{
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
@@ -55,26 +53,28 @@ namespace Ariane.Tests
 			person.FirstName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("MyTopic", person);
+			bus.Send("test.azure2", person);
 
 			await bus.StartReadingAsync();
 
-			await Task.Delay(15 * 1000);
+			await Task.Delay(5 * 1000);
 
-			Check.That(messageCollector.Count).IsEqualTo(3);
+			Check.That(messageCollector.Count).IsStrictlyGreaterThan(0);
+
+			await bus.StopReadingAsync();
 		}
 
 		[TestMethod]
-		public async Task Write_In_Azure_Topic_And_Receive()
+		public async Task Write_In_Azure_Queue_And_Receive()
 		{
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var person = Person.CreateTestPerson();
-			bus.Send("MyTopic2", person);
+			bus.Send("test.azure3", person);
 
-			await Task.Delay(3 * 1000);
+			await Task.Delay(5 * 1000);
 
-			var list = await bus.ReceiveAsync<Person>("MyTopic2", 10, 10 * 1000);
+			var list = await bus.ReceiveAsync<Person>("test.azure3", 10, 10 * 1000);
 
 			Check.That(list).IsNotNull();
 			Check.That(list.Count()).IsStrictlyGreaterThan(0);
