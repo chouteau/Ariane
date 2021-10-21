@@ -21,17 +21,20 @@ namespace Ariane
 			ActionQueue actionQueue,
 			ILogger<BusManager> logger,
 			IEnumerable<IMessageQueue> messageQueues,
-			IServiceProvider serviceProvider)
+			IServiceProvider serviceProvider,
+			ArianeSettings arianeSettings)
 		{
 			m_ActionQueue = actionQueue;
 			this.Logger = logger;
 			this.MessageQueueList = messageQueues;
 			this.ServiceProvider = serviceProvider;
+			this.ArianeSettings = arianeSettings;
 		}
 
         protected ILogger<BusManager> Logger { get; }
 		protected IEnumerable<IMessageQueue> MessageQueueList { get; }
 		protected IServiceProvider ServiceProvider { get; }
+		protected ArianeSettings ArianeSettings { get; }
 
 
 		private IList<IMessageDispatcher> _messageDispatchers;
@@ -73,6 +76,7 @@ namespace Ariane
 
 		protected virtual void SendInternal<T>(string queueName, T body, MessageOptions options)
 		{
+			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			options = options ?? new MessageOptions();
 			var mq = MessageQueueList.FirstOrDefault(i => i.Name == queueName);
 			if (mq == null)
@@ -100,6 +104,7 @@ namespace Ariane
 
 		public virtual Task StartReadingAsync(string queueName)
 		{
+			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
             foreach (var dispatcher in MessageDispatcherList)
             {
 				if (!dispatcher.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase))
@@ -122,6 +127,7 @@ namespace Ariane
 
 		public virtual Task StopReadingAsync(string queueName)
 		{
+			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			foreach (var dispatcher in MessageDispatcherList)
 			{
 				if (!dispatcher.QueueName.Equals(queueName, StringComparison.InvariantCultureIgnoreCase))
@@ -135,6 +141,7 @@ namespace Ariane
 
 		public virtual async Task<IEnumerable<T>> ReceiveAsync<T>(string queueName, int count)
 		{
+			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			var mq = MessageQueueList.SingleOrDefault(i => i.Name == queueName);
 			var result = new List<T>();
             for (int i = 0; i < count; i++)
@@ -156,6 +163,7 @@ namespace Ariane
 
 		internal virtual async Task<IEnumerable<T>> ReceiveInternalAsync<T>(string queueName, int count, int timeoutInMillisecond)
 		{
+			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			var mq = MessageQueueList.SingleOrDefault(i => i.Name == queueName);
 			if (mq == null)
             {

@@ -15,6 +15,7 @@ namespace Ariane
         }
         public bool WorkSynchronized { get; set; }
         public string UniqueTopicNameForTest { get; set; }
+        public string UniquePrefixName { get; set; }
         public string DefaultAzureConnectionString { get; set; }
 		public bool AutoStart { get; set; }
 	}

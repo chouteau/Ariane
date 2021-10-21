@@ -12,7 +12,7 @@ using NFluent;
 namespace Ariane.Tests
 {
 	[TestClass]
-	public class AzureTopicTests
+	public class AzureTopicWithUniquePrefixTests
 	{
 		[ClassInitialize()]
 		public static void MyClassInitialize(TestContext testContext)
@@ -36,6 +36,9 @@ namespace Ariane.Tests
 						TypeReader = typeof(PersonMessageReader)
 					});
 
+				}, settings =>
+				{
+					settings.UniquePrefixName = "MyPrefix";
 				});
 			});
 		}
