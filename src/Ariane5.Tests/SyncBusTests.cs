@@ -44,7 +44,7 @@ namespace Ariane.Tests
 		{
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Clear();
+			messageCollector.Reset();
 
 			Check.That(bus.GetType()).IsEqualTo(typeof(Ariane.SyncBusManager));
 

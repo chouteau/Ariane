@@ -51,14 +51,14 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Clear();
+			messageCollector.Reset();
 
 			await bus.StartReadingAsync();
 
 			var firstName = person.FirstName;
 			bus.Send("test3.msmq", person);
 
-			await Task.Delay(10 * 1000);
+			await messageCollector.WaitForReceiveMessage(10 * 1000);
 
 			person = messageCollector.GetList().First();
 
