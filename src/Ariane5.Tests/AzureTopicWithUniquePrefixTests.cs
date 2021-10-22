@@ -52,7 +52,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Clear();
+			messageCollector.Reset();
 
 			var person = new Person();
 			person.FirstName = Guid.NewGuid().ToString();
@@ -62,9 +62,11 @@ namespace Ariane.Tests
 
 			await bus.StartReadingAsync();
 
-			await Task.Delay(15 * 1000);
+			await messageCollector.WaitForReceiveMessage(15 * 1000);
 
 			Check.That(messageCollector.Count).IsEqualTo(3);
+
+			await bus.StopReadingAsync();
 		}
 
 		[TestMethod]

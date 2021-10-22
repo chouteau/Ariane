@@ -40,7 +40,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Clear();
+			messageCollector.Reset();
 
 			var person = new Person();
 			person.FirstName = Guid.NewGuid().ToString();
@@ -49,7 +49,7 @@ namespace Ariane.Tests
 			bus.Send("test.file", person);
 			await bus.StartReadingAsync();
 
-			await Task.Delay(1000);
+			await messageCollector.WaitForReceiveMessage(2 * 1000);
 
 			Check.That(messageCollector.Count).IsStrictlyGreaterThan(0);
 
