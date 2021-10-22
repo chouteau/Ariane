@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,13 @@ namespace Ariane.Tests
 	{
 		private List<Person> m_PersonList;
 		private System.Threading.ManualResetEvent m_ManualResetEvent;
+		private ILogger m_Logger;
 
-		public MessageCollector()
+		public MessageCollector(ILogger<MessageCollector> logger)
 		{
 			m_PersonList = new List<Person>();
 			m_ManualResetEvent = new System.Threading.ManualResetEvent(false);
+			m_Logger = logger;
 		}
 
 		public int Count
@@ -47,7 +50,11 @@ namespace Ariane.Tests
 
 		public async Task WaitForReceiveMessage(int millisecond)
         {
-			m_ManualResetEvent.WaitOne(10 * 1000);
+			var success = m_ManualResetEvent.WaitOne(10 * 1000);
+			if (!success)
+            {
+				m_Logger.LogWarning("Timeout detected");
+            }
 			await Task.Delay(millisecond);
 		}
 	}
