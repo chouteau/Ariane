@@ -26,7 +26,7 @@ namespace Ariane
 			string result = string.Empty;
 			try
 			{
-				result = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+				result = System.Text.Json.JsonSerializer.Serialize(message);
 			}
 			catch { /* */ }
 			return result;

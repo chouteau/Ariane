@@ -21,6 +21,7 @@ namespace Ariane.Tests
 		{
 			ServiceProvider = RootTests.Initialize(services =>
 			{
+				services.ConfigureArianeMsmq();
 				services.ConfigureAriane(register =>
 				{
 					register.AddMSMQReader<PersonMessageReader>("test7.msmq");
