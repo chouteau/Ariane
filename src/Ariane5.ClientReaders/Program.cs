@@ -27,6 +27,7 @@ namespace Ariane5.ClientReaders
 
             serviceCollection.AddSingleton<IConfiguration>(configuration);
 
+            serviceCollection.ConfigureArianeMsmq();
             serviceCollection.ConfigureAriane(register =>
             {
                 register.AddMSMQReader<R1>("q1");
