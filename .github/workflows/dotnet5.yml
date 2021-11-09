@@ -40,7 +40,7 @@ jobs:
     - name: Publish Ariane5.Azure to nuget
       uses: rohith/publish-nuget@v2
       with:
-        PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5.Azure\Ariane5.Msmq.csproj
+        PROJECT_FILE_PATH: ${{github.workspace}}\src\Ariane5.Msmq\Ariane5.Msmq.csproj
         PACKAGE_NAME: Ariane5.Msmq
         NUGET_SOURCE: https://api.nuget.org
         NUGET_KEY: ${{secrets.nuget}}
