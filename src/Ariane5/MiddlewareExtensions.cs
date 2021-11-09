@@ -35,8 +35,6 @@ namespace Ariane
 
             services.AddSingleton<FileMedium>();
             services.AddSingleton<InMemoryMedium>();
-            services.AddSingleton<MSMQMedium>();
-
 
             if (s.WorkSynchronized)
             {

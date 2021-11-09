@@ -21,7 +21,7 @@ namespace Ariane.Tests
 		{
 			ServiceProvider = RootTests.Initialize(services =>
 			{
-				services.ConfigureArianeAzure();
+				services.ConfigureArianeMsmq();
 				services.ConfigureAriane(register =>
 				{
 					register.AddMSMQWriter("test6.msmq");

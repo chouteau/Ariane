@@ -44,6 +44,8 @@ namespace Ariane5.ClientWriters
             var sw = new System.Diagnostics.Stopwatch();
             int count = 0;
 
+            sb.Send("q1", new User());
+
             while (true)
             {
                 sw.Start();

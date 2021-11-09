@@ -8,6 +8,6 @@ namespace Ariane
 {
     internal class ReceivedMessage
     {
-        public Newtonsoft.Json.Linq.JObject Body { get; set; }
+        public JObject Body { get; set; }
     }
 }
