@@ -21,7 +21,7 @@ namespace Ariane.QueueProviders
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
-		public AzureMessageQueue(ServiceBusClient serviceBusClient, string queueName, ILogger logger)
+		public AzureMessageQueue(ServiceBusClient serviceBusClient, AzureBusSettings settings, string queueName, ILogger logger)
 		{
 			this.Logger = logger;
 			m_ServiceBusClient = serviceBusClient;
@@ -29,13 +29,13 @@ namespace Ariane.QueueProviders
 			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(queueName, new ServiceBusReceiverOptions()
 			{
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = 10
+				PrefetchCount = settings.ReceiverPrefetchCount
 			});
 			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(queueName, new ServiceBusProcessorOptions()
 			{
 				AutoCompleteMessages = true,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = 10,
+				PrefetchCount = settings.ProcessorPrefetchCount,
 				MaxConcurrentCalls = 1
 			});
 			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
