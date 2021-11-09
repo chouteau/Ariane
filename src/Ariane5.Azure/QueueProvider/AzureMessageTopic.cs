@@ -13,6 +13,7 @@ namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable, IDisposable
 	{
+		private int _messageCount;
 		private ManualResetEvent m_Event;
 		private BinaryData m_BinaryMessage;
 		private readonly ServiceBusClient m_ServiceBusClient;
@@ -20,8 +21,9 @@ namespace Ariane.QueueProviders
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
-		public AzureMessageTopic(ServiceBusClient serviceBusClient, string topicName, string subscriptionName, ILogger logger)
+		public AzureMessageTopic(ServiceBusClient serviceBusClient, AzureBusSettings settings, string topicName, string subscriptionName, ILogger logger)
 		{
+			_messageCount = 0;
 			this.Logger = logger;
 			Name = topicName;
 			SubscriptionName = subscriptionName;
@@ -29,14 +31,14 @@ namespace Ariane.QueueProviders
 			m_ServiceBusSender = m_ServiceBusClient.CreateSender(topicName);
 			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(topicName, subscriptionName, new ServiceBusReceiverOptions()
 			{
-				PrefetchCount = 10,
+				PrefetchCount = settings.ReceiverPrefetchCount,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
 			});
 			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(topicName, SubscriptionName, new ServiceBusProcessorOptions()
 			{
 				AutoCompleteMessages = true,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = 10,
+				PrefetchCount = settings.ProcessorPrefetchCount,
 				MaxConcurrentCalls = 1
 			});
 			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
@@ -163,8 +165,10 @@ namespace Ariane.QueueProviders
 
 		private Task MessageHandler(ProcessMessageEventArgs args)
 		{
+			Logger.LogDebug($"message received {_messageCount}");
 			m_BinaryMessage = args.Message.Body;
 			m_Event.Set();
+			_messageCount++;
 			return Task.CompletedTask;
 		}
 

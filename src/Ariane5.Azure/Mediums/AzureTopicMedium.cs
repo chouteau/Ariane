@@ -16,17 +16,21 @@ namespace Ariane
 	{
 		public AzureTopicMedium(IConfiguration configuration,
 					ArianeSettings settings,
-					ILogger<AzureTopicMedium> logger)
+					ILogger<AzureTopicMedium> logger,
+					AzureBusSettings azureBusSettings)
 		{
 			this.Configuration = configuration;
 			this.Settings = settings;
 			this.Logger = logger;
+			this.AzureBusSettings = azureBusSettings;
 		}
 
 		public bool TopicCompliant => false;
 		protected IConfiguration Configuration { get; }
 		protected ArianeSettings Settings { get; }
 		protected ILogger Logger { get; }
+		protected AzureBusSettings AzureBusSettings { get; }
+
 
 		public IMessageQueue CreateMessageQueue(QueueSetting queueSetting)
 		{
@@ -60,8 +64,8 @@ namespace Ariane
 			{
 				var topicOptions = new CreateTopicOptions(queueSetting.Name)
 				{
-					DefaultMessageTimeToLive = TimeSpan.FromDays(1),
-					AutoDeleteOnIdle = TimeSpan.FromDays(7),
+					DefaultMessageTimeToLive = TimeSpan.FromDays(AzureBusSettings.DefaultMessageTimeToLiveInDays),
+					AutoDeleteOnIdle = TimeSpan.FromDays(AzureBusSettings.AutoDeleteOnIdleInDays),
 					EnableBatchedOperations = true,
 				};
 				topicOptions.AuthorizationRules.Add(new SharedAccessAuthorizationRule("allClaims"
@@ -80,8 +84,8 @@ namespace Ariane
 					var subscriptionOptions = new CreateSubscriptionOptions(queueSetting.Name, queueSetting.SubscriptionName)
 					{
 						EnableBatchedOperations = true,
-						DefaultMessageTimeToLive = TimeSpan.FromDays(1),
-						AutoDeleteOnIdle = TimeSpan.FromDays(7)
+						DefaultMessageTimeToLive = TimeSpan.FromDays(AzureBusSettings.DefaultMessageTimeToLiveInDays),
+						AutoDeleteOnIdle = TimeSpan.FromDays(AzureBusSettings.AutoDeleteOnIdleInDays)
 					};
 
 					managementClient.CreateSubscriptionAsync(subscriptionOptions).Wait();
@@ -100,7 +104,7 @@ namespace Ariane
 					MaxDelay = TimeSpan.FromSeconds(10)
 				}
 			});
-			var mq = new QueueProviders.AzureMessageTopic(serviceBusClient, queueSetting.Name, queueSetting.SubscriptionName, Logger);
+			var mq = new QueueProviders.AzureMessageTopic(serviceBusClient, AzureBusSettings, queueSetting.Name, queueSetting.SubscriptionName, Logger);
 			mq.ConnectionString = cs;
 			return mq;
 		}
