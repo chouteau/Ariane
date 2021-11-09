@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 using Experimental.System.Messaging;
 
 namespace Ariane.QueueProviders
@@ -60,7 +59,7 @@ namespace Ariane.QueueProviders
 			var label = (string)obj.GetType().GetProperty("Label").GetValue(obj, null);
 			var recoverable = (bool)obj.GetType().GetProperty("Recoverable").GetValue(obj, null);
 
-			var json = JsonConvert.SerializeObject(body, Formatting.None);
+			var json = System.Text.Json.JsonSerializer.Serialize(body);
 			var buffer = System.Text.Encoding.UTF8.GetBytes(json);
 			message.BodyStream = new System.IO.MemoryStream(buffer);
 			message.BodyType = 0;

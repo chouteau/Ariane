@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Ariane.QueueProviders
 {
@@ -96,7 +95,7 @@ namespace Ariane.QueueProviders
 				{
 					System.Threading.Thread.Sleep(100);
 					var content = System.IO.File.ReadAllText(fileName);
-					m = JsonConvert.DeserializeObject<T>(content);
+					m = System.Text.Json.JsonSerializer.Deserialize<T>(content);
 					System.IO.File.Delete(fileName);
 					break;
 				}
@@ -139,7 +138,7 @@ namespace Ariane.QueueProviders
 
 		public void Send<T>(Message<T> message)
 		{
-			var json = JsonConvert.SerializeObject(message.Body, Formatting.None);
+			var json = System.Text.Json.JsonSerializer.Serialize(message.Body);
 			string fileName = System.IO.Path.Combine(m_Path, string.Format("{0}.{1}", m_QueueName, Guid.NewGuid().ToString()));
 			System.IO.File.WriteAllText(fileName, json, Encoding.UTF8);
 		}

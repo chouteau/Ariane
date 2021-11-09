@@ -46,6 +46,8 @@ namespace Ariane5.AzureTopicClientWriters
             var sw = new System.Diagnostics.Stopwatch();
             int count = 0;
 
+            sb.Send($"t1", new User());
+
             sw.Start();
             Parallel.For(1, 6, (i) =>
             {

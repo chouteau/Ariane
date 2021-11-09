@@ -9,8 +9,6 @@ using Azure.Messaging.ServiceBus;
 
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
 namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable, IDisposable
@@ -88,7 +86,7 @@ namespace Ariane.QueueProviders
 		{
 			if (m_BinaryMessage != null)
 			{
-				var receiveMessage = JsonConvert.DeserializeObject<T>(m_BinaryMessage.ToString());
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(m_BinaryMessage.ToString());
 				return receiveMessage;
 			}
 			return default(T);
@@ -101,7 +99,7 @@ namespace Ariane.QueueProviders
 			if (receivedMessage != null
 				&& receivedMessage.Body != null)
 			{
-				var receiveMessage = JsonConvert.DeserializeObject<T>(receivedMessage.Body.ToString());
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(receivedMessage.Body.ToString());
 				result = receiveMessage;
 			}
 			return result;
@@ -129,7 +127,7 @@ namespace Ariane.QueueProviders
 				string data = null;
 				try
 				{
-					data = JsonConvert.SerializeObject(message.Body);
+					data = System.Text.Json.JsonSerializer.Serialize(message.Body);
 					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
 					busMessage.Subject = message.Label;
 					if (message.ScheduledEnqueueTimeUtc.HasValue)
