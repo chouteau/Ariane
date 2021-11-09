@@ -13,7 +13,6 @@ namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable, IDisposable
 	{
-		private int _messageCount;
 		private ManualResetEvent m_Event;
 		private BinaryData m_BinaryMessage;
 		private readonly ServiceBusClient m_ServiceBusClient;
@@ -23,7 +22,6 @@ namespace Ariane.QueueProviders
 
 		public AzureMessageTopic(ServiceBusClient serviceBusClient, AzureBusSettings settings, string topicName, string subscriptionName, ILogger logger)
 		{
-			_messageCount = 0;
 			this.Logger = logger;
 			Name = topicName;
 			SubscriptionName = subscriptionName;
@@ -165,10 +163,8 @@ namespace Ariane.QueueProviders
 
 		private Task MessageHandler(ProcessMessageEventArgs args)
 		{
-			Logger.LogDebug($"message received {_messageCount}");
 			m_BinaryMessage = args.Message.Body;
 			m_Event.Set();
-			_messageCount++;
 			return Task.CompletedTask;
 		}
 
