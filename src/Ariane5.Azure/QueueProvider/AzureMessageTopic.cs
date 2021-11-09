@@ -9,8 +9,6 @@ using Azure.Messaging.ServiceBus;
 
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
 namespace Ariane.QueueProviders
 {
 	public class AzureMessageTopic : IMessageQueue, IAsyncDisposable, IDisposable
@@ -22,7 +20,7 @@ namespace Ariane.QueueProviders
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
-		public AzureMessageTopic(ServiceBusClient serviceBusClient, string topicName, string subscriptionName, ILogger logger)
+		public AzureMessageTopic(ServiceBusClient serviceBusClient, AzureBusSettings settings, string topicName, string subscriptionName, ILogger logger)
 		{
 			this.Logger = logger;
 			Name = topicName;
@@ -31,14 +29,14 @@ namespace Ariane.QueueProviders
 			m_ServiceBusSender = m_ServiceBusClient.CreateSender(topicName);
 			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(topicName, subscriptionName, new ServiceBusReceiverOptions()
 			{
-				PrefetchCount = 10,
+				PrefetchCount = settings.ReceiverPrefetchCount,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
 			});
 			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(topicName, SubscriptionName, new ServiceBusProcessorOptions()
 			{
 				AutoCompleteMessages = true,
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = 10,
+				PrefetchCount = settings.ProcessorPrefetchCount,
 				MaxConcurrentCalls = 1
 			});
 			m_ServiceBusProcessor.ProcessMessageAsync += MessageHandler;
@@ -88,7 +86,7 @@ namespace Ariane.QueueProviders
 		{
 			if (m_BinaryMessage != null)
 			{
-				var receiveMessage = JsonConvert.DeserializeObject<T>(m_BinaryMessage.ToString());
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(m_BinaryMessage.ToString());
 				return receiveMessage;
 			}
 			return default(T);
@@ -101,7 +99,7 @@ namespace Ariane.QueueProviders
 			if (receivedMessage != null
 				&& receivedMessage.Body != null)
 			{
-				var receiveMessage = JsonConvert.DeserializeObject<T>(receivedMessage.Body.ToString());
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(receivedMessage.Body.ToString());
 				result = receiveMessage;
 			}
 			return result;
@@ -129,7 +127,7 @@ namespace Ariane.QueueProviders
 				string data = null;
 				try
 				{
-					data = JsonConvert.SerializeObject(message.Body);
+					data = System.Text.Json.JsonSerializer.Serialize(message.Body);
 					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
 					busMessage.Subject = message.Label;
 					if (message.ScheduledEnqueueTimeUtc.HasValue)

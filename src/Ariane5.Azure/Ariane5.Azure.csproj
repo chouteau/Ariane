@@ -1,10 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Ariane</RootNamespace>
-    <Version>5.1.10</Version>
+    <Version>5.2.12</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ReceivedMessage.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.1.0" />

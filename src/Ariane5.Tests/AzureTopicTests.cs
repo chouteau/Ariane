@@ -19,7 +19,9 @@ namespace Ariane.Tests
 		{
 			ServiceProvider = RootTests.Initialize(services =>
 			{
-				services.ConfigureArianeAzure();
+				services.ConfigureArianeAzure(config =>
+                {
+                });
 				services.ConfigureAriane(register =>
 				{
 					register.AddAzureTopicWriter("MyTopic");

@@ -83,7 +83,7 @@ namespace Ariane.QueueProviders
 			T body = default(T);
 			try
 			{
-				body = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+				body = System.Text.Json.JsonSerializer.Deserialize<T>(content);
 			}
 			catch (Exception ex)
 			{
@@ -111,7 +111,7 @@ namespace Ariane.QueueProviders
 					mqex.Data.Add("QueueName", Name);
 					mqex.Data.Add("MsmqErrorCode", mqex.MessageQueueErrorCode.ToString());
 					mqex.Data.Add("MessageType", message.GetType().FullName);
-					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+					var json = System.Text.Json.JsonSerializer.Serialize(message);
 					mqex.Data.Add("Message", json);
 					Logger.LogError(mqex, mqex.Message);
 				}
@@ -123,7 +123,7 @@ namespace Ariane.QueueProviders
 				{
 					ex.Data.Add("QueueName", Name);
 					ex.Data.Add("MessageType", message.GetType().FullName);
-					var json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+					var json = System.Text.Json.JsonSerializer.Serialize(message);
 					ex.Data.Add("Message", json);
 					Logger.LogError(ex, ex.Message);
 				}

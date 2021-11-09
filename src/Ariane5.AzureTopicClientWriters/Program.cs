@@ -46,7 +46,21 @@ namespace Ariane5.AzureTopicClientWriters
             var sw = new System.Diagnostics.Stopwatch();
             int count = 0;
 
+            // sb.Send($"t1", new User());
+
             sw.Start();
+
+            for (int m = 0; m < 500; m++)
+            {
+                sb.Send($"t1", new User());
+                if (count % 500 == 0)
+                {
+                    Console.WriteLine($"{count} messages queued");
+                }
+                count++;
+            }
+
+            /*
             Parallel.For(1, 6, (i) =>
             {
                 for (int m = 0; m < 10000; m++)
@@ -58,9 +72,10 @@ namespace Ariane5.AzureTopicClientWriters
                     }
                     count++;
                 }
-            });
+            }); */
             sw.Stop();
 
+            Console.WriteLine($"{count} messages");
             Console.WriteLine($"5 * 10000 user queued in {sw.ElapsedMilliseconds} ms");
             Console.Read();
 
