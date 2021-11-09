@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ariane5.Msmq\Ariane5.Msmq.csproj" />
     <ProjectReference Include="..\Ariane5\Ariane5.csproj" />
   </ItemGroup>
 

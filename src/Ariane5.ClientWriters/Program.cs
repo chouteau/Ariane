@@ -28,6 +28,7 @@ namespace Ariane5.ClientWriters
 
             serviceCollection.AddSingleton<IConfiguration>(configuration);
 
+            serviceCollection.ConfigureArianeMsmq();
             serviceCollection.ConfigureAriane(register =>
             {
                 register.AddMSMQWriter("q1");
