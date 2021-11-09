@@ -218,3 +218,4 @@ ModelManifest.xml
 /.vs/Ariane5/DesignTimeBuild
 /.vs/Ariane5
 /.vs
+/src/Azure5.AzureTopicClientReaders/localconfig

@@ -16,18 +16,20 @@ namespace Ariane
 	{
         public AzureQueueMedium(IConfiguration configuration,
 			ArianeSettings settings,
-			ILogger<AzureQueueMedium> logging
-			)
+			ILogger<AzureQueueMedium> logging,
+			AzureBusSettings azureBusSettings)
         {
 			this.Configuration = configuration;
 			this.Settings = settings;
 			this.Logger = logging;
+			this.AzureBusSettings = azureBusSettings;	
         }
 
 		public bool TopicCompliant => false;
 		protected IConfiguration Configuration { get; }
 		protected ArianeSettings Settings { get; }
 		protected ILogger Logger { get; }
+		protected AzureBusSettings AzureBusSettings { get; }
 
 		public IMessageQueue CreateMessageQueue(QueueSetting queueSetting)
 		{
@@ -52,8 +54,8 @@ namespace Ariane
 			{
 				var options = new CreateQueueOptions(queueSetting.Name)
 				{
-					DefaultMessageTimeToLive = TimeSpan.FromDays(1),
-					AutoDeleteOnIdle = TimeSpan.FromDays(7),
+					DefaultMessageTimeToLive = TimeSpan.FromDays(AzureBusSettings.DefaultMessageTimeToLiveInDays),
+					AutoDeleteOnIdle = TimeSpan.FromDays(AzureBusSettings.AutoDeleteOnIdleInDays),
 					EnableBatchedOperations = true,
 					MaxDeliveryCount = 1,
 				};
@@ -67,7 +69,7 @@ namespace Ariane
 
 			var serviceBusClient = new ServiceBusClient(cs, new ServiceBusClientOptions()
 			{
-				TransportType = ServiceBusTransportType.AmqpTcp,
+				TransportType = AzureBusSettings.TransportType,
 				RetryOptions = new ServiceBusRetryOptions()
 				{
 					Mode = ServiceBusRetryMode.Exponential,
@@ -75,7 +77,7 @@ namespace Ariane
 					MaxDelay = TimeSpan.FromSeconds(10)
 				}
 			});
-			var mq = new QueueProviders.AzureMessageQueue(serviceBusClient, queueSetting.Name, Logger);
+			var mq = new QueueProviders.AzureMessageQueue(serviceBusClient, AzureBusSettings, queueSetting.Name, Logger);
 			mq.ConnectionString = cs;
 			return mq;
 		}
