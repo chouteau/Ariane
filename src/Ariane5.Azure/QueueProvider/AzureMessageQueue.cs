@@ -14,6 +14,7 @@ namespace Ariane.QueueProviders
 {
 	public class AzureMessageQueue : IMessageQueue, IAsyncDisposable, IDisposable
 	{
+		private readonly bool m_FlushReceivedMessageToDiskBeforeProcess;
 		private ManualResetEvent m_Event;
 		private BinaryData m_BinaryMessage;
 		private readonly ServiceBusClient m_ServiceBusClient;
@@ -21,8 +22,9 @@ namespace Ariane.QueueProviders
 		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
-		public AzureMessageQueue(ServiceBusClient serviceBusClient, AzureBusSettings settings, string queueName, ILogger logger)
+		public AzureMessageQueue(ServiceBusClient serviceBusClient, AzureBusSettings settings, string queueName, ILogger logger, bool flushReceivedMessageToDiskBeforeProcess)
 		{
+			this.m_FlushReceivedMessageToDiskBeforeProcess = flushReceivedMessageToDiskBeforeProcess;
 			this.Logger = logger;
 			m_ServiceBusClient = serviceBusClient;
 			m_ServiceBusSender = m_ServiceBusClient.CreateSender(queueName);
@@ -82,7 +84,12 @@ namespace Ariane.QueueProviders
 		{
 			if (m_BinaryMessage != null)
             {
-				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(m_BinaryMessage.ToString());
+				var body = m_BinaryMessage.ToString();
+				if (m_FlushReceivedMessageToDiskBeforeProcess)
+                {
+					DiagnosticHelper.FlushToDisk(body);
+				}
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(body);
 				return receiveMessage;
 			}
 			return default(T);
@@ -95,7 +102,8 @@ namespace Ariane.QueueProviders
 			if (receivedMessage != null
 				&& receivedMessage.Body != null)
             {
-				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(receivedMessage.Body.ToString());
+				var body = receivedMessage.Body.ToString();
+				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(body);
 				result = receiveMessage; 
 			}
 			return result;

@@ -77,7 +77,7 @@ namespace Ariane
 					MaxDelay = TimeSpan.FromSeconds(10)
 				}
 			});
-			var mq = new QueueProviders.AzureMessageQueue(serviceBusClient, AzureBusSettings, queueSetting.Name, Logger);
+			var mq = new QueueProviders.AzureMessageQueue(serviceBusClient, AzureBusSettings, queueSetting.Name, Logger, queueSetting.FlushReceivedMessageToDiskBeforeProcess);
 			mq.ConnectionString = cs;
 			return mq;
 		}
