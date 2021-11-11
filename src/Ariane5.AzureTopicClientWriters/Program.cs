@@ -37,10 +37,32 @@ namespace Ariane5.AzureTopicClientWriters
                 register.AddAzureTopicWriter("t3");
                 register.AddAzureTopicWriter("t4");
                 register.AddAzureTopicWriter("t5");
+                register.AddAzureQueueWriter("BankTest");
             });
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
+            await SendBigMessage(serviceProvider);
+        }
+
+        private static async Task SendBigMessage(IServiceProvider serviceProvider)
+        {
+            var sb = serviceProvider.GetRequiredService<IServiceBus>();
+
+            var content = System.IO.File.ReadAllText("localconfig\\message.txt");
+            var message = System.Text.Json.JsonSerializer.Deserialize<ValidationPaymentRequest>(content);
+
+            for (int i = 0; i < 100; i++)
+            {
+                sb.Send($"BankTest", message);
+            }
+
+            Console.WriteLine($"message sent");
+            Console.Read();
+        }
+
+        private static async Task Send500Messages(IServiceProvider serviceProvider)
+        {
             var sb = serviceProvider.GetRequiredService<IServiceBus>();
 
             var sw = new System.Diagnostics.Stopwatch();
@@ -80,5 +102,7 @@ namespace Ariane5.AzureTopicClientWriters
             Console.Read();
 
         }
+
+        
     }
 }

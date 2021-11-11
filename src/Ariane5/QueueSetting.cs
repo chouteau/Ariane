@@ -14,6 +14,7 @@ namespace Ariane
 		{
 			TypeMedium = typeof(InMemoryMedium);
 			AutoStartReading = true;
+			FlushReceivedMessageToDiskBeforeProcess = false;
 		}
 		/// <summary>
 		/// Name
@@ -39,6 +40,10 @@ namespace Ariane
 		/// Topic name for multiple subscriptions
 		/// </summary>
 		public string SubscriptionName { get; set; }
+		/// <summary>
+		/// Flush message to disk before process (warning is slow, for debug purpose)
+		/// </summary>
+        public bool FlushReceivedMessageToDiskBeforeProcess { get; set; }
 
         public override string ToString()
         {
