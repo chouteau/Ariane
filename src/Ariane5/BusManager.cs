@@ -158,7 +158,7 @@ namespace Ariane
 
 		public virtual async Task<IEnumerable<T>> ReceiveAsync<T>(string queueName, int count, int timeoutInMillisecond)
 		{
-			timeoutInMillisecond = Math.Max(60 * 1000, timeoutInMillisecond);
+			timeoutInMillisecond = Math.Min(60 * 1000, timeoutInMillisecond);
 			return await ReceiveInternalAsync<T>(queueName, count, timeoutInMillisecond);
 		}
 
