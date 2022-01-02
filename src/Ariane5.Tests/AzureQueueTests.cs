@@ -70,7 +70,7 @@ namespace Ariane.Tests
 
 			await Task.Delay(5 * 1000);
 
-			var list = await bus.ReceiveAsync<Person>("test.azure3", 10, 10 * 1000);
+			var list = await bus.ReceiveAsync<Person>("test.azure3", 10);
 
 			Check.That(list).IsNotNull();
 			Check.That(list.Count()).IsStrictlyGreaterThan(0);

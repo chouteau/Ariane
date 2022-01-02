@@ -23,7 +23,6 @@ namespace Ariane
             services.AddSingleton(s);
 
             services.AddTransient<ActionQueue>();
-            services.AddLogging();
 
             var register = new Register(s,services);
             if (registerExpression != null)
