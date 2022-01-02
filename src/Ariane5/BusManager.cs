@@ -147,17 +147,18 @@ namespace Ariane
             for (int i = 0; i < count; i++)
             {
 				var message = await mq.ReceiveAsync<T>();
-				if (message != null)
+				if (message == null)
                 {
-					result.Add(message);
+					break;
                 }
-            }
+				result.Add(message);
+			}
 			return result;
 		}
 
 		public virtual async Task<IEnumerable<T>> ReceiveAsync<T>(string queueName, int count, int timeoutInMillisecond)
 		{
-			timeoutInMillisecond = Math.Min(60 * 1000, timeoutInMillisecond);
+			timeoutInMillisecond = Math.Max(60 * 1000, timeoutInMillisecond);
 			return await ReceiveInternalAsync<T>(queueName, count, timeoutInMillisecond);
 		}
 
