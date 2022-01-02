@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Ariane</RootNamespace>
-    <Version>5.2.15</Version>
+    <Version>5.2.16</Version>
   </PropertyGroup>
 
   <ItemGroup>
