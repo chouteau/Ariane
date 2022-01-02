@@ -18,6 +18,7 @@ namespace Ariane.Tests
             var serviceCollection = new ServiceCollection()
                                         .AddLogging(config =>
                                         {
+                                            config.SetMinimumLevel(LogLevel.Trace);
                                             config.AddConsole();
                                             config.AddDebug();
                                         });

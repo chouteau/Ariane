@@ -31,7 +31,7 @@ namespace Ariane.QueueProviders
 			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(queueName, new ServiceBusReceiverOptions()
 			{
 				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-				PrefetchCount = settings.ReceiverPrefetchCount
+				PrefetchCount = settings.ProcessorPrefetchCount
 			});
 			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(queueName, new ServiceBusProcessorOptions()
 			{
