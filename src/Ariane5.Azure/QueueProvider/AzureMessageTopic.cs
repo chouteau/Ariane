@@ -18,7 +18,6 @@ namespace Ariane.QueueProviders
 		private BinaryData m_BinaryMessage;
 		private readonly ServiceBusClient m_ServiceBusClient;
 		private readonly ServiceBusSender m_ServiceBusSender;
-		private readonly ServiceBusReceiver m_ServiceBusReceiver;
 		private readonly ServiceBusProcessor m_ServiceBusProcessor;
 
 		public AzureMessageTopic(ServiceBusClient serviceBusClient, AzureBusSettings settings, string topicName, string subscriptionName, ILogger logger, bool flushReceivedMessageToDiskBeforeProcess)
@@ -29,11 +28,6 @@ namespace Ariane.QueueProviders
 			SubscriptionName = subscriptionName;
 			m_ServiceBusClient = serviceBusClient;
 			m_ServiceBusSender = m_ServiceBusClient.CreateSender(topicName);
-			m_ServiceBusReceiver = m_ServiceBusClient.CreateReceiver(topicName, subscriptionName, new ServiceBusReceiverOptions()
-			{
-				PrefetchCount = settings.ReceiverPrefetchCount,
-				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
-			});
 			m_ServiceBusProcessor = m_ServiceBusClient.CreateProcessor(topicName, SubscriptionName, new ServiceBusProcessorOptions()
 			{
 				AutoCompleteMessages = true,
@@ -101,8 +95,14 @@ namespace Ariane.QueueProviders
 
 		public async Task<T> ReceiveAsync<T>()
 		{
+			await using var serviceBusReceiver = m_ServiceBusClient.CreateReceiver(Name, SubscriptionName, new ServiceBusReceiverOptions()
+			{
+				PrefetchCount = 0,
+				ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
+			});
+
 			T result = default(T);
-			var receivedMessage = await m_ServiceBusReceiver.ReceiveMessageAsync();
+			var receivedMessage = await serviceBusReceiver.ReceiveMessageAsync(TimeSpan.FromSeconds(1));
 			if (receivedMessage != null
 				&& receivedMessage.Body != null)
 			{
@@ -196,10 +196,6 @@ namespace Ariane.QueueProviders
 			if (m_ServiceBusSender != null)
 			{
 				disposeList.Add(m_ServiceBusSender.DisposeAsync().AsTask());
-			}
-			if (m_ServiceBusReceiver != null)
-			{
-				disposeList.Add(m_ServiceBusReceiver.DisposeAsync().AsTask());
 			}
 			if (m_ServiceBusClient != null)
 			{
