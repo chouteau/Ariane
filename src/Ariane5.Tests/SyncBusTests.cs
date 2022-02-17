@@ -53,7 +53,7 @@ namespace Ariane.Tests
 			var person = new Person();
 			var firstName = person.FirstName = $"{Guid.NewGuid()}";
 
-			bus.Send("sendsync", person);
+			await bus.SendAsync("sendsync", person);
 
 			var syncReceivePeson = messageCollector.GetList().Single();
 			

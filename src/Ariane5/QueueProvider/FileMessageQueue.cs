@@ -136,11 +136,12 @@ namespace Ariane.QueueProviders
 			m_Event.Reset();
 		}
 
-		public void Send<T>(Message<T> message)
+		public Task SendAsync<T>(Message<T> message)
 		{
 			var json = System.Text.Json.JsonSerializer.Serialize(message.Body);
 			string fileName = System.IO.Path.Combine(m_Path, string.Format("{0}.{1}", m_QueueName, Guid.NewGuid().ToString()));
 			System.IO.File.WriteAllText(fileName, json, Encoding.UTF8);
+			return Task.CompletedTask;
 		}
 
 		#endregion

@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5", "src\Ariane5\Aria
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.Tests", "src\Ariane5.Tests\Ariane5.Tests.csproj", "{C1B38AE6-C1F7-4B32-9324-FD663BFF33E4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.Azure", "src\Ariane5.Azure\Ariane5.Azure.csproj", "{73CF29A5-5E70-4AD9-9B3C-A89D31FD312C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.ClientWriters", "src\Ariane5.ClientWriters\Ariane5.ClientWriters.csproj", "{E6A9B681-C3E6-4879-B845-514C34364E74}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.ClientReaders", "src\Ariane5.ClientReaders\Ariane5.ClientReaders.csproj", "{CE65098A-546A-4932-A006-EEF83E08FF4E}"
@@ -31,9 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.AzureTopicClientWri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.AzureTopicClientReaders", "src\Azure5.AzureTopicClientReaders\Ariane5.AzureTopicClientReaders.csproj", "{A479AD31-32F7-4C9D-8D54-6B2DF49518A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ariane5.Msmq", "src\Ariane5.Msmq\Ariane5.Msmq.csproj", "{37F32BE3-6480-48C6-A347-ADF766147411}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.Msmq", "src\Ariane5.Msmq\Ariane5.Msmq.csproj", "{37F32BE3-6480-48C6-A347-ADF766147411}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "msmq", "msmq", "{3F1A737C-D8BE-4AEA-8D9A-ED247272397E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariane5.Azure", "src\Ariane5.Azure\Ariane5.Azure.csproj", "{03EF52B1-BD55-4FD7-960A-F6597C6B43F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +49,6 @@ Global
 		{C1B38AE6-C1F7-4B32-9324-FD663BFF33E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1B38AE6-C1F7-4B32-9324-FD663BFF33E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1B38AE6-C1F7-4B32-9324-FD663BFF33E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73CF29A5-5E70-4AD9-9B3C-A89D31FD312C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73CF29A5-5E70-4AD9-9B3C-A89D31FD312C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73CF29A5-5E70-4AD9-9B3C-A89D31FD312C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73CF29A5-5E70-4AD9-9B3C-A89D31FD312C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6A9B681-C3E6-4879-B845-514C34364E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6A9B681-C3E6-4879-B845-514C34364E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6A9B681-C3E6-4879-B845-514C34364E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +77,10 @@ Global
 		{37F32BE3-6480-48C6-A347-ADF766147411}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37F32BE3-6480-48C6-A347-ADF766147411}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37F32BE3-6480-48C6-A347-ADF766147411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03EF52B1-BD55-4FD7-960A-F6597C6B43F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03EF52B1-BD55-4FD7-960A-F6597C6B43F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03EF52B1-BD55-4FD7-960A-F6597C6B43F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03EF52B1-BD55-4FD7-960A-F6597C6B43F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

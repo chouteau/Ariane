@@ -45,7 +45,7 @@ namespace Ariane.Tests
 			await bus.StartReadingAsync();
 
 			var firstName = person.FirstName;
-			bus.Send("test7.msmq", person);
+			await bus.SendAsync("test7.msmq", person);
 
 			await messageCollector.WaitForReceiveMessage(10 * 1000);
 

@@ -58,7 +58,7 @@ namespace Ariane.Tests
 			person.FirstName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("MyTopic", person);
+			await bus.SendAsync("MyTopic", person);
 
 			await bus.StartReadingAsync();
 
@@ -75,7 +75,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var person = Person.CreateTestPerson();
-			bus.Send("MyTopic2", person);
+			await bus.SendAsync("MyTopic2", person);
 
 			await Task.Delay(3 * 1000);
 

@@ -98,7 +98,7 @@ namespace Ariane.QueueProviders
 			m_Queue.Refresh();
 		}
 
-		public void Send<T>(Message<T> message)
+		public Task SendAsync<T>(Message<T> message)
 		{
 			try
 			{
@@ -129,6 +129,7 @@ namespace Ariane.QueueProviders
 				}
 				catch { /* Dead for science */ }
 			}
+			return Task.CompletedTask; 
 		}
 
 		#endregion

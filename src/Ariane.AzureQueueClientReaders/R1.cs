@@ -10,6 +10,8 @@ namespace Ariane5.AzureQueueClientReaders
     public class R1 : Ariane.MessageReaderBase<User>
     {
         int _count = 0;
+        int messageId = 0;
+
         public R1(ILogger<R1> logger)
         {
             this.Logger = logger;
@@ -17,14 +19,21 @@ namespace Ariane5.AzureQueueClientReaders
 
         protected ILogger Logger { get; }
 
-        public override Task ProcessMessageAsync(User message)
+        public override async Task ProcessMessageAsync(User message)
         {
+            if (message.MessageId <= messageId)
+			{
+                Logger.LogWarning("Message not ordered");
+			}
+            messageId = message.MessageId;
+            await Task.Delay(1 * 1000);
             _count++;
-            if (_count % 100 == 0)
-            {
-                Logger.LogInformation($"{message} {_count}");
-            }
-            return Task.CompletedTask;
+            Logger.LogInformation($"{message} {message.MessageId} {_count}");
         }
-    }
+
+		public override void Elapsed()
+		{
+            Logger.LogInformation("Elaped");
+		}
+	}
 }

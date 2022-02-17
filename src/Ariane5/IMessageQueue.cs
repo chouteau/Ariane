@@ -38,7 +38,7 @@ namespace Ariane
 		/// <typeparam name="T"></typeparam>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		T EndReceive<T>(IAsyncResult result);
+		T EndReceive<T>(IAsyncResult asyncResult);
 		/// <summary>
 		/// Reset receive
 		/// </summary>
@@ -48,7 +48,7 @@ namespace Ariane
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="message"></param>
-		void Send<T>(Message<T> message);
+		Task SendAsync<T>(Message<T> message);
 		/// <summary>
 		/// Timeout between read messages
 		/// </summary>

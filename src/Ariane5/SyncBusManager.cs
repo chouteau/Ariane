@@ -26,17 +26,17 @@ namespace Ariane
 			m_ArianeSettings = arianeSettings;
 		}
 
-		public void Send<T>(string queueName, T body, string label = null, int priority = 0)
+		public async Task SendAsync<T>(string queueName, T body, string label = null, int priority = 0)
 		{
 			queueName = $"{m_ArianeSettings.UniquePrefixName}{queueName}";
-			Send(queueName, body, new MessageOptions()
+			await SendAsync(queueName, body, new MessageOptions()
 			{
 				Label = label,
 				Priority = priority
 			});
 		}
 
-		public void Send<T>(string queueName, T body, MessageOptions options)
+		public async Task SendAsync<T>(string queueName, T body, MessageOptions options)
 		{
 			var localQueueName = $"{m_ArianeSettings.UniquePrefixName}{queueName}";
 			var registeredQueues = m_ServiceProvider.GetServices<IMessageDispatcher>();
@@ -48,7 +48,7 @@ namespace Ariane
 			}
 			else
 			{
-				m_Decorated.Send(queueName, body, options);
+				await m_Decorated.SendAsync(queueName, body, options);
 			}
 		}
 

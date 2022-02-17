@@ -56,7 +56,7 @@ namespace Ariane.Tests
 			await bus.StartReadingAsync();
 
 			var firstName = person.FirstName;
-			bus.Send("test3.msmq", person);
+			await bus.SendAsync("test3.msmq", person);
 
 			await messageCollector.WaitForReceiveMessage(10 * 1000);
 
@@ -93,10 +93,10 @@ namespace Ariane.Tests
 			personHighest.FirstName = "highest";
 			personHighest.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("test.msmq", personNormal, new MessageOptions() { Priority = 0 });
-			bus.Send("test.msmq", personHigh, new MessageOptions() { Priority = 1 });
-			bus.Send("test.msmq", personVeryHigh, new MessageOptions() { Priority = 2 });
-			bus.Send("test.msmq", personHighest, new MessageOptions() { Priority = 3 });
+			await bus.SendAsync("test.msmq", personNormal, new MessageOptions() { Priority = 0 });
+			await bus.SendAsync("test.msmq", personHigh, new MessageOptions() { Priority = 1 });
+			await bus.SendAsync("test.msmq", personVeryHigh, new MessageOptions() { Priority = 2 });
+			await bus.SendAsync("test.msmq", personHighest, new MessageOptions() { Priority = 3 });
 
 			IEnumerable<Person> list = null;
 			while (true)
@@ -131,7 +131,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var person = Person.CreateTestPerson();
-			bus.Send("test6.msmq", person);
+			await bus.SendAsync("test6.msmq", person);
 
 			await Task.Delay(3 * 1000);
 

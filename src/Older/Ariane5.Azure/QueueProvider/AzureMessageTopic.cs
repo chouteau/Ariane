@@ -120,7 +120,7 @@ namespace Ariane.QueueProviders
 			}
 		}
 
-		public void Send<T>(Message<T> message)
+		public async Task SendAsync<T>(Message<T> message)
 		{
 			if (message == null
 				|| message.Body == null)
@@ -128,44 +128,41 @@ namespace Ariane.QueueProviders
 				return;
 			}
 
-			Task.Run(async () =>
+			ServiceBusMessage busMessage = null;
+			string data = null;
+			try
 			{
-				ServiceBusMessage busMessage = null;
-				string data = null;
-				try
+				data = System.Text.Json.JsonSerializer.Serialize(message.Body);
+				busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
+				busMessage.Subject = message.Label;
+				if (message.ScheduledEnqueueTimeUtc.HasValue)
 				{
-					data = System.Text.Json.JsonSerializer.Serialize(message.Body);
-					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
-					busMessage.Subject = message.Label;
-					if (message.ScheduledEnqueueTimeUtc.HasValue)
-					{
-						busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
-					}
-					if (message.TimeToLive.HasValue)
-					{
-						busMessage.TimeToLive = message.TimeToLive.Value;
-					}
+					busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
 				}
-				catch (Exception ex)
+				if (message.TimeToLive.HasValue)
 				{
-					ex.Data.Add("QueueName", Name);
-					ex.Data.Add("Message", data);
-					Logger.LogError(ex, ex.Message);
-					return;
+					busMessage.TimeToLive = message.TimeToLive.Value;
 				}
+			}
+			catch (Exception ex)
+			{
+				ex.Data.Add("QueueName", Name);
+				ex.Data.Add("Message", data);
+				Logger.LogError(ex, ex.Message);
+				return;
+			}
 
-				try
-				{
-					await m_ServiceBusSender.SendMessageAsync(busMessage);
-				}
-				catch(Exception ex)
-                {
-					ex.Data.Add("QueueName", Name);
-					ex.Data.Add("Message", data);
-					Logger.LogError(ex, ex.Message);
-					await Task.Delay(200);
-				}
-			});
+			try
+			{
+				await m_ServiceBusSender.SendMessageAsync(busMessage);
+			}
+			catch(Exception ex)
+            {
+				ex.Data.Add("QueueName", Name);
+				ex.Data.Add("Message", data);
+				Logger.LogError(ex, ex.Message);
+				await Task.Delay(200);
+			}
 		}
 
 		private Task MessageHandler(ProcessMessageEventArgs args)

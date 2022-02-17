@@ -45,7 +45,7 @@ namespace Ariane.Tests
 			var person = new Person();
 			var firstName = person.FirstName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
-			bus.Send("sendreceivetest", person);
+			await bus.SendAsync("sendreceivetest", person);
 
 			await Task.Delay(5 * 1000);
 

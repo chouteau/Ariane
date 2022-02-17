@@ -33,16 +33,16 @@ namespace Ariane5.AzureQueueClientReaders
             serviceCollection.ConfigureAriane(register =>
             {
                 register.AddAzureQueueReader<R1>("q1");
-                register.AddAzureQueueReader<R2>("q2");
-                register.AddAzureQueueReader<R3>("q3");
-                register.AddAzureQueueReader<R4>("q4");
-                register.AddQueue(new QueueSetting()
-                {
-                    AutoStartReading = false,
-                    Name = "q5",
-                    TypeMedium = typeof(Ariane.AzureQueueMedium),
-                    TypeReader = typeof(R5)
-                });
+                // register.AddAzureQueueReader<R2>("q2");
+                // register.AddAzureQueueReader<R3>("q3");
+                // register.AddAzureQueueReader<R4>("q4");
+                //register.AddQueue(new QueueSetting()
+                //{
+                //    AutoStartReading = false,
+                //    Name = "q5",
+                //    TypeMedium = typeof(Ariane.AzureQueueMedium),
+                //    TypeReader = typeof(R5)
+                //});
             });
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -50,8 +50,8 @@ namespace Ariane5.AzureQueueClientReaders
             var sb = serviceProvider.GetRequiredService<IServiceBus>();
             await sb.StartReadingAsync();
 
-            var list = await sb.ReceiveAsync<User>("q5", 1000);
-            Console.WriteLine($"receive {list.Count()} from q5");
+            //var list = await sb.ReceiveAsync<User>("q5", 1000);
+            //Console.WriteLine($"receive {list.Count()} from q5");
 
             Console.Read();
 

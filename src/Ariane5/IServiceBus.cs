@@ -51,7 +51,7 @@ namespace Ariane
 		/// <param name="queueName"></param>
 		/// <param name="body"></param>
 		/// <param name="options"></param>
-		void Send<T>(string queueName, T body, MessageOptions options = null);
+		Task SendAsync<T>(string queueName, T body, MessageOptions options = null);
 
 		/// <summary>
 		/// Process message directly synchronously for unit tests with options
