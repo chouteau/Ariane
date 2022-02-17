@@ -70,10 +70,11 @@ namespace Ariane.QueueProviders
 			}
 		}
 
-		public void Send<T>(Message<T> message)
+		public Task SendAsync<T>(Message<T> message)
 		{
 			m_Queue.Enqueue(message);
 			m_Event.Set();
+			return Task.CompletedTask;
 		}
 
 		#endregion

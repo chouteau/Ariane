@@ -46,19 +46,33 @@ namespace Ariane5.AzureQueueClientWriters
             int count = 0;
 
             sw.Start();
-            Parallel.For(1, 6, (i) =>
-            {
-                for (int m = 0; m < 10000; m++)
-                {
-                    sb.Send($"q{i}", new User());
-                    if (count % 500 == 0)
-                    {
-                        Console.WriteLine($"{count} messages sent");
-                    }
-                    count++;
-                }
-            });
-            sw.Stop();
+
+			for (int m = 0; m < 100; m++)
+			{
+                var user = new User();
+                user.MessageId = m;
+                await sb.SendAsync($"q1", user);
+
+				if (count % 500 == 0)
+				{
+					Console.WriteLine($"{count} messages sent");
+				}
+				count++;
+			}
+
+			//Parallel.For(1, 6, (i) =>
+			//{
+			//    for (int m = 0; m < 10000; m++)
+			//    {
+			//        sb.Send($"q{i}", new User() { MessageId = messa});
+			//        if (count % 500 == 0)
+			//        {
+			//            Console.WriteLine($"{count} messages sent");
+			//        }
+			//        count++;
+			//    }
+			//});
+			sw.Stop();
 
             Console.WriteLine($"5 * 10000 user queued in {sw.ElapsedMilliseconds} ms");
             Console.Read();

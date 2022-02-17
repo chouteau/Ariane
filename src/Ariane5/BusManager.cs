@@ -56,25 +56,22 @@ namespace Ariane
 			}
 		}
 
-		public virtual void Send<T>(string queueName, T body)
+		public virtual async Task SendAsync<T>(string queueName, T body)
 		{
 			var options = new MessageOptions()
 			{
 				Label = null,
 				Priority = 0
 			};
-			Send(queueName, body, options);
+			await SendAsync(queueName, body, options);
 		}
 
-		public virtual void Send<T>(string queueName, T body, MessageOptions options)
+		public virtual async Task SendAsync<T>(string queueName, T body, MessageOptions options)
 		{
-			m_ActionQueue.Add(() =>
-			{
-				SendInternal(queueName, body, options);
-			});
+			await SendInternalAsync(queueName, body, options);
 		}
 
-		protected virtual void SendInternal<T>(string queueName, T body, MessageOptions options)
+		protected virtual async Task SendInternalAsync<T>(string queueName, T body, MessageOptions options)
 		{
 			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			options = options ?? new MessageOptions();
@@ -91,7 +88,7 @@ namespace Ariane
 			m.TimeToLive = options.TimeToLive;
 			m.ScheduledEnqueueTimeUtc = options.ScheduledEnqueueTimeUtc;
 			Logger.LogTrace($"Try to send {m.ToJsonStringTraceLog()} in queue {queueName}");
-			mq.Send(m);
+			await mq.SendAsync(m);
 		}
 
 		public virtual async Task StartReadingAsync()

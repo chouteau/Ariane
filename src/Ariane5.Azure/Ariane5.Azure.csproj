@@ -1,18 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Ariane</RootNamespace>
-    <Version>5.2.18</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <Version>6.0.19</Version>	  
+	  <PackageId>Ariane5.Azure</PackageId>
+	  <PackageProjectUrl>https://github.com/chouteau/Ariane</PackageProjectUrl>
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
+	  <EmbedUntrackedSources>true</EmbedUntrackedSources>
+	  <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ReceivedMessage.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.5.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.6.0" />
   </ItemGroup>
 
   <ItemGroup>

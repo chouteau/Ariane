@@ -16,6 +16,8 @@ namespace Ariane.QueueProviders
 	{
 		private readonly bool m_FlushReceivedMessageToDiskBeforeProcess;
 		private ManualResetEvent m_Event;
+		private readonly ManualResetEvent m_MessageProcessed;
+
 		private BinaryData m_BinaryMessage;
 		private readonly ServiceBusClient m_ServiceBusClient;
 		private readonly ServiceBusSender m_ServiceBusSender;
@@ -38,6 +40,8 @@ namespace Ariane.QueueProviders
 			m_ServiceBusProcessor.ProcessErrorAsync += ProcessError;
 
 			Name = queueName;
+
+			m_MessageProcessed = new ManualResetEvent(false);
 		}
 
 		protected ILogger Logger { get; }
@@ -46,16 +50,14 @@ namespace Ariane.QueueProviders
 		{
 			get
 			{
-				return 30 * 1000; // Toutes les 30 secondes
+				return 30 * 1000; // after 30 seconds
 			}
 		}
 
 		public void SetTimeout()
 		{
-			
+			// Do nothing
 		}
-
-		#region IMessageQueue Members
 
 		public string Name { get; internal set; }
 		public string SubscriptionName { get; internal set; }
@@ -65,17 +67,25 @@ namespace Ariane.QueueProviders
 		{
 			if (m_Event == null)
 			{
+				m_Event = new ManualResetEvent(false);
 				Task.Run(async () =>
 				{
-					await m_ServiceBusProcessor.StartProcessingAsync(new CancellationToken());
+					try
+					{
+						await m_ServiceBusProcessor.StartProcessingAsync(new CancellationToken());
+					}
+					catch (Exception ex)
+					{
+						Logger.LogError(ex, ex.Message);
+					}
 				});
-				m_Event = new ManualResetEvent(false);
 			}
 			return new AsyncResult(m_Event);
 		}
 
 		public T EndReceive<T>(IAsyncResult asyncResult)
 		{
+			var result = default(T);
 			if (m_BinaryMessage != null)
             {
 				var body = m_BinaryMessage.ToString();
@@ -83,10 +93,9 @@ namespace Ariane.QueueProviders
                 {
 					DiagnosticHelper.FlushToDisk(body);
 				}
-				var receiveMessage = System.Text.Json.JsonSerializer.Deserialize<T>(body);
-				return receiveMessage;
+				result = System.Text.Json.JsonSerializer.Deserialize<T>(body);
 			}
-			return default(T);
+			return result;
 		}
 
 		public async Task<T> ReceiveAsync<T>()
@@ -111,13 +120,14 @@ namespace Ariane.QueueProviders
 
 		public void Reset()
 		{
+			m_MessageProcessed.Set();
 			if (m_Event != null)
 			{
 				m_Event.Reset();
 			}
 		}
 
-		public void Send<T>(Message<T> message)
+		public async Task SendAsync<T>(Message<T> message)
 		{
 			if (message == null
 				|| message.Body == null)
@@ -125,43 +135,40 @@ namespace Ariane.QueueProviders
 				return;
 			}
 
-			Task.Run(async ()  => 
+			ServiceBusMessage busMessage = null;
+			string data = null;
+			try
 			{
-				ServiceBusMessage busMessage = null;
-				string data = null;
-				try
+				data = System.Text.Json.JsonSerializer.Serialize(message.Body);
+				busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
+				busMessage.Subject = message.Label;
+				if (message.ScheduledEnqueueTimeUtc.HasValue)
 				{
-					data = System.Text.Json.JsonSerializer.Serialize(message.Body);
-					busMessage = new ServiceBusMessage(System.Text.Encoding.UTF8.GetBytes(data));
-					busMessage.Subject = message.Label;
-					if (message.ScheduledEnqueueTimeUtc.HasValue)
-					{
-						busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
-					}
-					if (message.TimeToLive.HasValue)
-					{
-						busMessage.TimeToLive = message.TimeToLive.Value;
-					}
+					busMessage.ScheduledEnqueueTime = message.ScheduledEnqueueTimeUtc.Value;
 				}
-				catch(Exception ex)
+				if (message.TimeToLive.HasValue)
 				{
-					ex.Data.Add("QueueName", Name);
-					ex.Data.Add("Message", data);
-					Logger.LogError(ex, ex.Message);
-					return;
+					busMessage.TimeToLive = message.TimeToLive.Value;
 				}
-				try
-				{
-					await m_ServiceBusSender.SendMessageAsync(busMessage);
-				}
-				catch(Exception ex)
-                {
-					ex.Data.Add("QueueName", Name);
-					ex.Data.Add("Message", data);
-					Logger.LogError(ex, ex.Message);
-					await Task.Delay(200);
-                }
-			});
+			}
+			catch(Exception ex)
+			{
+				ex.Data.Add("QueueName", Name);
+				ex.Data.Add("Message", data);
+				Logger.LogError(ex, ex.Message);
+				return;
+			}
+			try
+			{
+				await m_ServiceBusSender.SendMessageAsync(busMessage);
+			}
+			catch(Exception ex)
+            {
+				ex.Data.Add("QueueName", Name);
+				ex.Data.Add("Message", data);
+				Logger.LogError(ex, ex.Message);
+				await Task.Delay(200);
+            }
 		}
 
 		public void SendBatch<T>(IList<Message<T>> messages)
@@ -188,13 +195,12 @@ namespace Ariane.QueueProviders
 			});
 		}
 
-		#endregion
-
-
 		private Task MessageHandler(ProcessMessageEventArgs args)
         {
 			m_BinaryMessage = args.Message.Body;
 			m_Event.Set();
+			m_MessageProcessed.WaitOne();
+			m_MessageProcessed.Reset();
 			return Task.CompletedTask;
         }
 

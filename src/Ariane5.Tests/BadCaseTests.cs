@@ -30,7 +30,7 @@ namespace Ariane.Tests
         }
 
         [TestMethod]
-        public void Send_With_Unknown_Queue()
+        public async Task Send_With_Unknown_Queue()
         {
             var sp = RootTests.Initialize(services =>
             {
@@ -39,7 +39,7 @@ namespace Ariane.Tests
 
             var bus = sp.GetRequiredService<IServiceBus>();
             var person = Person.CreateTestPerson();
-            bus.Send("unknown", person);
+            await bus.SendAsync("unknown", person);
         }
 
         [TestMethod]

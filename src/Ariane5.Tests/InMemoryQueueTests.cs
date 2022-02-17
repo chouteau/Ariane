@@ -68,7 +68,7 @@ namespace Ariane.Tests
 				var person = new Person();
 				person.FirstName = Guid.NewGuid().ToString();
 				person.LastName = Guid.NewGuid().ToString();
-				bus.Send("sendreceivetest", person);
+				await bus.SendAsync("sendreceivetest", person);
 				personList.Add(person);
 			}
 
@@ -87,7 +87,7 @@ namespace Ariane.Tests
 			foreach (var person in personList)
 			{
 				person.IsProcessed = false;
-				bus.Send("sendreceivetest", person);
+				await bus.SendAsync("sendreceivetest", person);
 			}
 
 			processedCount = personList.Where(i => i.IsProcessed).Count();
@@ -115,7 +115,7 @@ namespace Ariane.Tests
 				var person = new Person();
 				person.FirstName = Guid.NewGuid().ToString();
 				person.LastName = Guid.NewGuid().ToString();
-				bus.Send("sendreceivetestnoautostart", person);
+				await bus.SendAsync("sendreceivetestnoautostart", person);
 			}
 
 			var personList = await bus.ReceiveAsync<Person>("sendreceivetestnoautostart", 10, 5 * 1000);
@@ -139,7 +139,7 @@ namespace Ariane.Tests
 				var person = new Person();
 				person.FirstName = Guid.NewGuid().ToString();
 				person.LastName = Guid.NewGuid().ToString();
-				bus.Send("sendreceivetest2", person);
+				await bus.SendAsync("sendreceivetest2", person);
 			}
 
 			var personList = await bus.ReceiveAsync<Person>("sendreceivetest2", 10, 10 * 1000);

@@ -20,7 +20,7 @@ namespace Ariane5.AzureTopicClientReaders
         public override Task ProcessMessageAsync(User message)
         {
             _count++;
-            if (_count % 100 == 0)
+            if (_count % 10 == 0)
             {
                 Logger.LogInformation($"{message} {_count}");
             }

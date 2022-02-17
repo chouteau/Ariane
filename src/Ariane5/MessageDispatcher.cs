@@ -34,7 +34,7 @@ namespace Ariane
 		{
 			if (subscriberType == null)
 			{
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("subscriberType");
 			}
 			if (!m_MessageSubscriberTypeList.Contains(subscriberType))
 			{
@@ -155,6 +155,7 @@ namespace Ariane
 				{
 					index = WaitHandle.WaitAny(waitHandles);
 				}
+
 				if (index == 0)
 				{
 					break;

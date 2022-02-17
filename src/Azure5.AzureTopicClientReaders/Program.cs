@@ -23,7 +23,7 @@ namespace Ariane5.AzureTopicClientReaders
             var configuration = new ConfigurationBuilder()
                                         .SetBasePath(System.Environment.CurrentDirectory)
                                         .AddJsonFile("localconfig\\appsettings.json",
-                                            optional: false,
+                                            optional: true,
                                              reloadOnChange: false)
                                         .Build();
 
@@ -33,17 +33,17 @@ namespace Ariane5.AzureTopicClientReaders
             serviceCollection.ConfigureAriane(register =>
             {
                 register.AddAzureTopicReader<T1>("t1","s1");
-                register.AddAzureTopicReader<T2>("t2", "s2");
-                register.AddAzureTopicReader<T3>("t3", "s3");
-                register.AddAzureTopicReader<T4>("t4", "s4");
-                register.AddQueue(new QueueSetting()
-                {
-                    AutoStartReading = false,
-                    Name = "t5",
-                    SubscriptionName = "s5",
-                    TypeMedium = typeof(Ariane.AzureTopicMedium),
-                    TypeReader = typeof(T5)
-                });
+                //register.AddAzureTopicReader<T2>("t2", "s2");
+                //register.AddAzureTopicReader<T3>("t3", "s3");
+                //register.AddAzureTopicReader<T4>("t4", "s4");
+                //register.AddQueue(new QueueSetting()
+                //{
+                //    AutoStartReading = false,
+                //    Name = "t5",
+                //    SubscriptionName = "s5",
+                //    TypeMedium = typeof(Ariane.AzureTopicMedium),
+                //    TypeReader = typeof(T5)
+                //});
             });
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -51,8 +51,8 @@ namespace Ariane5.AzureTopicClientReaders
             var sb = serviceProvider.GetRequiredService<IServiceBus>();
             await sb.StartReadingAsync();
 
-            var list = await sb.ReceiveAsync<User>("t5", 1000);
-            Console.WriteLine($"receive {list.Count()} from t5");
+            //var list = await sb.ReceiveAsync<User>("t5", 1000);
+            //Console.WriteLine($"receive {list.Count()} from t5");
 
             Console.Read();
 

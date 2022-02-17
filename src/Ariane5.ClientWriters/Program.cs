@@ -10,7 +10,7 @@ namespace Ariane5.ClientWriters
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var serviceCollection = new ServiceCollection()
                             .AddLogging(config =>
@@ -45,16 +45,16 @@ namespace Ariane5.ClientWriters
             var sw = new System.Diagnostics.Stopwatch();
             int count = 0;
 
-            sb.Send("q1", new User());
+            await sb.SendAsync("q1", new User());
 
             while (true)
             {
                 sw.Start();
                 Parallel.For(1, 6, (i) =>
                 {
-                    Parallel.For(0, 10000, (x) =>
+                    Parallel.For(0, 10000, async (x) =>
                     {
-                        sb.Send($"q{i}", new User());
+                        await sb.SendAsync($"q{i}", new User());
                         if (count % 500 == 0)
                         {
                             Console.WriteLine($"{count} messages sent");

@@ -37,12 +37,12 @@ namespace Ariane5.AzureTopicClientWriters
                 register.AddAzureTopicWriter("t3");
                 register.AddAzureTopicWriter("t4");
                 register.AddAzureTopicWriter("t5");
-                register.AddAzureQueueWriter("BankTest");
+                //register.AddAzureQueueWriter("BankTest");
             });
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            await SendBigMessage(serviceProvider);
+            await Send500Messages(serviceProvider);
         }
 
         private static async Task SendBigMessage(IServiceProvider serviceProvider)
@@ -54,7 +54,7 @@ namespace Ariane5.AzureTopicClientWriters
 
             for (int i = 0; i < 100; i++)
             {
-                sb.Send($"BankTest", message);
+                await sb.SendAsync($"BankTest", message);
             }
 
             Console.WriteLine($"message sent");
@@ -74,7 +74,7 @@ namespace Ariane5.AzureTopicClientWriters
 
             for (int m = 0; m < 500; m++)
             {
-                sb.Send($"t1", new User());
+                await sb.SendAsync($"t1", new User());
                 if (count % 500 == 0)
                 {
                     Console.WriteLine($"{count} messages queued");

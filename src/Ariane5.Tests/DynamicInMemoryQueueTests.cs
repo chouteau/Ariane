@@ -43,7 +43,7 @@ namespace Ariane.Tests
 			person.LastName = Guid.NewGuid().ToString();
 			var d = bus.CreateMessage("test");
 			d.Person = person;
-			bus.Send("dynamic", d);
+			await bus.SendAsync("dynamic", d);
 
 			await bus.StartReadingAsync();
 

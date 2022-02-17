@@ -46,7 +46,7 @@ namespace Ariane.Tests
 			person.FirstName = Guid.NewGuid().ToString();
 			person.LastName = Guid.NewGuid().ToString();
 
-			bus.Send("test.file", person);
+			await bus.SendAsync("test.file", person);
 			await bus.StartReadingAsync();
 
 			await messageCollector.WaitForReceiveMessage(2 * 1000);

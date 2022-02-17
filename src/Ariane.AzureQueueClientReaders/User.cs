@@ -13,5 +13,6 @@ namespace Ariane5.AzureQueueClientReaders
             Name = Guid.NewGuid().ToString();
         }
         public string Name { get; set; }
-    }
+		public int MessageId { get; set; }
+	}
 }
