@@ -19,22 +19,16 @@ namespace Ariane
 
 		public SyncBusManager(IServiceProvider serviceProvider, 
 			Ariane.IServiceBus decorated,
-			ArianeSettings arianeSettings)
+			ArianeSettings arianeSettings,
+			ILogger<SyncBusManager> logger)
 		{
 			m_Decorated = decorated;
 			m_ServiceProvider = serviceProvider;
 			m_ArianeSettings = arianeSettings;
+			this.Logger = logger;
 		}
 
-		public async Task SendAsync<T>(string queueName, T body, string label = null, int priority = 0)
-		{
-			queueName = $"{m_ArianeSettings.UniquePrefixName}{queueName}";
-			await SendAsync(queueName, body, new MessageOptions()
-			{
-				Label = label,
-				Priority = priority
-			});
-		}
+		protected ILogger Logger { get; }
 
 		public async Task SendAsync<T>(string queueName, T body, MessageOptions options)
 		{
@@ -43,11 +37,13 @@ namespace Ariane
 			var registered = registeredQueues.SingleOrDefault(i => i.QueueName.Equals(localQueueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registered != null)
 			{
+				Logger.LogDebug($"Process message synchronizely");
 				var md = registered as MessageDispatcher<T>;
 				md.ProcessMessageAsync(body).Wait();
 			}
 			else
 			{
+				Logger.LogDebug($"Process message synchronizely queue {queueName} not registered");
 				await m_Decorated.SendAsync(queueName, body, options);
 			}
 		}
@@ -82,23 +78,9 @@ namespace Ariane
 			await m_Decorated.StopReadingAsync(queueName);
 		}
 
-		public void SyncProcess<T>(string queueName, T body, string label = null, int priority = 0)
+		public dynamic CreateMessage(string messageName)
 		{
-			m_Decorated.SyncProcess(queueName, body, new MessageOptions()
-			{
-				Label = label,
-				Priority = priority
-			});
-		}
-
-		public void SyncProcess<T>(string queueName, T body, MessageOptions options)
-		{
-			m_Decorated.SyncProcess(queueName, body, options);
-		}
-
-		public dynamic CreateMessage(string name)
-		{
-			return m_Decorated.CreateMessage(name);
+			return m_Decorated.CreateMessage(messageName);
 		}
 
 		public IEnumerable<string> GetRegisteredQueueList()

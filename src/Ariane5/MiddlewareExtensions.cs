@@ -39,8 +39,9 @@ namespace Ariane
             {
                 services.AddSingleton<IServiceBus>(sp =>
                 {
-                    var bus = (IServiceBus)ActivatorUtilities.CreateInstance(sp, typeof(BusManager));
-                    return new SyncBusManager(sp, bus, s);
+                    var bus = (IServiceBus)ActivatorUtilities.CreateInstance(sp, typeof(SyncBusManager));
+                    var logger = sp.GetService<ILogger<SyncBusManager>>();
+                    return new SyncBusManager(sp, bus, s, logger);
                 });
             }
 			else
