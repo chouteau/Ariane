@@ -46,7 +46,7 @@ namespace Ariane.Tests
 			await bus.SendAsync("test.file", person);
 			await bus.StartReadingAsync();
 
-			await messageCollector.WaitForReceiveMessage(2 * 1000);
+			await messageCollector.WaitForReceiveMessage(10 * 1000);
 
 			Check.That(messageCollector.Count).IsStrictlyGreaterThan(0);
 

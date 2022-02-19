@@ -51,7 +51,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Reset();
+			messageCollector.Reset(3);
 
 			var person = new Person();
 			person.FirstName = Guid.NewGuid().ToString();

@@ -37,7 +37,7 @@ namespace Ariane
 			var registered = registeredQueues.SingleOrDefault(i => i.QueueName.Equals(localQueueName, StringComparison.InvariantCultureIgnoreCase));
 			if (registered != null)
 			{
-				Logger.LogDebug($"Process message synchronizely");
+				Logger.LogDebug($"Process message synchronizely with queue {queueName}");
 				var md = registered as MessageDispatcher<T>;
 				md.ProcessMessageAsync(body).Wait();
 			}
