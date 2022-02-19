@@ -54,15 +54,6 @@ namespace Ariane
 		Task SendAsync<T>(string queueName, T body, MessageOptions options = null);
 
 		/// <summary>
-		/// Process message directly synchronously for unit tests with options
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="queueName"></param>
-		/// <param name="body"></param>
-		/// <param name="options"></param>
-		void SyncProcess<T>(string queueName, T body, MessageOptions options = null);
-
-		/// <summary>
 		/// Create dynamic message with name
 		/// </summary>
 		/// <param name="messageName"></param>

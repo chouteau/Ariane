@@ -56,22 +56,12 @@ namespace Ariane
 			}
 		}
 
-		public virtual async Task SendAsync<T>(string queueName, T body)
-		{
-			var options = new MessageOptions()
-			{
-				Label = null,
-				Priority = 0
-			};
-			await SendAsync(queueName, body, options);
-		}
-
-		public virtual async Task SendAsync<T>(string queueName, T body, MessageOptions options)
+		public virtual async Task SendAsync<T>(string queueName, T body, MessageOptions options = null)
 		{
 			await SendInternalAsync(queueName, body, options);
 		}
 
-		protected virtual async Task SendInternalAsync<T>(string queueName, T body, MessageOptions options)
+		protected virtual async Task SendInternalAsync<T>(string queueName, T body, MessageOptions options = null)
 		{
 			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			options = options ?? new MessageOptions();
@@ -82,6 +72,7 @@ namespace Ariane
 				return;
 			}
 			var m = new Message<T>();
+			m.QueueName = queueName;
 			m.Label = options.Label ?? Guid.NewGuid().ToString();
 			m.Body = body;
 			m.Priority = Math.Max(0, options.Priority);
