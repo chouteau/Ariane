@@ -9,15 +9,17 @@ namespace Ariane.Tests
 {
 	public class MessageCollector
 	{
-		private List<Person> m_PersonList;
-		private System.Threading.ManualResetEvent m_ManualResetEvent;
-		private ILogger m_Logger;
+		private readonly List<Person> m_PersonList;
+		private readonly System.Threading.ManualResetEvent m_ManualResetEvent;
+		private readonly ILogger m_Logger;
+		private int m_MessageCount;
 
 		public MessageCollector(ILogger<MessageCollector> logger)
 		{
 			m_PersonList = new List<Person>();
 			m_ManualResetEvent = new System.Threading.ManualResetEvent(false);
 			m_Logger = logger;
+			m_MessageCount = 1;
 		}
 
 		public int Count
@@ -28,10 +30,11 @@ namespace Ariane.Tests
 			}
 		}
 
-		public void Reset()
+		public void Reset(int? messageCount = 1)
 		{
 			m_PersonList.Clear();
 			m_ManualResetEvent.Reset();
+			m_MessageCount = messageCount.Value;
 		}
 
 		public IEnumerable<Person> GetList()
@@ -42,7 +45,7 @@ namespace Ariane.Tests
 		public void AddPerson(Person person)
 		{
 			m_PersonList.Add(person);
-			if (m_PersonList.Count == 1)
+			if (m_PersonList.Count >= m_MessageCount)
             {
 				m_ManualResetEvent.Set();
 			}
@@ -50,12 +53,14 @@ namespace Ariane.Tests
 
 		public async Task WaitForReceiveMessage(int millisecond)
         {
-			var success = m_ManualResetEvent.WaitOne(10 * 1000);
+			var timeout = DateTime.Now.AddSeconds((millisecond / 1000.0) * -1);
+			var success = m_ManualResetEvent.WaitOne(millisecond);
 			if (!success)
             {
 				m_Logger.LogWarning("Timeout detected");
             }
-			await Task.Delay(millisecond);
+			var balance = Convert.ToInt32((timeout - DateTime.Now).TotalMilliseconds);
+			await Task.Delay(Math.Max(0, balance));
 		}
 	}
 }

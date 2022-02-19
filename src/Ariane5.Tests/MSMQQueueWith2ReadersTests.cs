@@ -40,7 +40,7 @@ namespace Ariane.Tests
 			var bus = ServiceProvider.GetRequiredService<IServiceBus>();
 
 			var messageCollector = ServiceProvider.GetRequiredService<MessageCollector>();
-			messageCollector.Reset();
+			messageCollector.Reset(2);
 
 			await bus.StartReadingAsync();
 
