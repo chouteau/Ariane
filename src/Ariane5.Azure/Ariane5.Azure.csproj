@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <Version>6.0.20</Version>	  
+	  <Version>6.0.21</Version>	  
 	  <PackageId>Ariane5.Azure</PackageId>
 	  <PackageProjectUrl>https://github.com/chouteau/Ariane</PackageProjectUrl>
 	  <IncludeSymbols>true</IncludeSymbols>

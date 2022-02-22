@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Ariane</RootNamespace>
-    <Version>6.0.19</Version>
+    <Version>6.0.20</Version>
 	  <PackageId>Ariane5</PackageId>
 	  <PackageProjectUrl>https://github.com/chouteau/Ariane</PackageProjectUrl>
 	  <IncludeSymbols>true</IncludeSymbols>

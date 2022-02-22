@@ -147,64 +147,28 @@ namespace Ariane
 		public virtual async Task<IEnumerable<T>> ReceiveAsync<T>(string queueName, int count, int timeoutInMillisecond)
 		{
 			timeoutInMillisecond = Math.Min(60 * 1000, timeoutInMillisecond);
-			return await ReceiveInternalAsync<T>(queueName, count, timeoutInMillisecond);
-		}
-
-		internal virtual async Task<IEnumerable<T>> ReceiveInternalAsync<T>(string queueName, int count, int timeoutInMillisecond)
-		{
+			var stopDate = DateTime.Now.AddMilliseconds(timeoutInMillisecond);
 			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			var mq = MessageQueueList.SingleOrDefault(i => i.Name == queueName);
-			if (mq == null)
-            {
-				return null;
-            }
 			var result = new List<T>();
-			while (true)
+			while(true)
 			{
-				IAsyncResult item = null;
-				mq.Reset();
-				mq.SetTimeout();
-				try
-				{
-					item = mq.BeginReceive();
-				}
-				catch (Exception ex)
-				{
-					Logger.LogError(ex, ex.Message);
-				}
-				var handles = new WaitHandle[] { item.AsyncWaitHandle };
-				var index = WaitHandle.WaitAny(handles, timeoutInMillisecond);
-				if (index == 258) // Timeout
-				{
-					mq.SetTimeout();
-					break;
-				}
-
-				T message = default(T);
-				try
-				{
-					message = mq.EndReceive<T>(item);
-				}
-				catch (Exception ex)
-				{
-					Logger.LogError(ex, ex.Message);
-				}
-				finally
-				{
-					mq.Reset();
-				}
-
+				var message = await mq.ReceiveAsync<T>();
 				if (message != null)
 				{
 					result.Add(message);
 				}
-
 				if (result.Count == count)
 				{
 					break;
 				}
+				if (DateTime.Now > stopDate)
+				{
+					break;
+				}
+				await Task.Delay(100);
 			}
-			return await Task.FromResult(result);
+			return result;
 		}
 
 		/// <summary>
