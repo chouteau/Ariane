@@ -131,6 +131,11 @@ namespace Ariane
 		{
 			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			var mq = MessageQueueList.SingleOrDefault(i => i.Name == queueName);
+			if (mq == null)
+			{
+				Logger.LogWarning("Receive request in unknown queue {0}", queueName);
+				return null;
+			}
 			var result = new List<T>();
             for (int i = 0; i < count; i++)
             {
@@ -150,6 +155,11 @@ namespace Ariane
 			var stopDate = DateTime.Now.AddMilliseconds(timeoutInMillisecond);
 			queueName = $"{ArianeSettings.UniquePrefixName}{queueName}";
 			var mq = MessageQueueList.SingleOrDefault(i => i.Name == queueName);
+			if (mq == null)
+			{
+				Logger.LogWarning("Receive request in unknown queue {0}", queueName);
+				return null;
+			}
 			var result = new List<T>();
 			while(true)
 			{

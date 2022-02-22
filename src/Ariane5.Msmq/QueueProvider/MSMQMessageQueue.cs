@@ -17,13 +17,14 @@ namespace Ariane.QueueProviders
 			this.Logger = logger;
         }
 
-		protected ILogger<MSMQMessageQueue> Logger { get; }
+		protected ILogger Logger { get; }
 
-		public MSMQMessageQueue(Experimental.System.Messaging.MessageQueue queue, string queueName)
+		public MSMQMessageQueue(Experimental.System.Messaging.MessageQueue queue, string queueName, ILogger logger)
 		{
 			Name = queueName;
 			m_Queue = queue;
 			m_Queue.Formatter = new MSMQJSonMessageFormatter();
+			Logger = logger;
 		}
 
 		#region IMessageQueue Members
@@ -50,7 +51,7 @@ namespace Ariane.QueueProviders
 			T body = default(T);
 			try
 			{
-				var timeout = new TimeSpan(0, 0, 0, 0, 100);
+				var timeout = new TimeSpan(0, 0, 0, 0, 500);
 				var message = m_Queue.Receive(timeout);
 				body = GetBody<T>(message);
 			}

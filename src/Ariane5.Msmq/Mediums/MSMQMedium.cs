@@ -56,7 +56,7 @@ namespace Ariane
 			}
 
 			var  result = new Experimental.System.Messaging.MessageQueue(path, Experimental.System.Messaging.QueueAccessMode.SendAndReceive);
-			return new QueueProviders.MSMQMessageQueue(result, queueSetting.Name);
+			return new QueueProviders.MSMQMessageQueue(result, queueSetting.Name, Logger);
 		}
 	}
 }
