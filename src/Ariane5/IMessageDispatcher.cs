@@ -12,7 +12,7 @@ namespace Ariane
         void AddMessageSubscriberType(Type messageSubscriber);
 		void InitializeSubscribers(IServiceProvider serviceProvider);
 		void InitializeMedium(IServiceProvider serviceProvider, QueueSetting queueSetting);
-		Task StartAsync();
+		Task StartAsync(bool force = false);
 		Task StopAsync(CancellationToken cancellationToken);
 	}
 }

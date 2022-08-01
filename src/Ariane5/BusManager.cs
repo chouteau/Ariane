@@ -99,7 +99,7 @@ namespace Ariane
                 {
 					continue;
                 }
-				dispatcher.StartAsync();
+				dispatcher.StartAsync(true);
             }
 			return Task.CompletedTask;
 		}
