@@ -80,10 +80,10 @@ namespace Ariane
 			MessageSubscriberList = result;
 		}
 
-        public Task StartAsync()
+        public Task StartAsync(bool force = false)
         {
-			if (!AutoStart)
-            {
+			if (!AutoStart && !force)
+			{
 				return Task.CompletedTask;
             }
 			if (m_runningTask != null)
@@ -95,7 +95,7 @@ namespace Ariane
 		}
 
 		public async Task StopAsync(CancellationToken cancellationToken)
-        {
+		{
 			if (m_runningTask == null)
             {
 				return;
