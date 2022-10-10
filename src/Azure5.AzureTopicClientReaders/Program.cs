@@ -32,7 +32,7 @@ namespace Ariane5.AzureTopicClientReaders
             serviceCollection.ConfigureArianeAzure();
             serviceCollection.ConfigureAriane(register =>
             {
-                register.AddAzureTopicReader<T1>("t1","s1");
+                register.AddAzureTopicReader<T1>("t1","same");
                 //register.AddAzureTopicReader<T2>("t2", "s2");
                 //register.AddAzureTopicReader<T3>("t3", "s3");
                 //register.AddAzureTopicReader<T4>("t4", "s4");
