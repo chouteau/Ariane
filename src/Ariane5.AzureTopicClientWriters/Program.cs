@@ -33,16 +33,16 @@ namespace Ariane5.AzureTopicClientWriters
             serviceCollection.ConfigureAriane(register =>
             {
                 register.AddAzureTopicWriter("t1");
-                register.AddAzureTopicWriter("t2");
-                register.AddAzureTopicWriter("t3");
-                register.AddAzureTopicWriter("t4");
-                register.AddAzureTopicWriter("t5");
+                //register.AddAzureTopicWriter("t2");
+                //register.AddAzureTopicWriter("t3");
+                //register.AddAzureTopicWriter("t4");
+                //register.AddAzureTopicWriter("t5");
                 //register.AddAzureQueueWriter("BankTest");
             });
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            await Send500Messages(serviceProvider);
+            await SendMessages(serviceProvider);
         }
 
         private static async Task SendBigMessage(IServiceProvider serviceProvider)
@@ -61,24 +61,24 @@ namespace Ariane5.AzureTopicClientWriters
             Console.Read();
         }
 
-        private static async Task Send500Messages(IServiceProvider serviceProvider)
+        private static async Task SendMessages(IServiceProvider serviceProvider)
         {
             var sb = serviceProvider.GetRequiredService<IServiceBus>();
 
             var sw = new System.Diagnostics.Stopwatch();
             int count = 0;
 
-            // sb.Send($"t1", new User());
+            // await sb.SendAsync("t1", new User());
 
             sw.Start();
 
-            for (int m = 0; m < 500; m++)
+            for (int m = 0; m < 20; m++)
             {
-                await sb.SendAsync($"t1", new User());
-                if (count % 500 == 0)
+                await sb.SendAsync($"t1", new User()
                 {
-                    Console.WriteLine($"{count} messages queued");
-                }
+                    Name = $"name{m}"
+                });
+                Console.WriteLine($"{count} messages queued");
                 count++;
             }
 
@@ -98,7 +98,6 @@ namespace Ariane5.AzureTopicClientWriters
             sw.Stop();
 
             Console.WriteLine($"{count} messages");
-            Console.WriteLine($"5 * 10000 user queued in {sw.ElapsedMilliseconds} ms");
             Console.Read();
 
         }
