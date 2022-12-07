@@ -39,10 +39,15 @@ namespace Ariane
 
 			if (queueSetting == null)
 			{
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("The queue settings is null");
 			}
 
-			if (Settings.UniqueTopicNameForTest != null)
+            if (string.IsNullOrWhiteSpace(queueSetting.Name))
+            {
+                throw new ArgumentException("The name of queue is null or empty");
+            }
+
+            if (Settings.UniqueTopicNameForTest != null)
 			{
 				queueSetting.SubscriptionName = Settings.UniqueTopicNameForTest;
 			}
